@@ -41,6 +41,17 @@ jobs:
           echo "${{ secrets.YML }}" > ./application.yml
         shell: bash
 
+      # gradle clean bootJar
+      - name: Build Gradle
+        run: ./gradlew clean bootJar
+
+      # resources 디렉토리 내용 출력 (디버깅용)
+      - name: List resources directory
+        run: |
+          ls -l ./src/main/resources
+          if [ -f ./src/main/resources/adjective.txt ]; then echo "adjective.txt exists"; else echo "adjective.txt does not exist"; fi
+        shell: bash
+
       # Docker Image Push
       - name: Docker Image push
         run: |
