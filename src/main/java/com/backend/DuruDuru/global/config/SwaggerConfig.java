@@ -15,7 +15,7 @@ public class SwaggerConfig {
     public OpenAPI DuruDuruAPI() {
         Info info = new Info()
                 .title("DuruDuru Swagger")
-                .description("UMC-7th-DuruDuru Swagger")
+                .description("UMC-7th-DuruDuru server Swagger")
                 .version("1.0.0");
 
         String jwtSchemeName = "JWT TOKEN";
