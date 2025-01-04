@@ -27,9 +27,9 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
-                                .requestMatchers("/member/sign-up", "/member/sign-in").permitAll()
-                                .requestMatchers("/member/**").permitAll()
+                                .requestMatchers("/member/sign-up").permitAll()
                                 // 다른 엔티티 관련 접근
+
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
