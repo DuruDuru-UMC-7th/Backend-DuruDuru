@@ -74,6 +74,7 @@ jobs:
 
             # 기존 컨테이너 중지 및 제거
             sudo docker stop duruduru-container || true
+            sudo aa-remove-unknown || true
             sudo docker rm -f duruduru-container || true
 
             # 최신 이미지 가져오기
