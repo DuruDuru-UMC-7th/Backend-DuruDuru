@@ -56,7 +56,7 @@ jobs:
       - name: Docker Image push
         run: |
           echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-          docker build -t ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}} ./
+          docker build --no-cache -t ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}} ./
           docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY}}
 
       ## deploy to develop
@@ -74,7 +74,7 @@ jobs:
 
             # 기존 컨테이너 중지 및 제거
             sudo docker stop duruduru-container || true
-            sudo docker rm duruduru-container || true
+            sudo docker rm -f duruduru-container || true
 
             # 최신 이미지 가져오기
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
