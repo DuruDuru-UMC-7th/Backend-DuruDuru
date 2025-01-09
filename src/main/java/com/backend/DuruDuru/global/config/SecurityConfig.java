@@ -30,6 +30,8 @@ public class SecurityConfig {
                                 .requestMatchers("/member/sign-up").permitAll()
                                 // 다른 엔티티 관련 접근
                                 .requestMatchers("/example/**").permitAll()
+                                // Ingredient 관련 접근
+                                .requestMatchers("/ingredient/**").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
