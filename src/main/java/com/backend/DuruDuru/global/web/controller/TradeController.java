@@ -1,0 +1,94 @@
+package com.backend.DuruDuru.global.web.controller;
+
+
+import com.backend.DuruDuru.global.apiPayload.ApiResponse;
+import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.*;
+
+@RestController
+@RequiredArgsConstructor
+@Validated
+@CrossOrigin
+@Slf4j
+@RequestMapping("/trade")
+@Tag(name = "품앗이 API", description = "품앗이 API입니다.")
+public class TradeController {
+
+    // 품앗이 게시글 등록
+    @PostMapping("/")
+    @Operation(summary = "품앗이 게시글 등록 API", description = "품앗이 게시글을 등록하는 API 입니다.")
+    public ApiResponse<?> createTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 품앗이 게시글 삭제
+    @DeleteMapping("/{trade-id}")
+    @Operation(summary = "품앗이 게시글 삭제 API", description = "특정 품앗이를 삭제하는 API 입니다.")
+    public ApiResponse<?> deleteTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 품앗이 게시글 수정
+    @PatchMapping("/{trade-id}")
+    @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다.")
+    public ApiResponse<?> updateTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 품앗이 상세 조회
+    @GetMapping("/{trade-id}")
+    @Operation(summary = "품앗이 게시글 상세 조회 API", description = "특정 품앗이 게시글을 상세 조회하는 API 입니다.")
+    public ApiResponse<?> findTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 품앗이 가능한 식재료 조회
+    @GetMapping("/ingredient/available")
+    @Operation(summary = "품앗이 가능한 식재료 조회 API", description = "품앗이 가능한 식재료 목록을 조회하는 API 입니다.")
+    public ApiResponse<?> tradeAvailableIngredients(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 내 근처 품앗이 조회 - 나눔
+    @GetMapping("/near/sharing")
+    @Operation(summary = "내 근처 품앗이 조회 - 나눔 API", description = "나눔별로 내 근처 품앗이 목록을 조회하는 API 입니다.")
+    public ApiResponse<?> findNearSharingTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 내 근처 품앗이 조회 - 교환
+    @GetMapping("/near/exchange")
+    @Operation(summary = "내 근처 품앗이 조회 - 교환 API", description = "교환별로 내 근처 품앗이 목록을 조회하는 API 입니다.")
+    public ApiResponse<?> findNearExchangeTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 품앗이 링크 공유
+    @PostMapping("/shareUrl")
+    @Operation(summary = "품앗이 링크 공유 API", description = "품앗이 링크를 공유하는 API 입니다.")
+    public ApiResponse<?> shareUrl(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 오늘 업로드된 품앗이 추천
+    @GetMapping("/recommend/today")
+    @Operation(summary = "오늘 업로드된 품앗이 추천 API", description = "오늘 업로드된 품앗이를 추천하여 목록을 조회하는 API 입니다.")
+    public ApiResponse<?> findRecommendTodayTrade(){
+
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 품앗이 키워드 알림
+    @GetMapping("/keyword/alert")
+    @Operation(summary = "품앗이 키워드 알림 API", description = "품앗이 키워드 알림 API 입니다.")
+    public ApiResponse<?> tradeAlarm(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+
+}
