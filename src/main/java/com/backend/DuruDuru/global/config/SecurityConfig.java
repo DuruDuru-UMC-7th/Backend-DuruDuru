@@ -28,6 +28,7 @@ public class SecurityConfig {
                         authorize -> authorize
                                 // Member 관련 접근
                                 .requestMatchers("/member/sign-up").permitAll()
+                                .requestMatchers("/trade", "/trade/ingredient/available", "/trade/near/sharing", "/trade/near/exchange", "/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert").permitAll()
                                 // 다른 엔티티 관련 접근
                                 .requestMatchers("/example/**").permitAll()
                                 // 기타 관련 접근
