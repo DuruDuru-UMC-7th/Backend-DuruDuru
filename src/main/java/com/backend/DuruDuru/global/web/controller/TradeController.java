@@ -54,17 +54,10 @@ public class TradeController {
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
-    // 내 근처 품앗이 조회 - 나눔
-    @GetMapping("/near/sharing")
-    @Operation(summary = "내 근처 품앗이 조회 - 나눔 API", description = "나눔별로 내 근처 품앗이 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> findNearSharingTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
-    }
-
-    // 내 근처 품앗이 조회 - 교환
-    @GetMapping("/near/exchange")
-    @Operation(summary = "내 근처 품앗이 조회 - 교환 API", description = "교환별로 내 근처 품앗이 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> findNearExchangeTrade(){
+    // 내 근처 품앗이 나눔/교환별 조회
+    @GetMapping("/near/type")
+    @Operation(summary = "내 근처 품앗이 나눔/교환별 조회 API", description = "나눔/교환별로 내 근처 품앗이 목록을 조회하는 API 입니다.")
+    public ApiResponse<?> findNearTypeTrade(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
