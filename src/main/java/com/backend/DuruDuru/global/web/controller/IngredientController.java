@@ -60,7 +60,7 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
     }
 
-    // 식재료 소비기한 등록
+    // 식재료 소비기한 등록 (자동 계산 포함)
     @PostMapping("/expiry-date")
     @Operation(summary = "식재료 소비기한 등록 API", description = "식재료 소비기한 등록 API")
     public ApiResponse<?> ingredientExpiryDate(){
