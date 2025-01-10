@@ -1,0 +1,10 @@
+package com.backend.DuruDuru.global.domain.enums;
+
+import lombok.Getter;
+
+@Getter
+public enum Status {
+    COMPLETE("완료"),
+    PROCEEDING("진행중"),
+    PRE
+}
