@@ -55,7 +55,7 @@ public class TradeController {
     }
 
     // 내 근처 품앗이 나눔/교환별 조회
-    @GetMapping("/near/type")
+    @GetMapping("/near")
     @Operation(summary = "내 근처 품앗이 나눔/교환별 조회 API", description = "나눔/교환별로 내 근처 품앗이 목록을 조회하는 API 입니다.")
     public ApiResponse<?> findNearTypeTrade(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
