@@ -33,6 +33,9 @@ public class SecurityConfig {
                                 // Ingredient 관련 접근
                                 .requestMatchers("/ingredient/receipt/upload", "/ingredient/receipt/classify", "/ingredient/purchased", "/ingredient/photo", "/ingredient/category").permitAll()
                                 .requestMatchers("/ingredient/purchase-date", "/ingredient/expiry-date", "/ingredient/", "/ingredient/", "/ingredient/search/name/list", "/ingredient/search/category/list", "/ingredient/category/add").permitAll()
+                                // Fridge 관련 접근
+                                .requestMatchers("/fridge/ingredient/list", "/fridge/ingredient/near-expiry").permitAll()
+
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()
