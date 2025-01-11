@@ -7,10 +7,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 public class FridgeController {
 
     // 전체 식재료 리스트 조회
-    @PostMapping("/ingredient/list")
+    @GetMapping("/ingredient/list")
     @Operation(summary = "등록된 전체 식재료 리스트 조회 API", description = "등록된 전체 식재료 리스트 조회 API")
     public ApiResponse<?> findAllIngredients() {
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
     }
 
     // 소비기한 임박 식재료 조회
-    @PostMapping("/ingredient/near-expiry")
+    @GetMapping("/ingredient/near-expiry")
     @Operation(summary = "소비기한 임박 식재료 조회 API", description = "소비기한 임박 식재료 조회 API")
         public ApiResponse<?> ingredientNearExpiry() {
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
