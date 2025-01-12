@@ -50,7 +50,7 @@ public class TradeController {
     // 품앗이 가능한 식재료 조회
     @GetMapping("/ingredient/available")
     @Operation(summary = "품앗이 가능한 식재료 조회 API", description = "품앗이 가능한 식재료 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> tradeAvailableIngredients(){
+    public ApiResponse<?> findAvailableIngredients(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
