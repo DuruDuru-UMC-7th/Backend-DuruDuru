@@ -29,21 +29,21 @@ public class TradeController {
     // 품앗이 게시글 삭제
     @DeleteMapping("/{trade-id}")
     @Operation(summary = "품앗이 게시글 삭제 API", description = "특정 품앗이를 삭제하는 API 입니다.")
-    public ApiResponse<?> deleteTrade(){
+    public ApiResponse<?> deleteTradeById(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 게시글 수정
     @PatchMapping("/{trade-id}")
     @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다.")
-    public ApiResponse<?> updateTrade(){
+    public ApiResponse<?> updateTradeById(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 상세 조회
     @GetMapping("/{trade-id}")
     @Operation(summary = "품앗이 게시글 상세 조회 API", description = "특정 품앗이 게시글을 상세 조회하는 API 입니다.")
-    public ApiResponse<?> findTrade(){
+    public ApiResponse<?> findTradeById(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
@@ -57,7 +57,7 @@ public class TradeController {
     // 내 근처 품앗이 나눔/교환별 조회
     @GetMapping("/near")
     @Operation(summary = "내 근처 품앗이 나눔/교환별 조회 API", description = "나눔/교환별로 내 근처 품앗이 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> findNearTypeTrade(){
+    public ApiResponse<?> findNearTradeByType(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
@@ -71,7 +71,7 @@ public class TradeController {
     // 오늘 업로드된 품앗이 추천
     @GetMapping("/recommend/today")
     @Operation(summary = "오늘 업로드된 품앗이 추천 API", description = "오늘 업로드된 품앗이를 추천하여 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> findRecommendTodayTrade(){
+    public ApiResponse<?> RecommendTodayTrade(){
 
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
