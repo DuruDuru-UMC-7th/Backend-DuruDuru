@@ -19,14 +19,14 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private final SecretKey secretKey;
-    private final long accessTokenValidityMilliseconds;
-    private final long refreshTokenValidityMilliseconds;
+    private final Long accessTokenValidityMilliseconds;
+    private final Long refreshTokenValidityMilliseconds;
     private final View error;
 
     public JwtTokenProvider(
             @Value("${jwt.secret}") final String secretKey,
-            @Value("3600000") final long accessTokenValidityMilliseconds,
-            @Value("86400000") final long refreshTokenValidityMilliseconds, View error) {
+            @Value("3600000") final Long accessTokenValidityMilliseconds,
+            @Value("86400000") final Long refreshTokenValidityMilliseconds, View error) {
         this.secretKey = Keys.hmacShaKeyFor(secretKey.getBytes(StandardCharsets.UTF_8));
         this.accessTokenValidityMilliseconds = accessTokenValidityMilliseconds;
         this.refreshTokenValidityMilliseconds = refreshTokenValidityMilliseconds;
@@ -41,7 +41,7 @@ public class JwtTokenProvider {
         return createToken(memberId, refreshTokenValidityMilliseconds);
     }
 
-    private String createToken(Long memberId, long validityMilliseconds) {
+    private String createToken(Long memberId, Long validityMilliseconds) {
         Claims claims = Jwts.claims();
         claims.put("id", memberId);
 
