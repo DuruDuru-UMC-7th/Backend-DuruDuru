@@ -34,6 +34,8 @@ public class SecurityConfig {
                         authorize -> authorize
                                 // Member 관련 접근
                                 .requestMatchers("/member/sign-up").permitAll()
+                                .requestMatchers("/member/town", "/member/trade/current", "/member/trade/history").permitAll()
+                                // Trade 관련 접근
                                 .requestMatchers("/trade", "/trade/ingredient/available", "/trade/near", "/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert").permitAll()
                                 // 다른 엔티티 관련 접근
                                 .requestMatchers("/example/**").permitAll()
