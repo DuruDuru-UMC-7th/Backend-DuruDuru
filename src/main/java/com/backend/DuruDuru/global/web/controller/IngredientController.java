@@ -40,28 +40,28 @@ public class IngredientController {
     }
 
     // 추가할 식재료 사진 등록
-    @PostMapping("/photo")
+    @PostMapping("/{ingredient-id}/photo")
     @Operation(summary = "추가할 식재료 사진 등록 API", description = "추가할 식재료 사진 등록 API")
     public ApiResponse<?> ingredientPhoto(){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
     // 식재료 카테고리 설정
-    @PostMapping("/category")
+    @PostMapping("/{ingredient-id}/category")
     @Operation(summary = "식재료 카테고리 설정 API", description = "식재료 카테고리 설정 API")
     public ApiResponse<?> ingredientCategory(){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
     // 식재료 구매 날짜 등록
-    @PostMapping("/purchase-date")
+    @PostMapping("/{ingredient-id}/purchase-date")
     @Operation(summary = "식재료 구매 날짜 등록 API", description = "식재료 구매 날짜 등록 API")
     public ApiResponse<?> purchaseDate(){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
     // 식재료 소비기한 등록 (자동 계산 포함)
-    @PostMapping("/expiry-date")
+    @PostMapping("/{ingredient-id}/expiry-date")
     @Operation(summary = "식재료 소비기한 등록 API", description = "식재료 소비기한 등록 API")
     public ApiResponse<?> ingredientExpiryDate(){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
