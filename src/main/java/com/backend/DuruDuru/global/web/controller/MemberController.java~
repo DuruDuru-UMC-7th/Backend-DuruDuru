@@ -54,17 +54,10 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
     }
 
-    // 이메일 회원가입 API
-    @PostMapping("/sign-up")
-    @Operation(summary = "이메일 회원가입 API", description = "이메일로 회원가입하는 API 입니다.")
-    public ApiResponse<?> emailSignUp(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
-    }
-
-    // 이메일 로그인 API
-    @PostMapping("/login")
-    @Operation(summary = "이메일 로그인 API", description = "이메일로 로그인하는 API 입니다.")
-    public ApiResponse<?> emailLogin(){
+    // 내 동네 등록 API
+    @PostMapping("/town")
+    @Operation(summary = "내 동네 등록 API", description = "내 동네를 등록하는 API 입니다.")
+    public ApiResponse<?> createTown(){
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
     }
 
