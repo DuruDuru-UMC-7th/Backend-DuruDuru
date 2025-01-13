@@ -1,87 +1,69 @@
 name: DuruDuru github actions CI/CD
 
 on:
+  push:
+    branches: ["develop"]
   pull_request:
-    branches:
-      - develop
+    branches: ["develop"]
 
-permissions: write-all
+permissions:
+  contents: read
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v3
       # Build를 위한 JDK 설치
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - name: 1) Set up JDK 17
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'corretto'
-      # gradle caching - 빌드 시간 향상
-      - name: Gradle Caching
-        uses: actions/cache@v4.0.2
+      - name: 2) Set prod.yml
+        uses: microsoft/variable-substitution@v1
         with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          files: ./src/main/resources/application.yml
+        env:
+#          spring.datasource.url: ${{ secrets.DB_URL }}
+#          spring.datasource.username: ${{ secrets.DB_USERNAME }}
+#          spring.datasource.password: ${{ secrets.DB_PASSWORD }}
 
-      # Gradle 권한 부여
-      - name: Grant execute permission for gradlew
-        run: chmod +x gradlew
+      - name: 3)Grant permission
+        run: chmod +x ./gradlew
 
-        # yml 파일 생성 - application.yml
-      - name: make application.yml
+      - name: 4) Build with Gradle
+        run: ./gradlew bootJar
+
+      - name: 5) Docker build and push
         run: |
-          cd ./src/main/resources
-          touch ./application.yml
-          echo "${{ secrets.YML }}" > ./application.yml
-        shell: bash
+          docker login -u ${{ secrets.DOCKERHUB_USERNAME }} -p ${{ secrets.DOCKERHUB_PASSWORD }}
+          docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }} .
+          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
 
-      # gradle clean bootJar
-      - name: Build Gradle
-        run: ./gradlew clean bootJar
-
-      # resources 디렉토리 내용 출력 (디버깅용)
-      - name: List resources directory
-        run: |
-          ls -l ./src/main/resources
-          if [ -f ./src/main/resources/adjective.txt ]; then echo "adjective.txt exists"; else echo "adjective.txt does not exist"; fi
-        shell: bash
-
-      # Docker Image Push
-      - name: Docker Image push
-        run: |
-          echo ${{ secrets.DOCKERHUB_PASSWORD }} | docker login -u ${{ secrets.DOCKERHUB_USERNAME }} --password-stdin
-          docker build --platform linux/amd64 -t ${{ secrets.DOCKERHUB_USERNAME}}/${{ secrets.DOCKERHUB_REPOSITORY}} ./
-          docker push ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY}}
-
-      ## deploy to develop
-      - name: Docker Run #compose
+  deploy:
+    needs: build
+    name: Deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: 6) Deploy
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ secrets.EC2_SERVER_IP }} # EC2 퍼블릭 IPv4 DNS
-          username: ${{ secrets.USERNAME }} # ubuntu
+          host: ${{ secrets.EC2_SERVER_IP }}
+          username: ${{ secrets.USERNAME }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: 22
           script: |
-            cd .ssh/Backend-DuruDuru/
-
-            # Docker Hub 로그인 (password-stdin 사용)
-            echo "${{ secrets.DOCKERHUB_PASSWORD }}" | sudo docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
-
-            # 기존 컨테이너 중지 및 제거
             sudo docker stop duruduru-container || true
-            sudo aa-remove-unknown || true
-            sudo docker rm -f duruduru-container || true
-
-            # 최신 이미지 가져오기
+            sudo docker rm duruduru-container || true
+            sudo docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }} || true
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
-
-            # 새 컨테이너 실행
-            sudo docker run -d \
-              --name duruduru-container \
-              -p 8080:8080 \
+            sudo docker run -d --name duruduru-container \
+              -p 8081:8081 \
+#              -e DB_URL=${{ secrets.DB_URL }} \
+#              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+#              -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
+            sudo docker image prune -f
