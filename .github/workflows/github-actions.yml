@@ -22,10 +22,13 @@ jobs:
         with:
           java-version: '17'
           distribution: 'corretto'
-      - name: 2) Set prod.yml
-        uses: microsoft/variable-substitution@v1
-        with:
-          files: ./src/main/resources/application.yml
+
+      - name: 2) make application.yml
+        run: |
+          cd ./src/main/resources
+          touch ./application.yml
+          echo "${{ secrets.YML }}" > ./application.yml
+        shell: bash
 
       - name: 3)Grant permission
         run: chmod +x ./gradlew
