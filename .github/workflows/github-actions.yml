@@ -57,7 +57,6 @@ jobs:
           script: |
             sudo docker stop duruduru-container || true
             sudo docker rm duruduru-container || true
-            sudo docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }} || true
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
             sudo docker run -d \
               --name duruduru-container \
@@ -70,3 +69,4 @@ jobs:
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
             sudo docker image prune -f
             sudo docker logs duruduru-container || true
+#sudo docker image rm ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }} || true
