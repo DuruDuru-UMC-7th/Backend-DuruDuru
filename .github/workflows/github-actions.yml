@@ -61,12 +61,12 @@ jobs:
             sudo docker pull ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
             sudo docker run -d \
               --name duruduru-container \
-              -p 8081:8081 \
+              -p 8081:8080 \
               -e DB_HOST="aws-0-ap-northeast-2.pooler.supabase.com" \
               -e DB_PORT="5432" \
               -e DB_NAME="postgres" \
-              -e DB_USERNAME=${{ secrets.DB_USERNAME }} \
+              -e DB_USER=${{ secrets.DB_USERNAME }} \
               -e DB_PASSWORD=${{ secrets.DB_PASSWORD }} \
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
             sudo docker image prune -f
-            sudo docker logs duruduru-container
+            sudo docker logs duruduru-container || true
