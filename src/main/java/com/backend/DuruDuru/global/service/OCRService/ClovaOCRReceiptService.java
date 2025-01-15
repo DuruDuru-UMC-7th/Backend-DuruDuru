@@ -18,7 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Service
-public class ClovaOCRService {
+public class ClovaOCRReceiptService {
 
     @Value("${clova.ocr.api-url}")
     private String apiUrl;
@@ -33,7 +33,7 @@ public class ClovaOCRService {
 
             // HTTP 연결 생성 및 요청/응답 처리
             HttpURLConnection connection = createRequestHeader(new URL(apiUrl));
-            createRequestBody(connection, base64Image);
+            createRequestBody(connection, base64Image, getFileExtension(file.getOriginalFilename()));
             String response = getResponseData(connection);
 
             // 응답 데이터에서 상품명 추출
@@ -58,10 +58,9 @@ public class ClovaOCRService {
         return connection;
     }
 
-
-    private void createRequestBody(HttpURLConnection connection, String base64Image) throws Exception {
+    private void createRequestBody(HttpURLConnection connection, String base64Image, String format) throws Exception {
         JSONObject image = new JSONObject();
-        image.put("format", "jpg");
+        image.put("format", format); // 파일 포맷 설정 (jpg 또는 png)
         image.put("data", base64Image);
         image.put("name", "receipt_test");
 
@@ -102,7 +101,6 @@ public class ClovaOCRService {
         }
     }
 
-
     private List<String> parseProductNames(String response) {
         List<String> productNames = new ArrayList<>();
         try {
@@ -124,5 +122,12 @@ public class ClovaOCRService {
             e.printStackTrace();
         }
         return productNames;
+    }
+
+    private String getFileExtension(String filename) {
+        if (filename == null || !filename.contains(".")) {
+            return "jpg"; // 기본값
+        }
+        return filename.substring(filename.lastIndexOf(".") + 1).toLowerCase();
     }
 }
