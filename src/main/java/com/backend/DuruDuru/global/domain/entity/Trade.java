@@ -45,4 +45,7 @@ public class Trade extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "ingredient_id")
     private Ingredient ingredient;
+
+    @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL)
+    private List<LikeTrade> likeTrades = new ArrayList<>();
 }
