@@ -11,6 +11,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.List;
 
 @RestController
@@ -26,8 +27,13 @@ public class OCRController {
 
     @Operation(summary = "영수증 이미지 업로드", description = "영수증 이미지를 업로드하여 상품명을 추출합니다.")
     @PostMapping(value = "/receipt", consumes = "multipart/form-data")
-    public ApiResponse<List<String>> processReceipt(@RequestParam("Receipt") MultipartFile file) {
+    public ApiResponse<List<String>> processReceipt(@RequestParam("Receipt") MultipartFile file) throws IOException {
+        log.info("Received file: {}", file.getOriginalFilename());
+
         List<String> productNames = clovaOCRReceiptService.extractProductNames(file);
+
+        log.info("Extracted product names: {}", productNames);
         return ApiResponse.onSuccess(SuccessStatus.OCR_OK, productNames);
     }
+
 }
