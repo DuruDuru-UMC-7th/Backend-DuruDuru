@@ -44,7 +44,8 @@ public class SecurityConfig {
                                 .requestMatchers("/ingredient/purchase-date", "/ingredient/expiry-date", "/ingredient/", "/ingredient/", "/ingredient/search/name/list", "/ingredient/search/category/list", "/ingredient/category/add").permitAll()
                                 // Fridge 관련 접근
                                 .requestMatchers("/fridge/ingredient/list", "/fridge/ingredient/near-expiry").permitAll()
-
+                                // OCR 관련 접근
+                                .requestMatchers("/OCR/receipt").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
                                 .anyRequest().authenticated()

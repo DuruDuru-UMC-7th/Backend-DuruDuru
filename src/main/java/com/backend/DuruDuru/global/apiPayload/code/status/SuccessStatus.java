@@ -23,7 +23,9 @@ public enum SuccessStatus implements BaseCode {
     // 레시피 관련 응답
     RECIPE_OK(HttpStatus.OK, "RECIPE_1000", "성공입니다."),
     // 채팅 관련 응답
-    CHAT_OK(HttpStatus.OK, "CHAT_1000", "성공입니다.");
+    CHAT_OK(HttpStatus.OK, "CHAT_1000", "성공입니다."),
+    // OCR 관련 응답
+    OCR_OK(HttpStatus.OK, "OCR_1000", "성공입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;
