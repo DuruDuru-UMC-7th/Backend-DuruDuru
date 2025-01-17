@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -18,34 +19,37 @@ public class Trade extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "trade_id", nullable = false, columnDefinition = "bigint")
+    private Long tradeId;
 
-    @Column(length = 200)
+    @Column(name = "title", nullable = false, columnDefinition = "varchar(200)")
     private String title;
 
-    @Column(length = 500)
+    @Column(name = "body", nullable = false, columnDefinition = "varchar(500)")
     private String body;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, columnDefinition = "varchar(50)")
     private Status status;
 
     @Enumerated(EnumType.STRING)
+    @Column(name = "trade_type", nullable = false, columnDefinition = "varchar(50)")
     private TradeType tradeType;
 
-    @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChattingRoom> chattingRooms = new ArrayList<>();
 
-    @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<TradeImg> tradeImgs = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "ingredient_id")
+    @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
 
-    @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeTrade> likeTrades = new ArrayList<>();
 }

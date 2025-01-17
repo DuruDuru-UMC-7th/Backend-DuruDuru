@@ -9,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -16,12 +17,12 @@ public class Fridge extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "fridge_id", nullable = false, columnDefinition = "bigint")
+    private Long fridgeId;
 
-    private Long ingredientKind;
-
+    @Column(name = "ingredient_count", nullable = false, columnDefinition = "bigint")
     private Long ingredientCount;
 
-    @OneToMany(mappedBy = "fridge", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "fridge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ingredient> ingredients = new ArrayList<>();
 }

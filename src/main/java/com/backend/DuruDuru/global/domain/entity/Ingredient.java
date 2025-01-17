@@ -5,7 +5,6 @@ import com.backend.DuruDuru.global.domain.enums.StorageType;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,40 +18,42 @@ public class Ingredient extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "ingredient_id", nullable = false, columnDefinition = "bigint")
+    private Long ingredientId;
 
-    @Column(length = 200)
+    @Column(name = "ingredient_name", length = 200, nullable = false)
     private String ingredientName;
 
+    @Column(name = "count", nullable = false, columnDefinition = "bigint")
     private Long count;
 
-    private Long weight;
-
+    @Column(name = "purchase_date", nullable = false, columnDefinition = "timestamp")
     private LocalDateTime purchaseDate;
 
+    @Column(name = "expiry_date", nullable = true, columnDefinition = "timestamp")
     private LocalDateTime expiryDate;
 
-    private LocalDateTime sellByDate;
-
     @Enumerated(EnumType.STRING)
+    @Column(name = "storage_type", nullable = true, columnDefinition = "varchar(50)")
     private StorageType storageType;
 
-    private Long price;
-
-    @Column(length = 200)
+    @Column(name = "ingredient_image_url", length = 200, nullable = true)
     private String ingredientImageUrl;
 
-    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Trade> trades = new ArrayList<>();
 
-    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fridge_id")
+    @JoinColumn(name = "fridge_id", nullable = false)
     private Fridge fridge;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "member_id")
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
+
+    @OneToOne(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private IngredientImg ingredientImg;
 }

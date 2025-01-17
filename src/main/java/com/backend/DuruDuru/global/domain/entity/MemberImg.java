@@ -6,6 +6,7 @@ import lombok.*;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -13,8 +14,9 @@ public class MemberImg extends BaseEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Column(name = "member_img_id", nullable = false, columnDefinition = "bigint")
+    private Long memberImgId;
 
-    @Column(length = 200)
+    @Column(name = "url", nullable = false, columnDefinition = "varchar(200)")
     private String url;
 }
