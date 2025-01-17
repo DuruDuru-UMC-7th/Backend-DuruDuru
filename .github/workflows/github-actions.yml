@@ -62,13 +62,5 @@ jobs:
             sudo docker run -d \
               --name duruduru-container \
               -p 8080:8080 \
-              -e SPRING_PROFILES_ACTIVE=prod \
-              -e POSTGRES_DEPLOY_DB_USERNAME="${{ secrets.POSTGRES_DEPLOY_DB_USERNAME }}" \
-              -e POSTGRES_DEPLOY_DB_PW="${{ secrets.POSTGRES_DEPLOY_DB_PW }}" \
-              -e JWT_SECRET_KEY="${{ secrets.JWT_SECRET_KEY }}" \
-              -e JWT_ACCESS_TOKEN_TIME="${{ secrets.JWT_ACCESS_TOKEN_TIME }}" \
-              -e JWT_REFRESH_TOKEN_TIME="${{ secrets.JWT_REFRESH_TOKEN_TIME }}" \
-              -e CLOVA_OCR_API_URL="${{ secrets.CLOVA_OCR_API_URL }}" \
-              -e CLOVA_OCR_SECRET_KEY="${{ secrets.CLOVA_OCR_SECRET_KEY }}" \
               ${{ secrets.DOCKERHUB_USERNAME }}/${{ secrets.DOCKERHUB_REPOSITORY }}
           
