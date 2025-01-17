@@ -47,7 +47,7 @@ public class SecurityConfig {
                                 // OCR 관련 접근
                                 .requestMatchers("/OCR/receipt").permitAll()
                                 // 기타 관련 접근
-                                .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**", "/image/upload", "/image/delete").permitAll()
                                 .anyRequest().authenticated()
                 )
                 //.addFilterBefore(new JwtRequestFilter(jwtTokenProvider, principalDetailsService), SecurityFilterChain.class)
