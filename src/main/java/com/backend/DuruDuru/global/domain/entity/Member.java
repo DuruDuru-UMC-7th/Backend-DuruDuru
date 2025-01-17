@@ -10,24 +10,36 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
 public class Member extends BaseEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "member_id", nullable = false, columnDefinition = "bigint")
+    private Long memberId;
+
+    @Column(name = "nickName", nullable = false, columnDefinition = "varchar(200)")
+    private String nickName;
 
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
     private Long age;
 
-    private String accessToken;
-    private String refreshToken;
-
     private Long level;
+
+//    @Column(nullable = false)
+//    private String accessToken;
+//
+//    @Column(nullable = false)
+//    private String refreshToken;
+
+    // 동네 설정은 하나만 가능
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "town_id", nullable = false)
+    private Town town;
 
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_img_id")
@@ -49,8 +61,8 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-    private List<MemberAddress> memberAddresses = new ArrayList<>();
+//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+//    private List<MemberAddress> memberAddresses = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberRecipe> memberRecipes = new ArrayList<>();
