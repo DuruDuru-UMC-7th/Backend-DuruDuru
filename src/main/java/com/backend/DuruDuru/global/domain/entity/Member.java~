@@ -20,11 +20,6 @@ public class Member extends BaseEntity {
     @Column(name = "member_id", nullable = false, columnDefinition = "bigint")
     private Long memberId;
 
-    @Column(length = 45, unique = true)
-    private String email;
-
-    private String password;
-
     @Column(name = "nickName", nullable = false, columnDefinition = "varchar(200)")
     private String nickName;
 
