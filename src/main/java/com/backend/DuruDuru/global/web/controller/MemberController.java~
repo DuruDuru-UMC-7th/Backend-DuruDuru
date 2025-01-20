@@ -26,7 +26,6 @@ public class MemberController {
 
     private final MemberCommandServiceImpl memberService;
 
-    // 
     // 이메일 회원가입 API
     @PostMapping("/register")
     @Operation(summary = "이메일 회원가입 API", description = "이메일 회원가입을 진행하는 API 입니다.")
