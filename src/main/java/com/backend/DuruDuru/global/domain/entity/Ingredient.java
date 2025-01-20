@@ -11,6 +11,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -56,4 +57,7 @@ public class Ingredient extends BaseEntity {
 
     @OneToOne(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private IngredientImg ingredientImg;
+
+    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<IngredientCategory> ingredientCategoryList = new ArrayList<>();
 }
