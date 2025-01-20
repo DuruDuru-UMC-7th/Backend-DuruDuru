@@ -8,6 +8,6 @@ public interface MemberCommandService {
 
     Member findMemberById(Long memberId);
 
-    EmailRegisterResponseDTO registerMember(EmailRegisterRequestDTO request);
+    void registerMember(EmailRegisterRequestDTO request);
 
 }

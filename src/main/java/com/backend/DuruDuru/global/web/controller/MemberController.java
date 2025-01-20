@@ -30,9 +30,9 @@ public class MemberController {
     // 이메일 회원가입 API
     @PostMapping("/register")
     @Operation(summary = "이메일 회원가입 API", description = "이메일 회원가입을 진행하는 API 입니다.")
-    public ApiResponse<EmailRegisterResponseDTO> emailSignUp(@RequestBody @Valid EmailRegisterRequestDTO request){
+    public ApiResponse<?> emailSignUp(@RequestBody @Valid EmailRegisterRequestDTO request){
         EmailRegisterResponseDTO response = memberService.registerMember(request);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
     }
 
     // 내 동네 등록 API

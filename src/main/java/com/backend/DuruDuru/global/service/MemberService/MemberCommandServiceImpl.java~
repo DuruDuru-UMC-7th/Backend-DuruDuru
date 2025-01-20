@@ -29,7 +29,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
 
     @Override
     @Transactional
-    public void registerMember(EmailRegisterRequestDTO request) {
+    public EmailRegisterResponseDTO registerMember(EmailRegisterRequestDTO request) {
         // 이메일 중복 검사
         if (memberRepository.existsByEmail(request.getEmail())) {
             throw new MemberException(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS);
