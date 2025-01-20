@@ -7,5 +7,6 @@ public interface IngredientCommandService {
 
     Ingredient createRawIngredient(Long memberId, Long fridgeId, IngredientRequestDTO.CreateRawIngredientDTO request);
     Ingredient updateIngredient(Long memberId, Long fridgeId, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request);
+    void deleteIngredient(Long memberId, Long fridgeId, Long ingredientId);
 
 }
