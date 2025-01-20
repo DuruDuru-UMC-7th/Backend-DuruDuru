@@ -4,9 +4,8 @@ package com.backend.DuruDuru.global.web.controller;
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.service.MemberService.MemberCommandService;
-import com.backend.DuruDuru.global.web.dto.Member.EmailLoginRequestDTO;
-import com.backend.DuruDuru.global.web.dto.Member.EmailLoginResponseDTO;
-import com.backend.DuruDuru.global.web.dto.Member.EmailRegisterRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Member.MemberRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Member.MemberResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -29,17 +28,26 @@ public class MemberController {
     // 이메일 회원가입 API
     @PostMapping("/register")
     @Operation(summary = "이메일 회원가입 API", description = "이메일 회원가입을 진행하는 API 입니다.")
-    public ApiResponse<?> emailSignUp(@RequestBody @Valid EmailRegisterRequestDTO request){
+    public ApiResponse<?> emailSignUp(@RequestBody @Valid MemberRequestDTO.EmailRegisterRequestDTO request){
         memberService.emailRegister(request);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.USER_REGISTER_OK, null);
     }
 
     // 이메일 로그인 API
     @PostMapping("/login")
     @Operation(summary = "이메일 로그인 API", description = "이메일과 비밀번호로 로그인을 진행하는 API 입니다.")
-    public ApiResponse<EmailLoginResponseDTO> emailLogin(@RequestBody @Valid EmailLoginRequestDTO request){
-        EmailLoginResponseDTO response = memberService.emailLogin(request);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
+    public ApiResponse<MemberResponseDTO.EmailLoginResponseDTO> emailLogin(@RequestBody @Valid MemberRequestDTO.EmailLoginRequestDTO request){
+        MemberResponseDTO.EmailLoginResponseDTO response = memberService.emailLogin(request);
+        return ApiResponse.onSuccess(SuccessStatus.USER_LOGIN_OK, response);
+    }
+
+    @PostMapping("/refresh")
+    @Operation(
+            summary = "JWT Access Token 재발급 API",
+            description = "Refresh Token을 검증하고 새로운 Access Token과 Refresh Token을 응답합니다.")
+    public ApiResponse<MemberResponseDTO.TokenRefreshResponseDTO> refresh(@RequestBody MemberRequestDTO.RefreshTokenDTO request) {
+        MemberResponseDTO.TokenRefreshResponseDTO response = memberService.refreshToken(request.getRefreshToken());
+        return ApiResponse.onSuccess(SuccessStatus.USER_REFRESH_OK, response);
     }
 
     // 내 동네 등록 API

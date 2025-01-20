@@ -1,10 +1,11 @@
 package com.backend.DuruDuru.global.converter;
 
+import com.backend.DuruDuru.global.web.dto.Member.MemberRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Member.MemberResponseDTO;
 
 public class MemberConverter {
 
-    public static MemberResponseDTO.EmailLoginResponseDTO toEmailLoginResponse(String accessToken, String refreshToken) {
+    public static MemberResponseDTO.EmailLoginResponseDTO toEmailLoginRespons(String accessToken, String refreshToken) {
         return MemberResponseDTO.EmailLoginResponseDTO.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
