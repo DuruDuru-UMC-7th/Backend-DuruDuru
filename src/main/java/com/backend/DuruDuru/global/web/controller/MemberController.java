@@ -3,8 +3,13 @@ package com.backend.DuruDuru.global.web.controller;
 
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
+import com.backend.DuruDuru.global.service.MemberService.MemberCommandService;
+import com.backend.DuruDuru.global.service.MemberService.MemberCommandServiceImpl;
+import com.backend.DuruDuru.global.web.dto.Member.EmailRegisterRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Member.EmailRegisterResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
@@ -18,6 +23,16 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/member")
 @Tag(name = "멤버 API", description = "멤버 API입니다.")
 public class MemberController {
+
+    private final MemberCommandServiceImpl memberService;
+
+    // 이메일 회원가입 API
+    @PostMapping("/register")
+    @Operation(summary = "이메일 회원가입 API", description = "이메일 회원가입을 진행하는 API 입니다.")
+    public ApiResponse<EmailRegisterResponseDTO> emailSignUp(@RequestBody @Valid EmailRegisterRequestDTO request){
+        EmailRegisterResponseDTO response = memberService.registerMember(request);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
+    }
 
     // 내 동네 등록 API
     @PostMapping("/town")
@@ -54,12 +69,7 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
     }
 
-    // 이메일 회원가입 API
-    @PostMapping("/sign-up")
-    @Operation(summary = "이메일 회원가입 API", description = "이메일로 회원가입하는 API 입니다.")
-    public ApiResponse<?> emailSignUp(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
-    }
+
 
     // 이메일 로그인 API
     @PostMapping("/login")
