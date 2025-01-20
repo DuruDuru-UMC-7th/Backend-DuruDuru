@@ -4,9 +4,9 @@ package com.backend.DuruDuru.global.web.controller;
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.service.MemberService.MemberCommandService;
-import com.backend.DuruDuru.global.service.MemberService.MemberCommandServiceImpl;
+import com.backend.DuruDuru.global.web.dto.Member.EmailLoginRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Member.EmailLoginResponseDTO;
 import com.backend.DuruDuru.global.web.dto.Member.EmailRegisterRequestDTO;
-import com.backend.DuruDuru.global.web.dto.Member.EmailRegisterResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -24,15 +24,22 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "멤버 API", description = "멤버 API입니다.")
 public class MemberController {
 
-    private final MemberCommandServiceImpl memberService;
+    private final MemberCommandService memberService;
 
-    // 
     // 이메일 회원가입 API
     @PostMapping("/register")
     @Operation(summary = "이메일 회원가입 API", description = "이메일 회원가입을 진행하는 API 입니다.")
     public ApiResponse<?> emailSignUp(@RequestBody @Valid EmailRegisterRequestDTO request){
-        EmailRegisterResponseDTO response = memberService.registerMember(request);
+        memberService.emailRegister(request);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
+    }
+
+    // 이메일 로그인 API
+    @PostMapping("/login")
+    @Operation(summary = "이메일 로그인 API", description = "이메일과 비밀번호로 로그인을 진행하는 API 입니다.")
+    public ApiResponse<EmailLoginResponseDTO> emailLogin(@RequestBody @Valid EmailLoginRequestDTO request){
+        EmailLoginResponseDTO response = memberService.emailLogin(request);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, response);
     }
 
     // 내 동네 등록 API
@@ -67,15 +74,6 @@ public class MemberController {
     @GetMapping("/trade/history")
     @Operation(summary = "나의 품앗이 기록 조회 API", description = "나의 품앗이 기록을 조회하는 API 입니다.")
     public ApiResponse<?> findHistoryTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
-    }
-
-
-
-    // 이메일 로그인 API
-    @PostMapping("/login")
-    @Operation(summary = "이메일 로그인 API", description = "이메일로 로그인하는 API 입니다.")
-    public ApiResponse<?> emailLogin(){
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
     }
 

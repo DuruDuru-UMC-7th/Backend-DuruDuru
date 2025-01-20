@@ -5,7 +5,8 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class EmailRegisterResponseDTO {
+public class EmailLoginResponseDTO {
     private String accessToken;
     private String refreshToken;
+
 }

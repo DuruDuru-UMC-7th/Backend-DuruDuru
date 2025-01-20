@@ -5,8 +5,9 @@ import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.repository.MemberRepository;
 import com.backend.DuruDuru.global.security.provider.JwtTokenProvider;
+import com.backend.DuruDuru.global.web.dto.Member.EmailLoginRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Member.EmailLoginResponseDTO;
 import com.backend.DuruDuru.global.web.dto.Member.EmailRegisterRequestDTO;
-import com.backend.DuruDuru.global.web.dto.Member.EmailRegisterResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -29,7 +30,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
 
     @Override
     @Transactional
-    public void registerMember(EmailRegisterRequestDTO request) {
+    public void emailRegister(EmailRegisterRequestDTO request) {
         // 이메일 중복 검사
         if (memberRepository.existsByEmail(request.getEmail())) {
             throw new MemberException(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS);
@@ -43,16 +44,28 @@ public class MemberCommandServiceImpl implements MemberCommandService{
                 .build();
 
         memberRepository.save(member);
+    }
+
+    @Override
+    @Transactional
+    public EmailLoginResponseDTO emailLogin(EmailLoginRequestDTO request) {
+        // 이메일로 사용자 조회
+        Member member = memberRepository.findByEmail(request.getEmail())
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS));
+
+        // 비밀번호 검증
+        if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
+            throw new MemberException(ErrorStatus.MEMBER_LOGIN_FAIL);
+        }
 
         // JWT 토큰 생성
-        // String accessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
-        // String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
+        String accessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
+        String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
 
-        // 토큰 저장
-        // member.setAccessToken(accessToken);
-        // member.setRefreshToken(refreshToken);
-        // memberRepository.save(member);
+        // DB에 refresh token 저장
+        member.setRefreshToken(refreshToken);
+        memberRepository.save(member);
 
-        // return new EmailRegisterResponseDTO(accessToken, refreshToken);
+        return new EmailLoginResponseDTO(accessToken, refreshToken);
     }
 }
