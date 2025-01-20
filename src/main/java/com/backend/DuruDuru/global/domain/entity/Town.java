@@ -33,8 +33,4 @@ public class Town extends BaseEntity {
 
     @Column(name = "longitude", nullable = false, columnDefinition = "double precision")
     private Double longitude;
-
-    // 동네에 등록된 사용자 목록
-    @OneToMany(mappedBy = "town", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Member> members = new ArrayList<>();
 }
