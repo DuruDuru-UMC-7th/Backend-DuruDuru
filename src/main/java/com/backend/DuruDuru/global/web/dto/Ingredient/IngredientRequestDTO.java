@@ -12,9 +12,17 @@ public class IngredientRequestDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreateRawIngredientDTO {
-        private String IngredientName;
+        private String ingredientName;
         private Long count;
+    }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateIngredientDTO {
+        private String ingredientName;
+        private Long count;
     }
 
 }

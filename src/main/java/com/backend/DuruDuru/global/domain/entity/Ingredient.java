@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.domain.entity;
 
 import com.backend.DuruDuru.global.domain.common.BaseEntity;
 import com.backend.DuruDuru.global.domain.enums.StorageType;
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -67,5 +68,9 @@ public class Ingredient extends BaseEntity {
 
     public void setFridge(Fridge fridge) {
         this.fridge = fridge;
+    }
+    public void update(IngredientRequestDTO.UpdateIngredientDTO request){
+        this.ingredientName = request.getIngredientName();
+        this.count = request.getCount();
     }
 }

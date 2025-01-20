@@ -14,20 +14,27 @@ public class IngredientResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class CreateRawIngredientResultDTO {
-//        Long eventId;
-//        Long memberId;
-//        Long generatorId;
-//        String eventTitle;
-//        String eventBody;
-//        String eventColor;
-//        LocalDateTime startDate;
-//        LocalDateTime endDate;
         Long ingredientId;
         Long memberId;
         Long fridgeId;
         String ingredientName;
         Long count;
         LocalDateTime createdAt;
-
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateIngredientResultDTO {
+        Long ingredientId;
+        Long memberId;
+        Long fridgeId;
+        String ingredientName;
+        Long count;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
+
+
 }

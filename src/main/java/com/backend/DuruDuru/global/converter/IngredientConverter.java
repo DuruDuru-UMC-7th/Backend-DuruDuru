@@ -24,4 +24,17 @@ public class IngredientConverter {
                 .createdAt(ingredient.getCreatedAt())
                 .build();
     }
+
+    public static IngredientResponseDTO.UpdateIngredientResultDTO UpdateIngredientResultDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.UpdateIngredientResultDTO.builder()
+                .ingredientId(ingredient.getIngredientId())
+                .memberId(ingredient.getMember().getMemberId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientName(ingredient.getIngredientName())
+                .count(ingredient.getCount())
+                .createdAt(ingredient.getCreatedAt())
+                .updatedAt(ingredient.getUpdatedAt())
+                .build();
+    }
+
 }

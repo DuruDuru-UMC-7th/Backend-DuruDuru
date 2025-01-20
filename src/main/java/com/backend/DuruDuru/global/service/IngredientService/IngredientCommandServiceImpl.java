@@ -36,6 +36,21 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         return savedIngredient;
     }
 
+    @Override
+    public Ingredient updateIngredient(Long memberId, Long fridgeId, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
+        Member member = findMemberById(memberId);
+        Fridge fridge = findFridgeById(fridgeId);
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+
+        ingredient.update(request);
+        return ingredient;
+
+    }
+
+
+
+
 
 
     private Member findMemberById(Long memberId) {

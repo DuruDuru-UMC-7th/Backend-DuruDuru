@@ -82,10 +82,11 @@ public class IngredientController {
     }
 
     // 식재료 정보 수정
-    @PatchMapping("/{ingredient-id}")
+    @PatchMapping("/{ingredientId}")
     @Operation(summary = "식재료 정보 수정 API", description = "식재료의 정보를 수정하는 API 입니다.")
-    public ApiResponse<?> updateIngredient(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    public ApiResponse<IngredientResponseDTO.UpdateIngredientResultDTO> updateIngredient(@RequestParam Long memberId, @RequestParam Long fridgeId, @RequestBody IngredientRequestDTO.UpdateIngredientDTO request, @PathVariable Long ingredientId){
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK,
+                IngredientConverter.UpdateIngredientResultDTO(ingredientCommandService.updateIngredient(memberId, fridgeId, ingredientId, request)));
     }
 
     // 식재료 삭제
