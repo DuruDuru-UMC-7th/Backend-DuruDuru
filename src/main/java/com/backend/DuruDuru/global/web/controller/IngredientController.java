@@ -2,6 +2,11 @@ package com.backend.DuruDuru.global.web.controller;
 
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
+import com.backend.DuruDuru.global.converter.IngredientConverter;
+import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.service.IngredientService.IngredientCommandService;
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -17,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/ingredient")
 @Tag(name = "식재료 API", description = "식재료 관련 API입니다.")
 public class IngredientController {
+    private final IngredientCommandService ingredientCommandService;
 
 //    // 영수증 이미지 업로드 (식재료 목록 자동 인식)
 //    @PostMapping("/receipt/upload")
@@ -70,8 +76,9 @@ public class IngredientController {
     // 식재료 직접 등록
     @PostMapping("/")
     @Operation(summary = "식재료 직접 등록 API", description = "식재료를 OCR 자동 인식 없이 직접 등록하는 API 입니다.")
-    public ApiResponse<?> ingredientRawAdd(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    public ApiResponse<IngredientResponseDTO.CreateRawIngredientResultDTO> ingredientRawAdd(@RequestParam Long memberId, @RequestParam Long fridgeId, @RequestBody IngredientRequestDTO.CreateRawIngredientDTO request) {
+        Ingredient newIngredient = ingredientCommandService.createRawIngredient(memberId, fridgeId, request);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toCreateResultDTO(newIngredient));
     }
 
     // 식재료 정보 수정

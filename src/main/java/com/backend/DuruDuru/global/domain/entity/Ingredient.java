@@ -25,10 +25,10 @@ public class Ingredient extends BaseEntity {
     @Column(name = "ingredient_name", length = 200, nullable = false)
     private String ingredientName;
 
-    @Column(name = "count", nullable = false, columnDefinition = "bigint")
+    @Column(name = "count", nullable = true, columnDefinition = "bigint")
     private Long count;
 
-    @Column(name = "purchase_date", nullable = false, columnDefinition = "timestamp")
+    @Column(name = "purchase_date", nullable = true, columnDefinition = "timestamp")
     private LocalDateTime purchaseDate;
 
     @Column(name = "expiry_date", nullable = true, columnDefinition = "timestamp")
@@ -60,4 +60,12 @@ public class Ingredient extends BaseEntity {
 
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<IngredientCategory> ingredientCategoryList = new ArrayList<>();
+
+    public void setMember(Member member) {
+        this.member = member;
+    }
+
+    public void setFridge(Fridge fridge) {
+        this.fridge = fridge;
+    }
 }
