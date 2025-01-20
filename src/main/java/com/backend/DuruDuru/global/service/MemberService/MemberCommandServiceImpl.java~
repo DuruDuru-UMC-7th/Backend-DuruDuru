@@ -47,7 +47,6 @@ public class MemberCommandServiceImpl implements MemberCommandService{
     }
 
     @Override
-    @Transactional
     public EmailLoginResponseDTO emailLogin(EmailLoginRequestDTO request) {
         // 이메일로 사용자 조회
         Member member = memberRepository.findByEmail(request.getEmail())
