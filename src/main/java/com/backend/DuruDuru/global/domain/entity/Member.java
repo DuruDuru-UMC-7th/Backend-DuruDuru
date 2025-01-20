@@ -28,17 +28,11 @@ public class Member extends BaseEntity {
 
     private Long age;
 
-    private Long level;
+    private String accessToken;
+    private String refreshToken;
 
-//    @Column(nullable = false)
-//    private String accessToken;
-//
-//    @Column(nullable = false)
-//    private String refreshToken;
-
-    // 동네 설정은 하나만 가능
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "town_id", nullable = false)
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "town_id")
     private Town town;
 
     @OneToOne(fetch = FetchType.LAZY)
@@ -60,9 +54,6 @@ public class Member extends BaseEntity {
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
-
-//    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
-//    private List<MemberAddress> memberAddresses = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<MemberRecipe> memberRecipes = new ArrayList<>();
