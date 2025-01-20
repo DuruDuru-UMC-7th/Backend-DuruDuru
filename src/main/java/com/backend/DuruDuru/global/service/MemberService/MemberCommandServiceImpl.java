@@ -2,12 +2,12 @@ package com.backend.DuruDuru.global.service.MemberService;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
+import com.backend.DuruDuru.global.converter.MemberConverter;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.repository.MemberRepository;
 import com.backend.DuruDuru.global.security.provider.JwtTokenProvider;
-import com.backend.DuruDuru.global.web.dto.Member.EmailLoginRequestDTO;
-import com.backend.DuruDuru.global.web.dto.Member.EmailLoginResponseDTO;
-import com.backend.DuruDuru.global.web.dto.Member.EmailRegisterRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Member.MemberRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Member.MemberResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -30,7 +30,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
 
     @Override
     @Transactional
-    public void emailRegister(EmailRegisterRequestDTO request) {
+    public void emailRegister(MemberRequestDTO.EmailRegisterRequestDTO request) {
         // 이메일 중복 검사
         if (memberRepository.existsByEmail(request.getEmail())) {
             throw new MemberException(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS);
@@ -48,7 +48,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
 
     @Override
     @Transactional
-    public EmailLoginResponseDTO emailLogin(EmailLoginRequestDTO request) {
+    public MemberResponseDTO.EmailLoginResponseDTO emailLogin(MemberRequestDTO.EmailLoginRequestDTO request) {
         // 이메일로 사용자 조회
         Member member = memberRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS));
@@ -64,8 +64,25 @@ public class MemberCommandServiceImpl implements MemberCommandService{
 
         // DB에 refresh token 저장
         member.setRefreshToken(refreshToken);
+        member.setAccessToken(accessToken);
         memberRepository.save(member);
 
-        return new EmailLoginResponseDTO(accessToken, refreshToken);
+
+        return MemberConverter.toEmailLoginResponse(accessToken, refreshToken);
+    }
+
+    @Override
+    @Transactional
+    public MemberResponseDTO.TokenRefreshResponseDTO refreshToken(String refreshToken) {
+        jwtTokenProvider.isTokenValid(refreshToken);
+        Long id = jwtTokenProvider.getId(refreshToken);
+        Member member = memberRepository.findById(id)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        String newAccessToken = jwtTokenProvider.createAccessToken(id);
+        String newRefreshToken = jwtTokenProvider.createRefreshToken(id);
+        member.updateToken(newAccessToken, newRefreshToken);
+        memberRepository.save(member);
+        return MemberConverter.toTokenRefreshResponse(newAccessToken, newRefreshToken);
     }
 }
