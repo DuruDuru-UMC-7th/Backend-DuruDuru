@@ -36,9 +36,8 @@ public class SecurityConfig {
                         authorize -> authorize
                                 // Member 관련 접근
                                 .requestMatchers("/member/register", "/member/login" ,"/member/refresh").permitAll()
-                                .requestMatchers("/member/town", "/member/trade/current", "/member/trade/history").permitAll()
                                 // Trade 관련 접근
-                                .requestMatchers("/trade", "/trade/ingredient/available", "/trade/near", "/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert").permitAll()
+                                .requestMatchers("/trade", "/trade/ingredient/available", "/trade/near", "/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert", "/trade/current", "/trade/history").permitAll()
                                 // 다른 엔티티 관련 접근
                                 .requestMatchers("/example/**").permitAll()
                                 // Ingredient 관련 접근
@@ -48,6 +47,8 @@ public class SecurityConfig {
                                 .requestMatchers("/fridge/ingredient/list", "/fridge/ingredient/near-expiry").permitAll()
                                 // OCR 관련 접근
                                 .requestMatchers("/OCR/receipt").permitAll()
+                                // Town 관련 접근
+                                .requestMatchers("/town").permitAll()
                                 // 기타 관련 접근
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**", "/image/upload", "/image/delete").permitAll()
                                 .anyRequest().authenticated()

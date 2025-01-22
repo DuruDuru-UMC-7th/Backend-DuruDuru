@@ -61,6 +61,20 @@ public class TradeController {
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
+    // 나의 품앗이 목록 조회 API
+    @GetMapping("/current")
+    @Operation(summary = "나의 품앗이 목록 조회 API", description = "나의 품앗이 목록을 조회하는 API 입니다.")
+    public ApiResponse<?> findCurrentTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
+    }
+
+    // 나의 품앗이 기록 조회 API
+    @GetMapping("/history")
+    @Operation(summary = "나의 품앗이 기록 조회 API", description = "나의 품앗이 기록을 조회하는 API 입니다.")
+    public ApiResponse<?> findHistoryTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
+    }
+
     // 품앗이 링크 공유
     @PostMapping("/shareUrl")
     @Operation(summary = "품앗이 링크 공유 API", description = "품앗이 링크를 공유하는 API 입니다.")
