@@ -5,8 +5,11 @@ import lombok.Getter;
 public class TownRequestDTO {
 
     @Getter
-    public static class CoordsRequestDTO {
+    public static class CreateTownRequestDTO {
         double latitude;
         double longitude;
+        String city;
+        String district;
+        String townName;
     }
 }

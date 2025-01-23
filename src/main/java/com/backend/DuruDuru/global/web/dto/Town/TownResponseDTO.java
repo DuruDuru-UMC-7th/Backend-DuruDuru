@@ -12,7 +12,7 @@ public class TownResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CoordsResponseDTO {
+    public static class TownResultDTO {
         double latitude;
         double longitude;
         String city;

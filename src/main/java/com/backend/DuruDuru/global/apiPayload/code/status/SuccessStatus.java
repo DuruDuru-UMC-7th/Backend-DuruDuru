@@ -30,7 +30,9 @@ public enum SuccessStatus implements BaseCode {
     // 채팅 관련 응답
     CHAT_OK(HttpStatus.OK, "CHAT_1000", "성공입니다."),
     // OCR 관련 응답
-    OCR_OK(HttpStatus.OK, "OCR_1000", "성공입니다.");
+    OCR_OK(HttpStatus.OK, "OCR_1000", "성공입니다."),
+    // TOWN 관련 응답
+    TOWN_OK(HttpStatus.OK, "TOWN_1000", "성공입니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

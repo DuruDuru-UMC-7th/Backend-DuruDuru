@@ -5,11 +5,7 @@ import com.backend.DuruDuru.global.web.dto.Town.TownRequestDTO;
 
 public interface TownCommandService {
 
-    // 위도 경도를 통해 행정동 이름 반환
-    String coordsToTownName(TownRequestDTO.CoordsRequestDTO request);
-
-    // Town 등록
-    public Town registerTown();
-
+    // Town 엔티티를 저장하는 메서드
+    Town createTown(TownRequestDTO.CreateTownRequestDTO request);
 
 }
