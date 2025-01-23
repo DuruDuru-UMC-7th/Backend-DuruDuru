@@ -43,7 +43,7 @@ public class SecurityConfig {
                                 .requestMatchers("/example/**").permitAll()
                                 // Ingredient 관련 접근
                                 .requestMatchers("/ingredient/receipt/classify", "/ingredient/purchased", "/ingredient/{ingredient_id}/photo").permitAll()
-                                .requestMatchers("/ingredient/purchase-date", "/ingredient/expiry-date", "/ingredient", "/ingredient/{ingredient_id}","/ingredient/{ingredient_id}/category", "/ingredient/{ingredient_id}/storage-type").permitAll()
+                                .requestMatchers("/ingredient/{ingredient_id}/purchase-date", "/ingredient/{ingredient_id}/expiry-date", "/ingredient/", "/ingredient/{ingredient_id}","/ingredient/{ingredient_id}/category", "/ingredient/{ingredient_id}/storage-type").permitAll()
                                 .requestMatchers("/ingredient/search/name", "/ingredient/search/category", "/ingredient/category/add").permitAll()
                                 // Fridge 관련 접근
                                 .requestMatchers("/fridge/{member_id}/all-ingredients", "/fridge/{member_id}/near-expiry").permitAll()

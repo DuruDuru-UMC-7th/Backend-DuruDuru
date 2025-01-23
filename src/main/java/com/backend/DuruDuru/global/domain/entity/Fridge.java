@@ -20,9 +20,23 @@ public class Fridge extends BaseEntity {
     @Column(name = "fridge_id", nullable = false, columnDefinition = "bigint")
     private Long fridgeId;
 
-    @Column(name = "ingredient_count", nullable = false, columnDefinition = "bigint")
-    private Long ingredientCount;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
+
+    @Column(name = "ingredient_count", nullable = false)
+    private int ingredientCount = 0;
 
     @OneToMany(mappedBy = "fridge", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Ingredient> ingredients = new ArrayList<>();
+
+
+    public void setMember(Member member) {
+        this.member = member;
+        if (member.getFridge() != this) {
+            member.setFridge(this);
+        }
+    }
+
 }
+

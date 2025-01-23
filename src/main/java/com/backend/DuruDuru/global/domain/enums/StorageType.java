@@ -4,15 +4,12 @@ import lombok.Getter;
 
 @Getter
 public enum StorageType {
-    VEGETABLE("채소"),
-    FRUIT("과일"),
-    MEAT("육류"),
-    MUSHROOM("버섯"),
-    DAIRY("유제품"),
-    SEAFOOD("수산물"),
-    NUTS("견과류"),
-    DRY("건조식품"),
-    FAVORITE("기호식품");
+//    ROOM("실온"),
+//    FRIDGE("냉장"),
+//    FROZEN("냉동");
+    실온("실온"),
+    냉장("냉장"),
+    냉동("냉동");
 
     private final String storageType;
 
