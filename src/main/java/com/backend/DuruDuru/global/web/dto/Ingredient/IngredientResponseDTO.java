@@ -44,9 +44,21 @@ public class IngredientResponseDTO {
     @NoArgsConstructor
     public static class PurchaseDateResultDTO {
         Long memberId;
+        Long fridgeId;
         Long ingredientId;
         String ingredientName;
-        Long fridgeId;
         LocalDate purchaseDate;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class StorageTypeResultDTO {
+        Long memberId;
+        Long fridgeId;
+        Long ingredientId;
+        String ingredientName;
+        String storageType;
     }
 }

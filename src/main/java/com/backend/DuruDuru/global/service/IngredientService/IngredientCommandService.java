@@ -10,4 +10,5 @@ public interface IngredientCommandService {
     void deleteIngredient(Long memberId, Long fridgeId, Long ingredientId);
 
     Ingredient registerPurchaseDate(Long memberId, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request);
+    Ingredient setStorageType(Long memberId, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request);
 }

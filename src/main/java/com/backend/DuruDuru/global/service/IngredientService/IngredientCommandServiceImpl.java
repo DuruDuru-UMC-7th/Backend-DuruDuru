@@ -22,26 +22,30 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     private final IngredientRepository ingredientRepository;
     private final FridgeRepository fridgeRepository;
 
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+    }
+
+    private Fridge findFridgeById(Long fridgeId) {
+        return fridgeRepository.findById(fridgeId)
+                .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
+    }
+
     @Override
     @Transactional
     public Ingredient createRawIngredient(Long memberId, IngredientRequestDTO.CreateRawIngredientDTO request) {
-        // Member 조회
         Member member = findMemberById(memberId);
-
-        // Member의 Fridge 가져오기
         Fridge fridge = member.getFridge();
-        if (fridge == null) {
-            throw new IllegalArgumentException("The member does not have a linked fridge.");
-        }
+        if (fridge == null) { throw new IllegalArgumentException("사용자의 냉장고가 없습니다."); }
 
-        // Ingredient 생성
         Ingredient newIngredient = IngredientConverter.toIngredient(request);
-        newIngredient.setMember(member); // Member 설정
-        newIngredient.setFridge(fridge); // Fridge 설정
+        newIngredient.setMember(member);
+        newIngredient.setFridge(fridge);
 
-        // Ingredient 저장
         Ingredient savedIngredient = ingredientRepository.save(newIngredient);
-        log.info("New ingredient created. ID: {}", savedIngredient.getIngredientId());
+        //log.info("New ingredient created. ID: {}", savedIngredient.getIngredientId());
         return savedIngredient;
     }
 
@@ -79,16 +83,15 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         return ingredient;
     }
 
+    @Override
+    public Ingredient setStorageType(Long memberId, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request) {
+        Member member = findMemberById(memberId);
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
 
-
-
-    private Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+        ingredient.setStorageType(request.getStorageType());
+        return ingredient;
     }
 
-    private Fridge findFridgeById(Long fridgeId) {
-        return fridgeRepository.findById(fridgeId)
-                .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
-    }
+
 }
