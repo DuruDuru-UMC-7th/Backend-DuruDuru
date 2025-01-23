@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -59,6 +60,12 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
+    // 식재료 보관 방식 설정
+    @PostMapping("/{ingredient_id}/storage-type")
+    @Operation(summary = "식재료 보관 방식 설정 API", description = "식재료의 보관 방식을 설정하는 API 입니다.")
+    public ApiResponse<?> ingredientStorageType(){return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    }
+
     // 식재료 구매 날짜 등록
     @PostMapping("/{ingredient_id}/purchase-date")
     @Operation(summary = "식재료 구매 날짜 등록 API", description = "식재료의 구매 날짜를 등록하는 API 입니다.")
@@ -102,14 +109,14 @@ public class IngredientController {
     }
 
     // 식재료 이름으로 검색
-    @GetMapping("/search/name/list")
+    @GetMapping("/search/name")
     @Operation(summary = "식재료 이름으로 검색 API", description = "식재료를 이름으로 검색하는 API 입니다. 입력된 키워드가 포함된 식재료를 모두 반환합니다.")
     public ApiResponse<?> searchIngredientByName(){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
     // 식재료 카테고리로 검색
-    @GetMapping("/search/category/list")
+    @GetMapping("/search/category")
     @Operation(summary = "식재료 카테고리로 검색 API", description = "식재료를 카테고리로 검색하는 API 입니다. 입력된 카테고리에 속한 식재료를 모두 반환합니다.")
     public ApiResponse<?> searchIngredientByCategory(){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
