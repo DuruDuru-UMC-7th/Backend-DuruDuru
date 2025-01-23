@@ -76,7 +76,8 @@ public class IngredientController {
     // 식재료 직접 등록
     @PostMapping("/")
     @Operation(summary = "식재료 직접 등록 API", description = "식재료를 OCR 자동 인식 없이 직접 등록하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.CreateRawIngredientResultDTO> ingredientRawAdd(@RequestParam Long memberId, @RequestParam Long fridgeId, @RequestBody IngredientRequestDTO.CreateRawIngredientDTO request) {
+    public ApiResponse<IngredientResponseDTO.CreateRawIngredientResultDTO> ingredientRawAdd(@RequestParam Long memberId, @RequestParam Long fridgeId,
+                                                                                            @RequestBody IngredientRequestDTO.CreateRawIngredientDTO request) {
         Ingredient newIngredient = ingredientCommandService.createRawIngredient(memberId, fridgeId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toCreateResultDTO(newIngredient));
     }
@@ -84,7 +85,10 @@ public class IngredientController {
     // 식재료 정보 수정
     @PatchMapping("/{ingredient_id}")
     @Operation(summary = "식재료 정보 수정 API", description = "식재료의 정보를 수정하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.UpdateIngredientResultDTO> updateIngredient(@RequestParam Long memberId, @RequestParam Long fridgeId, @RequestBody IngredientRequestDTO.UpdateIngredientDTO request, @PathVariable("ingredient_id") Long ingredientId){
+    public ApiResponse<IngredientResponseDTO.UpdateIngredientResultDTO> updateIngredient(
+            @RequestParam Long memberId, @RequestParam Long fridgeId,
+            @RequestBody IngredientRequestDTO.UpdateIngredientDTO request,
+            @PathVariable("ingredient_id") Long ingredientId){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK,
                 IngredientConverter.UpdateIngredientResultDTO(ingredientCommandService.updateIngredient(memberId, fridgeId, ingredientId, request)));
     }
