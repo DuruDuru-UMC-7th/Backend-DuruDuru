@@ -5,6 +5,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class IngredientResponseDTO {
@@ -37,4 +38,15 @@ public class IngredientResponseDTO {
     }
 
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PurchaseDateResultDTO {
+        Long memberId;
+        Long ingredientId;
+        String ingredientName;
+        Long fridgeId;
+        LocalDate purchaseDate;
+    }
 }

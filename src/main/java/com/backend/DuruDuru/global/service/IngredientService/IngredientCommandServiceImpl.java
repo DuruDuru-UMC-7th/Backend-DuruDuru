@@ -23,23 +23,33 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     private final FridgeRepository fridgeRepository;
 
     @Override
-    public Ingredient createRawIngredient(Long memberId, Long fridgeId, IngredientRequestDTO.CreateRawIngredientDTO request) {
+    @Transactional
+    public Ingredient createRawIngredient(Long memberId, IngredientRequestDTO.CreateRawIngredientDTO request) {
+        // Member 조회
         Member member = findMemberById(memberId);
-        Fridge fridge = findFridgeById(fridgeId);
 
+        // Member의 Fridge 가져오기
+        Fridge fridge = member.getFridge();
+        if (fridge == null) {
+            throw new IllegalArgumentException("The member does not have a linked fridge.");
+        }
+
+        // Ingredient 생성
         Ingredient newIngredient = IngredientConverter.toIngredient(request);
-        newIngredient.setMember(member);
-        newIngredient.setFridge(fridge);
+        newIngredient.setMember(member); // Member 설정
+        newIngredient.setFridge(fridge); // Fridge 설정
 
+        // Ingredient 저장
         Ingredient savedIngredient = ingredientRepository.save(newIngredient);
-        log.info("New ingredient created. ID: {}", savedIngredient);
+        log.info("New ingredient created. ID: {}", savedIngredient.getIngredientId());
         return savedIngredient;
     }
 
+
     @Override
-    public Ingredient updateIngredient(Long memberId, Long fridgeId, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
+    public Ingredient updateIngredient(Long memberId, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
         Member member = findMemberById(memberId);
-        Fridge fridge = findFridgeById(fridgeId);
+        //Fridge fridge = findFridgeById(fridgeId);
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
 
@@ -57,6 +67,19 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
         ingredientRepository.delete(ingredient);
     }
+
+
+    @Override
+    public Ingredient registerPurchaseDate(Long memberId, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
+        Member member = findMemberById(memberId);
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+
+        ingredient.setPurchaseDate(request.getPurchaseDate());
+        return ingredient;
+    }
+
+
 
 
     private Member findMemberById(Long memberId) {

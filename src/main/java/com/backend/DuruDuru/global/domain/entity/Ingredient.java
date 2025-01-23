@@ -6,6 +6,7 @@ import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,10 +31,10 @@ public class Ingredient extends BaseEntity {
     private Long count;
 
     @Column(name = "purchase_date", nullable = true, columnDefinition = "timestamp")
-    private LocalDateTime purchaseDate;
+    private LocalDate purchaseDate;
 
     @Column(name = "expiry_date", nullable = true, columnDefinition = "timestamp")
-    private LocalDateTime expiryDate;
+    private LocalDate expiryDate;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "storage_type", nullable = true, columnDefinition = "varchar(50)")

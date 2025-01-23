@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.web.dto.Ingredient;
 
 import lombok.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class IngredientRequestDTO {
@@ -23,6 +24,15 @@ public class IngredientRequestDTO {
     public static class UpdateIngredientDTO {
         private String ingredientName;
         private Long count;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class PurchaseDateRequestDTO {
+        private LocalDate purchaseDate;
     }
 
 }
