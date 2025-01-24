@@ -17,7 +17,7 @@ public class TownConverter {
                 .build();
     }
 
-    public static Town toTown(TownRequestDTO.CreateTownRequestDTO request) {
+    public static Town toTown(TownRequestDTO.ToTownRequestDTO request) {
         return Town.builder()
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())

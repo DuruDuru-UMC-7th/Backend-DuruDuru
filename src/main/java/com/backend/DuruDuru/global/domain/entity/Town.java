@@ -1,11 +1,9 @@
 package com.backend.DuruDuru.global.domain.entity;
 
 import com.backend.DuruDuru.global.domain.common.BaseEntity;
+import com.backend.DuruDuru.global.web.dto.Town.TownRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Getter
@@ -37,5 +35,13 @@ public class Town extends BaseEntity {
 
     @OneToOne(mappedBy = "town")
     private Member member;
+
+    public void update(TownRequestDTO.ToTownRequestDTO request) {
+        this.city = request.getCity();
+        this.district = request.getDistrict();
+        this.townName = request.getTownName();
+        this.latitude = request.getLatitude();
+        this.longitude = request.getLongitude();
+    }
 
 }
