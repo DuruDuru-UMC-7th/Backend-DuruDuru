@@ -19,15 +19,15 @@ import org.springframework.web.bind.annotation.*;
 public class FridgeController {
 
     // 전체 식재료 리스트 조회
-    @GetMapping("/ingredient/list")
-    @Operation(summary = "등록된 전체 식재료 리스트 조회 API", description = "등록된 전체 식재료 리스트 조회 API")
+    @GetMapping("/{member_id}/all-ingredients")
+    @Operation(summary = "등록된 전체 식재료 리스트 조회 API", description = "등록된 전체 식재료 리스트를 조회하는 API 입니다.")
     public ApiResponse<?> findAllIngredients() {
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
     }
 
     // 소비기한 임박 식재료 조회
-    @GetMapping("/ingredient/near-expiry")
-    @Operation(summary = "소비기한 임박 식재료 조회 API", description = "소비기한 임박 식재료 조회 API")
+    @GetMapping("/{member_id}/near-expiry")
+    @Operation(summary = "소비기한 임박 식재료 조회 API", description = "소비기한이 임박한 순서대로 식재료 리스트를 조회하는 API 입니다.")
         public ApiResponse<?> ingredientNearExpiry() {
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
     }

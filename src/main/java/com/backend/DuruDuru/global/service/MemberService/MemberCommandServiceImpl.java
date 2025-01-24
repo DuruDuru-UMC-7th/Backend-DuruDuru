@@ -3,7 +3,9 @@ package com.backend.DuruDuru.global.service.MemberService;
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
 import com.backend.DuruDuru.global.converter.MemberConverter;
+import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Member;
+import com.backend.DuruDuru.global.repository.FridgeRepository;
 import com.backend.DuruDuru.global.repository.MemberRepository;
 import com.backend.DuruDuru.global.security.provider.JwtTokenProvider;
 import com.backend.DuruDuru.global.web.dto.Member.MemberRequestDTO;
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class MemberCommandServiceImpl implements MemberCommandService{
 
     private final MemberRepository memberRepository;
+    private final FridgeRepository fridgeRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
 
@@ -36,15 +39,25 @@ public class MemberCommandServiceImpl implements MemberCommandService{
             throw new MemberException(ErrorStatus.MEMBER_EMAIL_ALREADY_EXISTS);
         }
 
-        // 회원 정보 저장
+        // 회원 생성
         Member member = Member.builder()
                 .nickName(request.getNickname())
                 .email(request.getEmail())
                 .password(passwordEncoder.encode(request.getPassword()))
                 .build();
-
         memberRepository.save(member);
+
+        // 회원 가입시 자동 개인 냉장고 생성
+        Fridge fridge = Fridge.builder()
+                .ingredientCount(0)
+                .build();
+        fridge.setMember(member);
+        member.setFridge(fridge);
+        fridgeRepository.save(fridge);
+
+
     }
+
 
     @Override
     @Transactional

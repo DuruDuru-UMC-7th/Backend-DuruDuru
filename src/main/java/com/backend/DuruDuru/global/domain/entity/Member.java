@@ -44,7 +44,7 @@ public class Member extends BaseEntity {
     @JoinColumn(name = "member_img_id")
     private MemberImg memberImg;
 
-    @OneToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "fridge_id")
     private Fridge fridge;
 
@@ -70,4 +70,12 @@ public class Member extends BaseEntity {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
     }
+
+    public void setFridge(Fridge fridge) {
+        this.fridge = fridge;
+        if (fridge.getMember() != this) {
+            fridge.setMember(this);
+        }
+    }
+
 }
