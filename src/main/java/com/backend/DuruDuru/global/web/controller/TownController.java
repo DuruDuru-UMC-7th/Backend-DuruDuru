@@ -28,22 +28,24 @@ public class TownController {
     // 내 동네 등록 API
     @PostMapping("/")
     @Operation(summary = "내 동네 등록 API", description = "내 동네를 등록하는 API 입니다.")
-    public ApiResponse<TownResponseDTO.TownResultDTO> createTown(@RequestBody TownRequestDTO.CreateTownRequestDTO request) {
-        Town town = townCommandService.createTown(request);
-        return ApiResponse.onSuccess(SuccessStatus.TOWN_OK, TownConverter.toTownResponseDTO(town));
+    public ApiResponse<TownResponseDTO.TownResultDTO> createTown(
+            @RequestParam Long memberId,
+            @RequestBody TownRequestDTO.CreateTownRequestDTO request) {
+        Town town = townCommandService.createTown(memberId, request);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TownConverter.toTownResponseDTO(town));
     }
 
     // 내 동네 조회 API
     @GetMapping("/")
     @Operation(summary = "내 동네 조회 API", description = "내 동네를 조회하는 API 입니다.")
     public ApiResponse<?> findTown(){
-        return ApiResponse.onSuccess(SuccessStatus.TOWN_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 내 동네 수정 API
     @PatchMapping("/")
     @Operation(summary = "내 동네 수정 API", description = "내 동네를 수정하는 API 입니다.")
     public ApiResponse<?> updateTown(){
-        return ApiResponse.onSuccess(SuccessStatus.TOWN_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 }

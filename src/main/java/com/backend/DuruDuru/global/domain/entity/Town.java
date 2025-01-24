@@ -9,6 +9,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor
@@ -33,4 +34,8 @@ public class Town extends BaseEntity {
 
     @Column(name = "longitude", nullable = false, columnDefinition = "double precision")
     private Double longitude;
+
+    @OneToOne(mappedBy = "town")
+    private Member member;
+
 }
