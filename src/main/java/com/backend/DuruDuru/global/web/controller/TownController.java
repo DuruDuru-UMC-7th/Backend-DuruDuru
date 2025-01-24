@@ -5,6 +5,7 @@ import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.TownConverter;
 import com.backend.DuruDuru.global.domain.entity.Town;
 import com.backend.DuruDuru.global.service.TownService.TownCommandService;
+import com.backend.DuruDuru.global.service.TownService.TownQueryService;
 import com.backend.DuruDuru.global.web.dto.Town.TownRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Town.TownResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -24,13 +25,15 @@ import org.springframework.web.bind.annotation.*;
 public class TownController {
 
     private final TownCommandService townCommandService;
+    private final TownQueryService townQueryService;
 
     // 내 동네 등록 API
     @PostMapping("/")
     @Operation(summary = "내 동네 등록 API", description = "내 동네를 등록하는 API 입니다.")
     public ApiResponse<TownResponseDTO.TownResultDTO> createTown(
             @RequestParam Long memberId,
-            @RequestBody TownRequestDTO.CreateTownRequestDTO request) {
+            @RequestBody TownRequestDTO.CreateTownRequestDTO request
+    ){
         Town town = townCommandService.createTown(memberId, request);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TownConverter.toTownResponseDTO(town));
     }
@@ -38,8 +41,11 @@ public class TownController {
     // 내 동네 조회 API
     @GetMapping("/")
     @Operation(summary = "내 동네 조회 API", description = "내 동네를 조회하는 API 입니다.")
-    public ApiResponse<?> findTown(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    public ApiResponse<TownResponseDTO.TownResultDTO> findTown(
+            @RequestParam Long memberId
+    ){
+        Town town = townQueryService.findTownByMember(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TownConverter.toTownResponseDTO(town));
     }
 
     // 내 동네 수정 API
