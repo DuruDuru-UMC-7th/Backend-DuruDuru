@@ -50,39 +50,4 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.USER_REFRESH_OK, response);
     }
 
-    // 내 동네 등록 API
-    @PostMapping("/town")
-    @Operation(summary = "내 동네 등록 API", description = "내 동네를 등록하는 API 입니다.")
-    public ApiResponse<?> createTown(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
-    }
-
-    // 내 동네 조회 API
-    @GetMapping("/town")
-    @Operation(summary = "내 동네 조회 API", description = "내 동네를 조회하는 API 입니다.")
-    public ApiResponse<?> findTown(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
-    }
-
-    // 내 동네 등록 API
-    @PatchMapping("/town")
-    @Operation(summary = "내 동네 등록 API", description = "내 동네를 수정하는 API 입니다.")
-    public ApiResponse<?> updateTown(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
-    }
-
-    // 나의 품앗이 목록 조회 API
-    @GetMapping("/trade/current")
-    @Operation(summary = "나의 품앗이 목록 조회 API", description = "나의 품앗이 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> findCurrentTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
-    }
-
-    // 나의 품앗이 기록 조회 API
-    @GetMapping("/trade/history")
-    @Operation(summary = "나의 품앗이 기록 조회 API", description = "나의 품앗이 기록을 조회하는 API 입니다.")
-    public ApiResponse<?> findHistoryTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
-    }
-
 }
