@@ -20,13 +20,13 @@ public class IngredientCategory extends BaseEntity {
     @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "major_category_id", nullable = false)
-    private MajorCategory majorCategory;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "minor_category_id", nullable = false)
-    private MinorCategory minorCategory;
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "major_category_id", nullable = false)
+//    private MajorCategory majorCategory;
+//
+//    @ManyToOne(fetch = FetchType.LAZY)
+//    @JoinColumn(name = "minor_category_id", nullable = false)
+//    private MinorCategory minorCategory;
 
 
     public void setIngredient(Ingredient ingredient) {
@@ -38,27 +38,27 @@ public class IngredientCategory extends BaseEntity {
         ingredient.getIngredientCategoryList().add(this);
     }
 
-    public void setMajorCategory(MajorCategory majorCategory) {
-        if (this.majorCategory != null) {
-            this.majorCategory.getIngredientCategoryList().remove(this);
-        }
-        this.majorCategory = majorCategory;
+//    public void setMajorCategory(MajorCategory majorCategory) {
+//        if (this.majorCategory != null) {
+//            this.majorCategory.getIngredientCategoryList().remove(this);
+//        }
+//        this.majorCategory = majorCategory;
+//
+//        if (majorCategory != null) {
+//            majorCategory.getIngredientCategoryList().add(this);
+//        }
+//    }
 
-        if (majorCategory != null) {
-            majorCategory.getIngredientCategoryList().add(this);
-        }
-    }
-
-    public void setMinorCategory(MinorCategory minorCategory) {
-        if (this.minorCategory != null) {
-            this.minorCategory.getIngredientCategoryList().remove(this);
-        }
-        this.minorCategory = minorCategory;
-
-        if (minorCategory != null) {
-            minorCategory.getIngredientCategoryList().add(this);
-        }
-    }
+//    public void setMinorCategory(MinorCategory minorCategory) {
+//        if (this.minorCategory != null) {
+//            this.minorCategory.getIngredientCategoryList().remove(this);
+//        }
+//        this.minorCategory = minorCategory;
+//
+//        if (minorCategory != null) {
+//            minorCategory.getIngredientCategoryList().add(this);
+//        }
+//    }
 
 
 
