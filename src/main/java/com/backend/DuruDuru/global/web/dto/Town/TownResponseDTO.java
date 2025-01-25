@@ -7,7 +7,6 @@ import lombok.NoArgsConstructor;
 
 public class TownResponseDTO {
 
-
     @Getter
     @Builder
     @AllArgsConstructor
@@ -15,8 +14,8 @@ public class TownResponseDTO {
     public static class TownResultDTO {
         double latitude;
         double longitude;
-        String city;
-        String district;
-        String townName;
+        String sido;
+        String sigungu;
+        String eupmyeondong;
     }
 }

@@ -8,8 +8,8 @@ public class TownRequestDTO {
     public static class ToTownRequestDTO {
         double latitude;
         double longitude;
-        String city;
-        String district;
-        String townName;
+        String sido;
+        String sigungu;
+        String eupmyeondong;
     }
 }
