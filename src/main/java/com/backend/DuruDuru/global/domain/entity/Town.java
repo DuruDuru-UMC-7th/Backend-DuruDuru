@@ -18,14 +18,14 @@ public class Town extends BaseEntity {
     @Column(name = "town_id", nullable = false, columnDefinition = "bigint")
     private Long townId;
 
-    @Column(name = "city", nullable = false, columnDefinition = "varchar(50)")
-    private String city;
+    @Column(name = "sido", nullable = false, columnDefinition = "varchar(50)")
+    private String sido;
 
-    @Column(name = "district", nullable = false, columnDefinition = "varchar(50)")
-    private String district;
+    @Column(name = "sigungu", nullable = false, columnDefinition = "varchar(50)")
+    private String sigungu;
 
-    @Column(name = "town_name", nullable = false, columnDefinition = "varchar(50)")
-    private String townName;
+    @Column(name = "eupmyeondong", nullable = false, columnDefinition = "varchar(50)")
+    private String eupmyeondong;
 
     @Column(name = "latitude", nullable = false, columnDefinition = "double precision")
     private Double latitude;
@@ -37,9 +37,9 @@ public class Town extends BaseEntity {
     private Member member;
 
     public void update(TownRequestDTO.ToTownRequestDTO request) {
-        this.city = request.getCity();
-        this.district = request.getDistrict();
-        this.townName = request.getTownName();
+        this.sido = request.getSido();
+        this.sigungu = request.getSigungu();
+        this.eupmyeondong = request.getEupmyeondong();
         this.latitude = request.getLatitude();
         this.longitude = request.getLongitude();
     }
