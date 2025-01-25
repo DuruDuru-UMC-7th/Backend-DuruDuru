@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.web.dto.Ingredient;
 
 import com.backend.DuruDuru.global.domain.enums.StorageType;
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -45,4 +46,12 @@ public class IngredientRequestDTO {
         private StorageType storageType;
     }
 
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class IngredientImageRequestDTO {
+        private MultipartFile image;
+    }
 }

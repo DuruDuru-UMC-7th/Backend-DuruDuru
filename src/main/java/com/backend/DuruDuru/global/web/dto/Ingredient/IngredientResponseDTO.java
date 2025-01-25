@@ -1,9 +1,6 @@
 package com.backend.DuruDuru.global.web.dto.Ingredient;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -61,4 +58,18 @@ public class IngredientResponseDTO {
         String ingredientName;
         String storageType;
     }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class IngredientImageDTO {
+        Long memberId;
+        Long fridgeId;
+        Long ingredientId;
+        String ingredientName;
+        String ingredientImageUrl;
+    }
+
 }

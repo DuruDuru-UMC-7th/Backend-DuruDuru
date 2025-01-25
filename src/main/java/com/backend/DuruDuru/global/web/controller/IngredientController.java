@@ -49,10 +49,12 @@ public class IngredientController {
 
 
     // 추가할 식재료 사진 등록
-    @PostMapping("/{ingredient_id}/photo")
+    @PostMapping(path = "/{ingredient_id}/photo", consumes = "multipart/form-data")
     @Operation(summary = "추가할 식재료 사진 등록 API", description = "추가할 식재료의 사진을 등록하는 API 입니다.")
-    public ApiResponse<?> ingredientPhoto(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    public ApiResponse<IngredientResponseDTO.IngredientImageDTO> updateIngredientPhoto(@ModelAttribute IngredientRequestDTO.IngredientImageRequestDTO request,
+                                                                                       @RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId) {
+        Ingredient ingredient = ingredientCommandService.registerIngredientImage(memberId, ingredientId, request);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientImageDTO(ingredient));
     }
 
 
