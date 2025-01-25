@@ -57,4 +57,16 @@ public class IngredientConverter {
                 .storageType(String.valueOf(ingredient.getStorageType()))
                 .build();
     }
+
+
+    public static IngredientResponseDTO.IngredientImageDTO toIngredientImageDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.IngredientImageDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .ingredientImageUrl(ingredient.getIngredientImg().getIngredientImgUrl())
+                .build();
+    }
+
 }

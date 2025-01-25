@@ -1,26 +1,33 @@
 package com.backend.DuruDuru.global.service.IngredientService;
 
+import com.backend.DuruDuru.global.S3.AmazonS3Manager;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
-import com.backend.DuruDuru.global.domain.entity.Fridge;
-import com.backend.DuruDuru.global.domain.entity.Ingredient;
-import com.backend.DuruDuru.global.domain.entity.Member;
-import com.backend.DuruDuru.global.repository.FridgeRepository;
-import com.backend.DuruDuru.global.repository.IngredientRepository;
-import com.backend.DuruDuru.global.repository.MemberRepository;
+import com.backend.DuruDuru.global.domain.entity.*;
+import com.backend.DuruDuru.global.repository.*;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
+import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 @Slf4j
 public class IngredientCommandServiceImpl implements IngredientCommandService {
+    @Autowired // 엔티티매니저에만 해당
+    private EntityManager entityManager;
+
     private final MemberRepository memberRepository;
     private final IngredientRepository ingredientRepository;
     private final FridgeRepository fridgeRepository;
+    private final AmazonS3Manager s3Manager;
+    private final IngredientImageRepository ingredientImageRepository;
+    private final UuidRepository uuidRepository;
 
 
     private Member findMemberById(Long memberId) {
@@ -38,7 +45,9 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     public Ingredient createRawIngredient(Long memberId, IngredientRequestDTO.CreateRawIngredientDTO request) {
         Member member = findMemberById(memberId);
         Fridge fridge = member.getFridge();
-        if (fridge == null) { throw new IllegalArgumentException("사용자의 냉장고가 없습니다."); }
+        if (fridge == null) {
+            throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
+        }
 
         Ingredient newIngredient = IngredientConverter.toIngredient(request);
         newIngredient.setMember(member);
@@ -91,6 +100,37 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
         ingredient.setStorageType(request.getStorageType());
         return ingredient;
+    }
+
+
+
+    @Transactional
+    @Override
+    public Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+        if (ingredient.getIngredientImg() != null) {
+            IngredientImg existingImage = ingredient.getIngredientImg();
+
+            s3Manager.deleteFile(existingImage.getIngredientImgUrl());
+            ingredient.setIngredientImg(null);
+
+            ingredientRepository.save(ingredient);
+            // 삭제 작업을 DB에 반영
+            entityManager.flush();
+            entityManager.clear();
+        }
+        // 새로운 식재료 이미지 업로드
+        String uuid = UUID.randomUUID().toString();
+        String fileUrl = s3Manager.uploadFile(uuid, request.getImage());
+
+        IngredientImg newImage = IngredientImg.builder()
+                .ingredientImgUrl(fileUrl)
+                .ingredient(ingredient)
+                .build();
+        ingredient.setIngredientImg(newImage);
+        // 식재료 이미지 업데이트
+        return ingredientRepository.save(ingredient);
     }
 
 

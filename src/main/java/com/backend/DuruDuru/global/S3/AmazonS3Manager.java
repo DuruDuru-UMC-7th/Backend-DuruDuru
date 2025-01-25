@@ -1,5 +1,6 @@
 package com.backend.DuruDuru.global.S3;
 
+import com.amazonaws.AmazonServiceException;
 import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.model.ObjectMetadata;
 import com.amazonaws.services.s3.model.PutObjectRequest;
@@ -36,19 +37,44 @@ public class AmazonS3Manager {
         return amazonS3.getUrl(s3Config.getBucket(), keyName).toString();
     }
 
-    public void deleteFile(String fileUrl) {
-        try {
-            String keyName = fileUrl.replace(amazonS3.getUrl(s3Config.getBucket(), "").toString(), "");
-            log.info("Attempting to delete file: bucket={}, keyName={}", s3Config.getBucket(), keyName);
-
-            amazonS3.deleteObject(s3Config.getBucket(), keyName);
-        } catch (Exception e) {
-            log.error("Error deleting file from S3: {}", e.getMessage());
-        }
-    }
-
-
-//    public String generatePostName(Uuid uuid) {
-//        return s3Config.getFilesPath() + '/' + uuid.getUuid();
+//    public void deleteFile(String fileUrl) {
+//        try {
+//            String keyName = fileUrl.replace(amazonS3.getUrl(s3Config.getBucket(), "").toString(), "");
+//            log.info("Attempting to delete file: bucket={}, keyName={}", s3Config.getBucket(), keyName);
+//
+//            amazonS3.deleteObject(s3Config.getBucket(), keyName);
+//        } catch (Exception e) {
+//            log.error("Error deleting file from S3: {}", e.getMessage());
+//        }
 //    }
+public void deleteFile(String fileUrl) {
+    try {
+        // S3 Key 추출
+        String bucketUrl = amazonS3.getUrl(s3Config.getBucket(), "").toString();
+        if (!fileUrl.startsWith(bucketUrl)) {
+            throw new IllegalArgumentException("Invalid file URL: " + fileUrl);
+        }
+        String keyName = fileUrl.substring(bucketUrl.length());
+        log.info("Attempting to delete file: bucket={}, keyName={}", s3Config.getBucket(), keyName);
+
+        // S3 파일 삭제 요청
+        amazonS3.deleteObject(s3Config.getBucket(), keyName);
+        log.info("Successfully deleted file: bucket={}, keyName={}", s3Config.getBucket(), keyName);
+    } catch (AmazonServiceException e) {
+        log.error("S3 Service Exception: {}", e.getErrorMessage());
+        log.error("HTTP Status Code: {}", e.getStatusCode());
+        log.error("AWS Error Code: {}", e.getErrorCode());
+        log.error("Request ID: {}", e.getRequestId());
+        throw e;
+    } catch (Exception e) {
+        log.error("Error deleting file from S3: {}", e.getMessage());
+        throw e;
+    }
+}
+
+
+
+    public String generatePostName(Uuid uuid) {
+        return s3Config.getFilesPath() + '/' + uuid.getUuid();
+    }
 }
