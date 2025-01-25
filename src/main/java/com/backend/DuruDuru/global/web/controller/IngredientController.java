@@ -80,9 +80,12 @@ public class IngredientController {
     // 식재료 카테고리 설정
     @PostMapping("/{ingredient_id}/category")
     @Operation(summary = "식재료 카테고리 설정 API", description = "식재료의 카테고리를 설정하는 API 입니다.")
-    public ApiResponse<?> ingredientCategory(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    public ApiResponse<IngredientResponseDTO.SetCategoryResultDTO> setIngredientCategory(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
+                                                @RequestBody IngredientRequestDTO.SetCategoryRequestDTO request) {
+        Ingredient ingredient = ingredientCommandService.setCategory(memberId, ingredientId, request);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toSetCategoryResultDTO(ingredient));
     }
+
 
 
     // 식재료 보관 방식 설정

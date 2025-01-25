@@ -14,5 +14,5 @@ public interface IngredientCommandService {
 
     Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request);
 
-
+    Ingredient setCategory(Long memberId, Long ingredientId, IngredientRequestDTO.SetCategoryRequestDTO request);
 }

@@ -1,5 +1,6 @@
 package com.backend.DuruDuru.global.web.dto.Ingredient;
 
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.domain.enums.StorageType;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,4 +55,14 @@ public class IngredientRequestDTO {
     public static class IngredientImageRequestDTO {
         private MultipartFile image;
     }
+
+
+    @Getter
+    @Setter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class SetCategoryRequestDTO {
+        private MinorCategory minorCategory;
+    }
+
 }

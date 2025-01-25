@@ -1,5 +1,6 @@
 package com.backend.DuruDuru.global.web.dto.Ingredient;
 
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -70,6 +71,19 @@ public class IngredientResponseDTO {
         Long ingredientId;
         String ingredientName;
         String ingredientImageUrl;
+    }
+
+    @Builder
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SetCategoryResultDTO {
+        Long memberId;
+        Long fridgeId;
+        Long ingredientId;
+        String ingredientName;
+        MinorCategory minorCategory;
     }
 
 }

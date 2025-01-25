@@ -69,4 +69,14 @@ public class IngredientConverter {
                 .build();
     }
 
+
+    public static IngredientResponseDTO.SetCategoryResultDTO toSetCategoryResultDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.SetCategoryResultDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .minorCategory(ingredient.getMinorCategory())
+                .build();
+    }
 }
