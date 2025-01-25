@@ -1,8 +1,12 @@
 package com.backend.DuruDuru.global.converter;
 
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class IngredientConverter {
 
@@ -37,6 +41,23 @@ public class IngredientConverter {
                 .build();
     }
 
+    public static IngredientResponseDTO.IngredientDetailDTO toIngredientDetailDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.IngredientDetailDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .count(ingredient.getCount())
+                .purchaseDate(ingredient.getPurchaseDate())
+                .expiryDate(ingredient.getExpiryDate())
+                .storageType(String.valueOf(ingredient.getStorageType()))
+                .majorCategory(ingredient.getMajorCategory().name())
+                .minorCategory(ingredient.getMinorCategory().name())
+                .ingredientImageUrl(ingredient.getIngredientImg().getIngredientImgUrl())
+                .createdAt(ingredient.getCreatedAt())
+                .updatedAt(ingredient.getUpdatedAt())
+                .build();
+    }
 
     public static IngredientResponseDTO.PurchaseDateResultDTO toPurchaseDateResultDTO(Ingredient ingredient) {
         return IngredientResponseDTO.PurchaseDateResultDTO.builder()
@@ -81,4 +102,15 @@ public class IngredientConverter {
                 .build();
     }
 
+
+    public static IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO toMinorCategoryIngredientPreviewListDTO(
+            MinorCategory minorCategory, List<Ingredient> ingredients) {
+        return IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO.builder()
+                .minorCategory(minorCategory.name())
+                .count(ingredients.size())
+                .ingredients(ingredients.stream()
+                        .map(IngredientConverter::toIngredientDetailDTO)
+                        .collect(Collectors.toList()))
+                .build();
+    }
 }

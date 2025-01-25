@@ -19,6 +19,7 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import javax.management.relation.InvalidRelationIdException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -160,18 +161,21 @@ public class IngredientController {
 
     // 소분류 카테고리에 속하는 식재료 리스트 조회
     @GetMapping("/search/category/list")
-    @Operation(summary = "식재료 카테고리로 검색 API", description = "식재료를 카테고리로 검색하는 API 입니다. 입력된 카테고리에 속한 식재료를 모두 반환합니다.")
-    public ApiResponse<?> searchIngredientByCategory(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    @Operation(summary = "소분류 카테고리에 속하는 식재료 리스트 조회 API", description = "식재료를 카테고리로 검색하는 API 입니다. 입력된 카테고리에 속한 식재료를 모두 반환합니다.")
+    public ApiResponse<IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO> searchIngredientByMinorCategory(@RequestParam Long memberId,
+                                                                                                                    @RequestParam MinorCategory minorCategory) {
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMinorCategory(memberId, minorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK,
+                IngredientConverter.toMinorCategoryIngredientPreviewListDTO(minorCategory, ingredients));
     }
 
-    // 소분류 카테고리에 속하는 식재료 개수 조회
-    @GetMapping("/category/count")
-    @Operation(summary = "식재료 카테고리 개수 조회 API", description = "식재료 카테고리의 개수를 조회하는 API 입니다. 소분류 카테고리별 식재료 개수를 반환합니다.")
-    public ApiResponse<?> countIngredientByCategory(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-    }
 
+//    // 소분류 카테고리에 속하는 식재료 개수 조회
+//    @GetMapping("/category/count")
+//    @Operation(summary = "식재료 카테고리 개수 조회 API", description = "식재료 카테고리의 개수를 조회하는 API 입니다. 소분류 카테고리별 식재료 개수를 반환합니다.")
+//    public ApiResponse<?> countIngredientByCategory(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
 
 
 //    // 새로운 식재료 카테고리 추가

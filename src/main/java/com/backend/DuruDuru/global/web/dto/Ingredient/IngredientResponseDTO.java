@@ -5,6 +5,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class IngredientResponseDTO {
 
@@ -35,6 +36,25 @@ public class IngredientResponseDTO {
         LocalDateTime updatedAt;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class IngredientDetailDTO {
+        Long memberId;
+        Long fridgeId;
+        Long ingredientId;
+        String ingredientName;
+        Long count;
+        LocalDate purchaseDate;
+        LocalDate expiryDate;
+        String storageType;
+        String majorCategory;
+        String minorCategory;
+        String ingredientImageUrl;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
 
     @Getter
     @Builder
@@ -86,6 +106,18 @@ public class IngredientResponseDTO {
         private String majorCategory;
         private String minorCategory;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MinorCategoryIngredientPreviewListDTO {
+        private String minorCategory;
+        private int count;
+        private List<IngredientDetailDTO> ingredients;
+    }
+
 
 
 }
