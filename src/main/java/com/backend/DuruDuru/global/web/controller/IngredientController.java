@@ -58,6 +58,14 @@ public class IngredientController {
     }
 
 
+    // 대분류에 속하는 소분류 카테고리 조회
+    @GetMapping("/category/major-to-minor")
+    @Operation(summary = "대분류에 속하는 소분류 카테고리 조회 API", description = "대분류에 속하는 소분류 카테고리를 조회하는 API 입니다.")
+    public ApiResponse<?> majorToMinorCategory(){
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    }
+
+
     // 식재료 카테고리 설정
     @PostMapping("/{ingredient_id}/category")
     @Operation(summary = "식재료 카테고리 설정 API", description = "식재료의 카테고리를 설정하는 API 입니다.")
@@ -131,20 +139,28 @@ public class IngredientController {
     }
 
 
-    // 식재료 카테고리로 검색
-    @GetMapping("/search/category")
+    // 소분류 카테고리에 속하는 식재료 리스트 조회
+    @GetMapping("/search/category/list")
     @Operation(summary = "식재료 카테고리로 검색 API", description = "식재료를 카테고리로 검색하는 API 입니다. 입력된 카테고리에 속한 식재료를 모두 반환합니다.")
     public ApiResponse<?> searchIngredientByCategory(){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
-
-    // 새로운 식재료 카테고리 추가
-    @PostMapping("/category/add")
-    @Operation(summary = "새로운 식재료 카테고리 추가 API", description = "새로운 식재료 카테고리를 추가하는 API 입니다. 등록되지 않은 카테고리를 추가할때 사용됩니다. 사용자는 사용하지 않습니다.")
-    public ApiResponse<?> addNewCategory(){
+    // 소분류 카테고리에 속하는 식재료 개수 조회
+    @GetMapping("/category/count")
+    @Operation(summary = "식재료 카테고리 개수 조회 API", description = "식재료 카테고리의 개수를 조회하는 API 입니다. 소분류 카테고리별 식재료 개수를 반환합니다.")
+    public ApiResponse<?> countIngredientByCategory(){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
+
+
+
+//    // 새로운 식재료 카테고리 추가
+//    @PostMapping("/category/add")
+//    @Operation(summary = "새로운 식재료 카테고리 추가 API", description = "새로운 식재료 카테고리를 추가하는 API 입니다. 등록되지 않은 카테고리를 추가할때 사용됩니다. 사용자는 사용하지 않습니다.")
+//    public ApiResponse<?> addNewCategory(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
 
 
 }
