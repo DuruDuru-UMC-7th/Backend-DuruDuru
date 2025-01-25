@@ -4,7 +4,10 @@ import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.service.IngredientService.IngredientCommandService;
+import com.backend.DuruDuru.global.service.IngredientService.IngredientQueryService;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -15,6 +18,12 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 @RestController
 @RequiredArgsConstructor
 @Validated
@@ -24,6 +33,7 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "식재료 API", description = "식재료 관련 API입니다.")
 public class IngredientController {
     private final IngredientCommandService ingredientCommandService;
+    private final IngredientQueryService ingredientQueryService;
 
 //    // 영수증 이미지 업로드 (식재료 목록 자동 인식)
 //    @PostMapping("/receipt/upload")
@@ -61,8 +71,9 @@ public class IngredientController {
     // 대분류에 속하는 소분류 카테고리 조회
     @GetMapping("/category/major-to-minor")
     @Operation(summary = "대분류에 속하는 소분류 카테고리 조회 API", description = "대분류에 속하는 소분류 카테고리를 조회하는 API 입니다.")
-    public ApiResponse<?> majorToMinorCategory(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    public ApiResponse<?> majorToMinorCategory(@RequestParam MajorCategory majorCategory) {
+        Map<String, Object> category = ingredientQueryService.getMinorCategoriesByMajor(majorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, category);
     }
 
 

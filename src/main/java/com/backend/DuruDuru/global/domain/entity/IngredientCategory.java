@@ -1,6 +1,8 @@
 package com.backend.DuruDuru.global.domain.entity;
 
 import com.backend.DuruDuru.global.domain.common.BaseEntity;
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -20,14 +22,11 @@ public class IngredientCategory extends BaseEntity {
     @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
 
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "major_category_id", nullable = false)
-//    private MajorCategory majorCategory;
-//
-//    @ManyToOne(fetch = FetchType.LAZY)
-//    @JoinColumn(name = "minor_category_id", nullable = false)
-//    private MinorCategory minorCategory;
+    @Column(name = "minor_category", nullable = false, columnDefinition = "varchar(50)")
+    private MinorCategory minorCategory;
 
+    @Column(name = "major_category", nullable = false, columnDefinition = "varchar(50)")
+    private MajorCategory majorCategory;
 
     public void setIngredient(Ingredient ingredient) {
         if (this.ingredient != null) {
@@ -37,31 +36,4 @@ public class IngredientCategory extends BaseEntity {
 
         ingredient.getIngredientCategoryList().add(this);
     }
-
-//    public void setMajorCategory(MajorCategory majorCategory) {
-//        if (this.majorCategory != null) {
-//            this.majorCategory.getIngredientCategoryList().remove(this);
-//        }
-//        this.majorCategory = majorCategory;
-//
-//        if (majorCategory != null) {
-//            majorCategory.getIngredientCategoryList().add(this);
-//        }
-//    }
-
-//    public void setMinorCategory(MinorCategory minorCategory) {
-//        if (this.minorCategory != null) {
-//            this.minorCategory.getIngredientCategoryList().remove(this);
-//        }
-//        this.minorCategory = minorCategory;
-//
-//        if (minorCategory != null) {
-//            minorCategory.getIngredientCategoryList().add(this);
-//        }
-//    }
-
-
-
-
-
 }
