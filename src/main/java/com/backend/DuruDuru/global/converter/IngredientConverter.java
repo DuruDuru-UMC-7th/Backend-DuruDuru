@@ -76,7 +76,9 @@ public class IngredientConverter {
                 .fridgeId(ingredient.getFridge().getFridgeId())
                 .ingredientId(ingredient.getIngredientId())
                 .ingredientName(ingredient.getIngredientName())
-                .minorCategory(ingredient.getMinorCategory())
+                .majorCategory(ingredient.getMajorCategory().name()) // Enum to String
+                .minorCategory(ingredient.getMinorCategory().name()) // Enum to String
                 .build();
     }
+
 }

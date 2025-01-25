@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.web.dto.Ingredient;
 
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.domain.enums.StorageType;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -59,10 +60,16 @@ public class IngredientRequestDTO {
 
     @Getter
     @Setter
-    @AllArgsConstructor
     @NoArgsConstructor
+    @AllArgsConstructor
     public static class SetCategoryRequestDTO {
-        private MinorCategory minorCategory;
+        @NotBlank(message = "대분류를 입력해주세요.")
+        private String majorCategory;
+
+        @NotBlank(message = "소분류를 입력해주세요.")
+        private String minorCategory;
     }
+
+
 
 }

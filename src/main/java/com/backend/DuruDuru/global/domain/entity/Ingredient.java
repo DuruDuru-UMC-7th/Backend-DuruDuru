@@ -43,11 +43,11 @@ public class Ingredient extends BaseEntity {
     private StorageType storageType;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "major_category", nullable = false, columnDefinition = "varchar(50)")
+    @Column(name = "major_category", nullable = true, columnDefinition = "varchar(50)")
     private MajorCategory majorCategory;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "minor_category", nullable = false, columnDefinition = "varchar(50)")
+    @Column(name = "minor_category", nullable = true, columnDefinition = "varchar(50)")
     private MinorCategory minorCategory;
 
     @Column(name = "ingredient_image_url", length = 200, nullable = true)

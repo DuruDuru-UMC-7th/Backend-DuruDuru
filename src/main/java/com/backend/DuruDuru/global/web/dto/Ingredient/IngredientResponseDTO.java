@@ -73,17 +73,19 @@ public class IngredientResponseDTO {
         String ingredientImageUrl;
     }
 
-    @Builder
     @Getter
     @Setter
+    @Builder
     @NoArgsConstructor
     @AllArgsConstructor
     public static class SetCategoryResultDTO {
-        Long memberId;
-        Long fridgeId;
-        Long ingredientId;
-        String ingredientName;
-        MinorCategory minorCategory;
+        private Long memberId;
+        private Long fridgeId;
+        private Long ingredientId;
+        private String ingredientName;
+        private String majorCategory;
+        private String minorCategory;
     }
+
 
 }

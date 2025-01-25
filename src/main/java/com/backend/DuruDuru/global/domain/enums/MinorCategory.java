@@ -77,5 +77,10 @@ public enum MinorCategory {
     MinorCategory(MajorCategory majorCategory) {
         this.majorCategory = majorCategory;
     }
+
+    public static boolean isValidCategory(MajorCategory majorCategory, MinorCategory minorCategory) {
+        return minorCategory.getMajorCategory() == majorCategory;
+    }
+
 }
 

@@ -12,6 +12,7 @@ import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.parameters.P;
@@ -79,12 +80,16 @@ public class IngredientController {
 
     // 식재료 카테고리 설정
     @PostMapping("/{ingredient_id}/category")
-    @Operation(summary = "식재료 카테고리 설정 API", description = "식재료의 카테고리를 설정하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.SetCategoryResultDTO> setIngredientCategory(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
-                                                @RequestBody IngredientRequestDTO.SetCategoryRequestDTO request) {
+    @Operation(summary = "식재료 카테고리 설정 API", description = "식재료의 대분류와 소분류를 설정하는 API 입니다.")
+    public ApiResponse<?> setIngredientCategory(@RequestParam Long memberId,
+                                                @PathVariable("ingredient_id") Long ingredientId,
+                                                @RequestBody @Valid IngredientRequestDTO.SetCategoryRequestDTO request) {
+        log.info("SetCategoryRequestDTO: {}", request);
         Ingredient ingredient = ingredientCommandService.setCategory(memberId, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toSetCategoryResultDTO(ingredient));
     }
+
+
 
 
 

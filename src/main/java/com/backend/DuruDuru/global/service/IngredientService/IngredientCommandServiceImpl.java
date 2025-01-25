@@ -3,6 +3,8 @@ package com.backend.DuruDuru.global.service.IngredientService;
 import com.backend.DuruDuru.global.S3.AmazonS3Manager;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.*;
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.repository.*;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import jakarta.persistence.EntityManager;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Arrays;
 import java.util.UUID;
 
 @Service
@@ -133,6 +136,34 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         return ingredientRepository.save(ingredient);
     }
 
+    @Transactional
+    @Override
+    public Ingredient setCategory(Long memberId, Long ingredientId, IngredientRequestDTO.SetCategoryRequestDTO request) {
+        // 대분류 검증
+        MajorCategory majorCategory;
+        try {
+            majorCategory = MajorCategory.valueOf(request.getMajorCategory());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("존재하지 않는 대분류 카테고리입니다.");
+        }
+        // 소분류 검증
+        MinorCategory minorCategory;
+        try {
+            minorCategory = MinorCategory.valueOf(request.getMinorCategory());
+        } catch (IllegalArgumentException e) {
+            throw new IllegalArgumentException("존재하지 않는 소분류 카테고리입니다.");
+        }
+        // 대분류와 소분류 매칭 검증
+        if (!MinorCategory.isValidCategory(majorCategory, minorCategory)) {
+            throw new IllegalArgumentException("대분류와 소분류가 일치하지 않습니다.");
+        }
+
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 식재료 ID입니다."));
+
+        ingredient.updateCategory(majorCategory, minorCategory);
+        return ingredientRepository.save(ingredient);
+    }
 
 
 }
