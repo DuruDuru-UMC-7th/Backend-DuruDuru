@@ -11,9 +11,9 @@ public class TownConverter {
         return TownResponseDTO.TownResultDTO.builder()
                 .latitude(town.getLatitude())
                 .longitude(town.getLongitude())
-                .sido(town.getCity())
-                .sigungu(town.getDistrict())
-                .eupmyeondong(town.getTownName())
+                .sido(town.getSido())
+                .sigungu(town.getSigungu())
+                .eupmyeondong(town.getEupmyeondong())
                 .build();
     }
 
@@ -21,9 +21,9 @@ public class TownConverter {
         return Town.builder()
                 .latitude(request.getLatitude())
                 .longitude(request.getLongitude())
-                .city(request.getSido())
-                .district(request.getSigungu())
-                .townName(request.getEupmyeondong())
+                .sido(request.getSido())
+                .sigungu(request.getSigungu())
+                .eupmyeondong(request.getEupmyeondong())
                 .build();
     }
 }
