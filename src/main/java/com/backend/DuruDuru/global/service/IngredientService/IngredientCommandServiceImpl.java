@@ -19,6 +19,9 @@ import java.util.UUID;
 @Transactional
 @Slf4j
 public class IngredientCommandServiceImpl implements IngredientCommandService {
+    @Autowired // 엔티티매니저에만 해당
+    private EntityManager entityManager;
+
     private final MemberRepository memberRepository;
     private final IngredientRepository ingredientRepository;
     private final FridgeRepository fridgeRepository;
@@ -100,70 +103,33 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     }
 
 
-//    @Override
-//    public Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
-//        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-//                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
-//
-//        if (ingredient.getIngredientImg() != null) {
-//            s3Manager.deleteFile(ingredient.getIngredientImg().getIngredientImgUrl());
-//            ingredientImageRepository.delete(ingredient.getIngredientImg());
-//        }
-//
-//        String uuid = UUID.randomUUID().toString();
-//        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-//        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
-//
-//        IngredientImg ingredientImage = IngredientImg.builder()
-//                .ingredientImgUrl(fileUrl)
-//                .ingredient(ingredient)
-//                .build();
-//
-//        ingredientImageRepository.save(ingredientImage);
-//        // 삭재료 새 이미지 설정
-//        ingredient.setIngredientImg(ingredientImage);
-//        // 변경된 Ingredient 저장 (필요 시)
-//        Ingredient updatedIngredient = ingredientRepository.save(ingredient);
-//        return updatedIngredient;
-//    }
-
-    @Autowired
-    private EntityManager entityManager;
 
     @Transactional
     @Override
     public Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
-        // 1. Ingredient 조회
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
-
         if (ingredient.getIngredientImg() != null) {
             IngredientImg existingImage = ingredient.getIngredientImg();
 
-            // S3에서 기존 이미지 삭제
             s3Manager.deleteFile(existingImage.getIngredientImgUrl());
-
-            // 관계 제거 및 영속성 컨텍스트에서 삭제
             ingredient.setIngredientImg(null);
-            ingredientRepository.save(ingredient);
 
+            ingredientRepository.save(ingredient);
             // 삭제 작업을 DB에 반영
             entityManager.flush();
             entityManager.clear();
         }
-
-        // 3. 새 이미지 업로드
+        // 새로운 식재료 이미지 업로드
         String uuid = UUID.randomUUID().toString();
         String fileUrl = s3Manager.uploadFile(uuid, request.getImage());
 
-        // 4. 새로운 IngredientImg 생성 및 설정
         IngredientImg newImage = IngredientImg.builder()
                 .ingredientImgUrl(fileUrl)
                 .ingredient(ingredient)
                 .build();
-        ingredient.setIngredientImg(newImage); // 관계 설정
-
-        // 5. 변경된 Ingredient 저장 및 반환
+        ingredient.setIngredientImg(newImage);
+        // 식재료 이미지 업데이트
         return ingredientRepository.save(ingredient);
     }
 
