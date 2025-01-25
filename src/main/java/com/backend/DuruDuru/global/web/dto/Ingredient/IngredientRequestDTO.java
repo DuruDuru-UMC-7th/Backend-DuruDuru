@@ -1,6 +1,8 @@
 package com.backend.DuruDuru.global.web.dto.Ingredient;
 
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.domain.enums.StorageType;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -54,4 +56,20 @@ public class IngredientRequestDTO {
     public static class IngredientImageRequestDTO {
         private MultipartFile image;
     }
+
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class SetCategoryRequestDTO {
+        @NotBlank(message = "대분류를 입력해주세요.")
+        private String majorCategory;
+
+        @NotBlank(message = "소분류를 입력해주세요.")
+        private String minorCategory;
+    }
+
+
+
 }
