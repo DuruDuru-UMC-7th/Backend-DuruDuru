@@ -28,6 +28,9 @@ public class Trade extends BaseEntity {
     @Column(name = "body", nullable = false, columnDefinition = "varchar(500)")
     private String body;
 
+    @Column(name = "ingredient_count", nullable = false, columnDefinition = "bigint")
+    private Long ingredientCount;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "varchar(50)")
     private Status status;
