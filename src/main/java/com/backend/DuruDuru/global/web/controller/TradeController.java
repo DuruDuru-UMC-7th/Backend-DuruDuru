@@ -40,14 +40,14 @@ public class TradeController {
     // 품앗이 게시글 삭제
     @DeleteMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 삭제 API", description = "특정 품앗이를 삭제하는 API 입니다.")
-    public ApiResponse<?> deleteTradeById(){
+    public ApiResponse<?> deleteTrade(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 게시글 수정
     @PatchMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다.")
-    public ApiResponse<?> updateTradeById(){
+    public ApiResponse<?> updateTrade(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
