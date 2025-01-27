@@ -3,6 +3,11 @@ package com.backend.DuruDuru.global.web.controller;
 
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
+import com.backend.DuruDuru.global.converter.TradeConverter;
+import com.backend.DuruDuru.global.domain.entity.Trade;
+import com.backend.DuruDuru.global.service.TradeService.TradeCommandService;
+import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,29 +24,35 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "품앗이 API", description = "품앗이 API입니다.")
 public class TradeController {
 
+    private final TradeCommandService tradeCommandService;
+
     // 품앗이 게시글 등록
     @PostMapping("/")
     @Operation(summary = "품앗이 게시글 등록 API", description = "품앗이 게시글을 등록하는 API 입니다.")
-    public ApiResponse<?> createTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    public ApiResponse<TradeResponseDTO.CreateTradeResultDTO> createTrade(
+            @RequestParam Long memberId, Long ingredientId,
+            @RequestBody TradeRequestDTO.CreateTradeRequestDTO request
+            ){
+        Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toCreateTradeResultDTO(trade));
     }
 
     // 품앗이 게시글 삭제
-    @DeleteMapping("/{trade-id}")
+    @DeleteMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 삭제 API", description = "특정 품앗이를 삭제하는 API 입니다.")
     public ApiResponse<?> deleteTradeById(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 게시글 수정
-    @PatchMapping("/{trade-id}")
+    @PatchMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다.")
     public ApiResponse<?> updateTradeById(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 상세 조회
-    @GetMapping("/{trade-id}")
+    @GetMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 상세 조회 API", description = "특정 품앗이 게시글을 상세 조회하는 API 입니다.")
     public ApiResponse<?> findTradeById(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);

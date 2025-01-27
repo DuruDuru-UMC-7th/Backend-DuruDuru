@@ -78,4 +78,11 @@ public class Member extends BaseEntity {
         }
     }
 
+    public void addTrades(Trade trade) {
+        this.trades.add(trade);
+        if (trade.getMember() != this) {
+            trade.setMember(this);
+        }
+    }
+
 }
