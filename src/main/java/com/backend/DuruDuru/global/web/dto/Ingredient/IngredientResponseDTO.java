@@ -118,6 +118,15 @@ public class IngredientResponseDTO {
         private List<IngredientDetailDTO> ingredients;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class IngredientDetailListDTO {
+        private int count;
+        private List<IngredientDetailDTO> ingredients;
+    }
 
 
 }

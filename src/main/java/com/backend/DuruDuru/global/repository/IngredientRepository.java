@@ -9,5 +9,6 @@ import java.util.List;
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
     List<Ingredient> findByMember_MemberIdAndMinorCategory(Long memberId, MinorCategory minorCategory);
-
+    List<Ingredient> findAllByIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(String search);
+    List<Ingredient> findAllByOrderByCreatedAtDesc();
 }

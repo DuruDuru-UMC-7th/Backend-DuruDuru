@@ -59,6 +59,17 @@ public class IngredientConverter {
                 .build();
     }
 
+    public static IngredientResponseDTO.IngredientDetailListDTO toIngredientDetailListDTO(List<Ingredient> ingredients) {
+        List<IngredientResponseDTO.IngredientDetailDTO> ingredientDetailDTOList = ingredients.stream()
+                .map(IngredientConverter::toIngredientDetailDTO)
+                .collect(Collectors.toList());
+
+        return IngredientResponseDTO.IngredientDetailListDTO.builder()
+                .ingredients(ingredientDetailDTOList)
+                .count(ingredients.size())
+                .build();
+    }
+
     public static IngredientResponseDTO.PurchaseDateResultDTO toPurchaseDateResultDTO(Ingredient ingredient) {
         return IngredientResponseDTO.PurchaseDateResultDTO.builder()
                 .memberId(ingredient.getMember().getMemberId())
@@ -101,7 +112,6 @@ public class IngredientConverter {
                 .minorCategory(ingredient.getMinorCategory().name()) // Enum to String
                 .build();
     }
-
 
     public static IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO toMinorCategoryIngredientPreviewListDTO(
             MinorCategory minorCategory, List<Ingredient> ingredients) {
