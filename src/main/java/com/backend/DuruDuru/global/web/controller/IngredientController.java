@@ -20,10 +20,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.management.relation.InvalidRelationIdException;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -91,9 +88,6 @@ public class IngredientController {
     }
 
 
-
-
-
     // 식재료 보관 방식 설정
     @PostMapping("/{ingredient_id}/storage-type")
     @Operation(summary = "식재료 보관 방식 설정 API", description = "식재료의 보관 방식을 설정하는 API 입니다.")
@@ -154,8 +148,9 @@ public class IngredientController {
     // 식재료 이름으로 검색
     @GetMapping("/search/name")
     @Operation(summary = "식재료 이름으로 검색 API", description = "식재료를 이름으로 검색하는 API 입니다. 입력된 키워드가 포함된 식재료를 모두 반환합니다.")
-    public ApiResponse<?> searchIngredientByName(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    public ApiResponse<IngredientResponseDTO.IngredientDetailListDTO> searchIngredientByName(@RequestParam Optional<String> search){
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByName(Optional.of(search.orElse("")));
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientDetailListDTO(ingredients));
     }
 
 

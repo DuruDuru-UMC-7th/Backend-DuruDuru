@@ -40,4 +40,12 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
         return ingredientRepository.findByMember_MemberIdAndMinorCategory(memberId, minorCategory);
     }
 
+    @Override
+    public List<Ingredient> getIngredientsByName(Optional<String> optSearch) {
+        if (optSearch.isPresent()) {
+            String search = optSearch.get();
+            return ingredientRepository.findAllByIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(search);
+        }
+        return ingredientRepository.findAllByOrderByCreatedAtDesc();
+    }
 }
