@@ -8,7 +8,7 @@ import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
 
 public class TradeConverter {
 
-    public static TradeResponseDTO.CreateTradeResultDTO toCreateTradeResultDTO(Trade trade) {
+    public static TradeResponseDTO.CreateTradeResultDTO toTradeResultDTO(Trade trade) {
         return TradeResponseDTO.CreateTradeResultDTO.builder()
                 .tradeId(trade.getTradeId())
                 .memberId(trade.getMember().getMemberId())

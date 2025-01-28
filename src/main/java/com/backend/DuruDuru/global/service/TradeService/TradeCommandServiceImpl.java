@@ -43,4 +43,13 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
         return newTrade;
     }
+
+    // 품앗이 게시글 상세 조회
+    @Override
+    @Transactional
+    public Trade getTrade(Long tradeId) {
+        Trade trade = tradeRepository.findById(tradeId)
+                .orElseThrow(() -> new IllegalArgumentException("Trade not found. ID: " + tradeId));
+        return trade;
+    }
 }

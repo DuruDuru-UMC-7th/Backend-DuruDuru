@@ -7,4 +7,6 @@ public interface TradeCommandService {
 
     // Trade 엔티티를 저장하는 메서드
     Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request);
+    // 품앗이 게시글 상세 조회
+    Trade getTrade(Long tradeId);
 }

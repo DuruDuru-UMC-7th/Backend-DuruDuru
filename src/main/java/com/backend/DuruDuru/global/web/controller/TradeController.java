@@ -5,7 +5,9 @@ import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.TradeConverter;
 import com.backend.DuruDuru.global.domain.entity.Trade;
+import com.backend.DuruDuru.global.repository.TradeRepository;
 import com.backend.DuruDuru.global.service.TradeService.TradeCommandService;
+import com.backend.DuruDuru.global.service.TradeService.TradeQueryService;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -25,6 +27,8 @@ import org.springframework.web.bind.annotation.*;
 public class TradeController {
 
     private final TradeCommandService tradeCommandService;
+    private final TradeQueryService tradeQueryService;
+    private final TradeRepository tradeRepository;
 
     // 품앗이 게시글 등록
     @PostMapping("/")
@@ -34,7 +38,7 @@ public class TradeController {
             @RequestBody TradeRequestDTO.CreateTradeRequestDTO request
             ){
         Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toCreateTradeResultDTO(trade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
     }
 
     // 품앗이 게시글 삭제
@@ -54,8 +58,11 @@ public class TradeController {
     // 품앗이 상세 조회
     @GetMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 상세 조회 API", description = "특정 품앗이 게시글을 상세 조회하는 API 입니다.")
-    public ApiResponse<?> findTradeById(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    public ApiResponse<TradeResponseDTO.CreateTradeResultDTO> findTradeById(
+            @PathVariable("trade_id") Long tradeId
+    ){
+        Trade trade = tradeCommandService.getTrade(tradeId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
     }
 
     // 품앗이 가능한 식재료 조회
