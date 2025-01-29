@@ -4,6 +4,7 @@ import com.backend.DuruDuru.global.domain.common.BaseEntity;
 import com.backend.DuruDuru.global.domain.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,9 @@ public class Member extends BaseEntity {
     private Gender gender;
 
     private Long age;
+
+    @ColumnDefault("0") // 삭제시 1
+    private int isDelete;
 
     private String accessToken;
     private String refreshToken;
