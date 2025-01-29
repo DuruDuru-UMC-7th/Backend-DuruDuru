@@ -39,3 +39,4 @@ out/
 ### yml ###
 docker-compose.yml
 **/main/resources/application.yml
+*~

@@ -1,12 +1,21 @@
 package com.backend.DuruDuru.global.converter;
 
 import com.backend.DuruDuru.global.domain.entity.Member;
+import com.backend.DuruDuru.global.web.dto.AuthDTO.KakaoProfile;
 import com.backend.DuruDuru.global.web.dto.Member.AuthResponseDTO;
 
-public class MemberConverter {
+public class AuthConverter {
 
-    public static AuthResponseDTO.EmailLoginResponse toEmailLoginResponse(String accessToken, String refreshToken, Member member) {
-        return AuthResponseDTO.EmailLoginResponse.builder()
+    public static Member toMember(KakaoProfile kakaoProfile, String nickname) {
+        return Member.builder()
+                .nickName(nickname)
+                .email(kakaoProfile.getKakaoAccount().getEmail())
+                .build();
+    }
+
+    public static AuthResponseDTO.OAuthResponse toOAuthResponse(
+            String accessToken, String refreshToken, Member member) {
+        return AuthResponseDTO.OAuthResponse.builder()
                 .accessToken(accessToken)
                 .refreshToken(refreshToken)
                 .memberId(member.getMemberId())
