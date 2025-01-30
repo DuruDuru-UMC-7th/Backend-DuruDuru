@@ -2,6 +2,8 @@ package com.backend.DuruDuru.global.web.controller;
 
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
+import com.backend.DuruDuru.global.converter.IngredientConverter;
+import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.service.OCRService.ClovaOCRReceiptService;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -37,16 +39,13 @@ public class OCRController {
 //        return ApiResponse.onSuccess(SuccessStatus.OCR_OK, productNames);
 //    }
 
-    @Operation(summary = "영수증 이미지 업로드", description = "영수증 이미지를 업로드하여 상품명을 추출하고, 카테고리를 자동으로 분류합니다.")
     @PostMapping(value = "/receipt", consumes = "multipart/form-data")
-    public ApiResponse<List<IngredientResponseDTO.SetCategoryResultDTO>> processReceipt(@RequestParam("Receipt") MultipartFile file) throws IOException {
-        log.info("Received file: {}", file.getOriginalFilename());
+    @Operation(summary = "영수증 OCR 처리 및 식재료 저장 API", description = "영수증 이미지를 업로드하여 상품명을 추출하고, 저장된 모든 식재료를 반환합니다.")
+    public ApiResponse<IngredientResponseDTO.IngredientOCRDetailListDTO> ingredientOcrAdd(@RequestParam Long memberId, @RequestParam("file") MultipartFile file) throws IOException {
+        List<Ingredient> savedIngredients = clovaOCRReceiptService.extractAndCategorizeProductNames(file, memberId);
 
-        // 상품명 추출 및 카테고리 분류
-        List<IngredientResponseDTO.SetCategoryResultDTO> result = clovaOCRReceiptService.extractAndCategorizeProductNames(file);
-
-        log.info("Categorized products: {}", result);
-        return ApiResponse.onSuccess(SuccessStatus.OCR_OK, result);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientOCRDetailListDTO(savedIngredients));
     }
+
 
 }

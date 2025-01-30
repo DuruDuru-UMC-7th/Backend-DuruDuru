@@ -5,6 +5,7 @@ import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -123,4 +124,31 @@ public class IngredientConverter {
                         .collect(Collectors.toList()))
                 .build();
     }
+
+
+    public static IngredientResponseDTO.CreateOCRIngredientResultDTO toCreateOCRResultDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.CreateOCRIngredientResultDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .majorCategory(ingredient.getMajorCategory().name())
+                .minorCategory(ingredient.getMinorCategory().name())
+                .build();
+    }
+
+    public static IngredientResponseDTO.IngredientOCRDetailListDTO toIngredientOCRDetailListDTO(List<Ingredient> ingredients) {
+        LocalDate purchaseDate = ingredients.isEmpty() ? null : ingredients.get(0).getPurchaseDate();
+
+        List<IngredientResponseDTO.CreateOCRIngredientResultDTO> ingredientOCRDetailDTOList = ingredients.stream()
+                .map(IngredientConverter::toCreateOCRResultDTO)
+                .collect(Collectors.toList());
+
+        return IngredientResponseDTO.IngredientOCRDetailListDTO.builder()
+                .purchaseDate(purchaseDate)
+                .ingredients(ingredientOCRDetailDTOList)
+                .build();
+    }
+
+
 }
