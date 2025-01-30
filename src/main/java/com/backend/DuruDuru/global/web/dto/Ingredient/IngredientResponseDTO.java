@@ -1,5 +1,6 @@
 package com.backend.DuruDuru.global.web.dto.Ingredient;
 
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import lombok.*;
 
@@ -128,5 +129,29 @@ public class IngredientResponseDTO {
         private List<IngredientDetailDTO> ingredients;
     }
 
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CreateOCRIngredientResultDTO {
+        private Long memberId;
+        private Long fridgeId;
+        private Long ingredientId;
+        private String ingredientName;
+        //private Long count;
+        private String majorCategory;
+        private String minorCategory;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class IngredientOCRDetailListDTO {
+        private LocalDate purchaseDate;
+        private List<CreateOCRIngredientResultDTO> ingredients;
+    }
 
 }

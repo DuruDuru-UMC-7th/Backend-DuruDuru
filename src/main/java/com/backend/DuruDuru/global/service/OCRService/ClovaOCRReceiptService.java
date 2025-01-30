@@ -1,20 +1,29 @@
 package com.backend.DuruDuru.global.service.OCRService;
 
+import com.backend.DuruDuru.global.domain.entity.Fridge;
+import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
-import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
+import com.backend.DuruDuru.global.repository.FridgeRepository;
+import com.backend.DuruDuru.global.repository.IngredientRepository;
+import com.backend.DuruDuru.global.repository.MemberRepository;
+
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -22,6 +31,8 @@ import java.util.UUID;
 
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class ClovaOCRReceiptService {
 
@@ -31,12 +42,11 @@ public class ClovaOCRReceiptService {
     @Value("${clova.ocr.secret-key}")
     private String secretKey;
 
+
     private final CategoryMapper categoryMapper;
-
-    public ClovaOCRReceiptService(CategoryMapper categoryMapper) {
-        this.categoryMapper = categoryMapper;
-    }
-
+    private final MemberRepository memberRepository;
+    private final IngredientRepository ingredientRepository;
+    private final FridgeRepository fridgeRepository;
 
     public List<String> extractProductNames(MultipartFile file) {
         try {
@@ -238,32 +248,61 @@ public class ClovaOCRReceiptService {
     }
 
 
+    ////////////////////////////////////////////
 
-    public List<IngredientResponseDTO.SetCategoryResultDTO> extractAndCategorizeProductNames(MultipartFile file) {
-        try {
-            // Step 1: OCR로 상품명 추출
-            List<String> productNames = extractProductNames(file);
-
-            // Step 2: 상품명을 기반으로 카테고리 분류
-            List<IngredientResponseDTO.SetCategoryResultDTO> categorizedProducts = new ArrayList<>();
-            for (String productName : productNames) {
-                MinorCategory minorCategory = categoryMapper.mapToMinorCategory(productName);
-                MajorCategory majorCategory = minorCategory != null ? minorCategory.getMajorCategory() : MajorCategory.기타;
-
-                categorizedProducts.add(IngredientResponseDTO.SetCategoryResultDTO.builder()
-                        .ingredientName(productName)
-                        .majorCategory(majorCategory.name())
-                        .minorCategory(minorCategory != null ? minorCategory.name() : "기타")
-                        .build());
-            }
-
-            return categorizedProducts;
-        } catch (Exception e) {
-            log.error("Error during OCR process", e);
-            return new ArrayList<>();
+    // OCR Main 로직
+    @Transactional
+    public List<Ingredient> extractAndCategorizeProductNames(MultipartFile file, Long memberId) {
+        Member member = findMemberById(memberId);
+        Fridge fridge = member.getFridge();
+        if (fridge == null) {
+            throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
         }
+        // 식재료 추출
+        List<String> productNames = extractProductNames(file);
+
+        List<Ingredient> savedIngredients = new ArrayList<>();
+        for (String productName : productNames) {
+            try {
+                Ingredient newIngredient = createAndSaveIngredient(productName, member, fridge);
+                savedIngredients.add(newIngredient);
+            } catch (Exception e) {
+                log.error("식재료 분류 실패: {}", productName, e);
+            }
+        }
+
+        return savedIngredients;
+    }
+
+    private Ingredient createAndSaveIngredient(String productName, Member member, Fridge fridge) {
+        MinorCategory minorCategory = categoryMapper.mapToMinorCategory(productName);
+        MajorCategory majorCategory = (minorCategory != null) ? minorCategory.getMajorCategory() : MajorCategory.기타;
+        if (minorCategory == null) {
+            minorCategory = MinorCategory.기타; // 매핑 안되면 소분류 기타로 설정
+        }
+
+        Ingredient ingredient = Ingredient.builder()
+                .member(member)
+                .fridge(fridge)
+                .ingredientName(productName)
+                .majorCategory(majorCategory)
+                .minorCategory(minorCategory != null ? minorCategory : MinorCategory.기타)
+                .count(1L)
+                .purchaseDate(LocalDate.now())
+                //.expiryDate(LocalDate.now().plusDays(7))
+                .build();
+        return ingredientRepository.save(ingredient);
     }
 
 
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+    }
+
+    private Fridge findFridgeById(Long fridgeId) {
+        return fridgeRepository.findById(fridgeId)
+                .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
+    }
 
 }
