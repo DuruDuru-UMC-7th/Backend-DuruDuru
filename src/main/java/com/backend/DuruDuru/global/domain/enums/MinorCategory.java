@@ -65,12 +65,35 @@ public enum MinorCategory {
     // 건조식품
     건조과일(MajorCategory.건조식품),
     건미역(MajorCategory.건조식품),
-    통조림(MajorCategory.건조식품),
+
+    // 가루
+    곡물가루(MajorCategory.가루),
+    고춧가루(MajorCategory.가루),
+    깨가루(MajorCategory.가루),
+    전분(MajorCategory.가루),
+    콩가루(MajorCategory.가루),
 
     // 기타
+    통조림(MajorCategory.기타),
     과자(MajorCategory.기타),
+    초콜릿(MajorCategory.기타),
     과채음료(MajorCategory.기타),
-    탄산음료(MajorCategory.기타);
+    탄산음료(MajorCategory.기타),
+    묵류(MajorCategory.기타),
+    장류(MajorCategory.기타),
+    밀떡(MajorCategory.기타),
+    쌀떡(MajorCategory.기타),
+    건조면류(MajorCategory.기타),
+    라면(MajorCategory.기타),
+    생면(MajorCategory.기타),
+    소스류(MajorCategory.기타),
+    조미료류(MajorCategory.기타),
+    기타(MajorCategory.기타);
+
+
+
+
+
 
     private final MajorCategory majorCategory;
 

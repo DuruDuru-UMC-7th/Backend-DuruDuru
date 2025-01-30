@@ -1,5 +1,8 @@
 package com.backend.DuruDuru.global.service.OCRService;
 
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.json.JSONArray;
@@ -27,6 +30,13 @@ public class ClovaOCRReceiptService {
 
     @Value("${clova.ocr.secret-key}")
     private String secretKey;
+
+    private final CategoryMapper categoryMapper;
+
+    public ClovaOCRReceiptService(CategoryMapper categoryMapper) {
+        this.categoryMapper = categoryMapper;
+    }
+
 
     public List<String> extractProductNames(MultipartFile file) {
         try {
@@ -229,6 +239,30 @@ public class ClovaOCRReceiptService {
 
 
 
+    public List<IngredientResponseDTO.SetCategoryResultDTO> extractAndCategorizeProductNames(MultipartFile file) {
+        try {
+            // Step 1: OCR로 상품명 추출
+            List<String> productNames = extractProductNames(file);
+
+            // Step 2: 상품명을 기반으로 카테고리 분류
+            List<IngredientResponseDTO.SetCategoryResultDTO> categorizedProducts = new ArrayList<>();
+            for (String productName : productNames) {
+                MinorCategory minorCategory = categoryMapper.mapToMinorCategory(productName);
+                MajorCategory majorCategory = minorCategory != null ? minorCategory.getMajorCategory() : MajorCategory.기타;
+
+                categorizedProducts.add(IngredientResponseDTO.SetCategoryResultDTO.builder()
+                        .ingredientName(productName)
+                        .majorCategory(majorCategory.name())
+                        .minorCategory(minorCategory != null ? minorCategory.name() : "기타")
+                        .build());
+            }
+
+            return categorizedProducts;
+        } catch (Exception e) {
+            log.error("Error during OCR process", e);
+            return new ArrayList<>();
+        }
+    }
 
 
 

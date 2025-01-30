@@ -13,5 +13,6 @@ public enum MajorCategory {
     버섯,
     두부,
     건조식품,
-    기타;
+    기타,
+    가루;
 }
