@@ -263,7 +263,7 @@ public class ClovaOCRReceiptService {
             throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
         }
 
-        Receipt receipt = createReceipt(member);
+        Receipt receipt = createReceipt(memberId);
 
         List<String> productNames = extractProductNames(file);
         List<Ingredient> savedIngredients = new ArrayList<>();
@@ -293,7 +293,7 @@ public class ClovaOCRReceiptService {
                 .majorCategory(majorCategory)
                 .minorCategory(minorCategory != null ? minorCategory : MinorCategory.기타)
                 .count(1L)
-                .purchaseDate(LocalDate.now())
+                .purchaseDate(receipt.getPurchaseDate())
                 //.expiryDate(LocalDate.now().plusDays(7))
                 .receipt(receipt)
                 .build();
@@ -313,6 +313,19 @@ public class ClovaOCRReceiptService {
     }
 
 
+    public Receipt updateOCRPurchaseDate(Long memberId, Long receiptId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
+        Member member = findMemberById(memberId);
+        Receipt receipt = receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
+
+        receipt.setPurchaseDate(request.getPurchaseDate());
+        for (Ingredient ingredient : receipt.getIngredients()) {
+            ingredient.setPurchaseDate(request.getPurchaseDate());
+        }
+        return receipt;
+    }
+
+
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
@@ -323,10 +336,14 @@ public class ClovaOCRReceiptService {
                 .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
     }
 
-    private Receipt createReceipt(Member member) {
+    @Transactional
+    public Receipt createReceipt(Long memberId) {
+        Member member = findMemberById(memberId);
         Receipt receipt = Receipt.builder()
                 .member(member)
+                .purchaseDate(LocalDate.now()) // 영수증 등록한 날짜(응답 요청 날짜)로 설정
                 .build();
         return receiptRepository.save(receipt);
     }
+
 }

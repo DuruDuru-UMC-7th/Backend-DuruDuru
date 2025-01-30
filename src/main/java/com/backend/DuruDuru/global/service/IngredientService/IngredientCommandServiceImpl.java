@@ -65,7 +65,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient updateIngredient(Long memberId, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
         Member member = findMemberById(memberId);
-        //Fridge fridge = findFridgeById(fridgeId);
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
 
@@ -75,9 +74,8 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     }
 
     @Override
-    public void deleteIngredient(Long memberId, Long fridgeId, Long ingredientId) {
+    public void deleteIngredient(Long memberId, Long ingredientId) {
         Member member = findMemberById(memberId);
-        Fridge fridge = findFridgeById(fridgeId);
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
 

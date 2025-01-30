@@ -1,6 +1,7 @@
 package com.backend.DuruDuru.global.converter;
 
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Receipt;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
@@ -165,5 +166,13 @@ public class IngredientConverter {
                 .build();
     }
 
+    public static IngredientResponseDTO.UpdateOCRPurchaseDateResultDTO toOCRPurchaseDateResultDTO(Receipt receipt) {
+        return IngredientResponseDTO.UpdateOCRPurchaseDateResultDTO.builder()
+                .memberId(receipt.getMember().getMemberId())
+                .receiptId(receipt.getReceiptId())
+                .fridgeId(receipt.getMember().getFridgeId())
+                .purchaseDate(receipt.getPurchaseDate())
+                .build();
+    }
 
 }

@@ -171,4 +171,14 @@ public class IngredientResponseDTO {
         String minorCategory;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateOCRPurchaseDateResultDTO {
+        Long memberId;
+        Long fridgeId;
+        Long receiptId;
+        LocalDate purchaseDate;
+    }
 }
