@@ -108,12 +108,12 @@ public class IngredientController {
     }
 
 
-    // 식재료 소비기한 등록 (자동 계산 포함)
-    @PostMapping("/{ingredient_id}/expiry-date")
-    @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
-    public ApiResponse<?> ingredientExpiryDate(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-    }
+//    // 식재료 소비기한 등록 (자동 계산 포함)
+//    @PostMapping("/{ingredient_id}/expiry-date")
+//    @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
+//    public ApiResponse<?> ingredientExpiryDate(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
 
 
     // 식재료 직접 등록

@@ -6,6 +6,7 @@ import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.Receipt;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
+import com.backend.DuruDuru.global.domain.enums.StorageType;
 import com.backend.DuruDuru.global.repository.FridgeRepository;
 import com.backend.DuruDuru.global.repository.IngredientRepository;
 import com.backend.DuruDuru.global.repository.MemberRepository;
@@ -286,15 +287,20 @@ public class ClovaOCRReceiptService {
             minorCategory = MinorCategory.기타; // 매핑 안되면 소분류 기타로 설정
         }
 
+        int shelfLifeDays = minorCategory.getShelfLifeDays();
+        StorageType storageType = minorCategory.getStorageType();
+
+
         Ingredient ingredient = Ingredient.builder()
                 .member(member)
                 .fridge(fridge)
                 .ingredientName(productName)
                 .majorCategory(majorCategory)
                 .minorCategory(minorCategory != null ? minorCategory : MinorCategory.기타)
+                .storageType(storageType)
                 .count(1L)
                 .purchaseDate(receipt.getPurchaseDate())
-                //.expiryDate(LocalDate.now().plusDays(7))
+                .expiryDate(receipt.getPurchaseDate().plusDays(shelfLifeDays))
                 .receipt(receipt)
                 .build();
         return ingredientRepository.save(ingredient);

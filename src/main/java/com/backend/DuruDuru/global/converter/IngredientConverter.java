@@ -137,6 +137,8 @@ public class IngredientConverter {
                 .count(ingredient.getCount())
                 .majorCategory(ingredient.getMajorCategory().name())
                 .minorCategory(ingredient.getMinorCategory().name())
+                .storageType(ingredient.getStorageType().name())
+                .expireDate(ingredient.getExpiryDate())
                 .build();
     }
 
@@ -163,6 +165,8 @@ public class IngredientConverter {
                 .count(ingredient.getCount())
                 .majorCategory(ingredient.getMajorCategory().name())
                 .minorCategory(ingredient.getMinorCategory().name())
+                .storageType(ingredient.getStorageType().name())
+                .expireDate(ingredient.getExpiryDate())
                 .build();
     }
 
