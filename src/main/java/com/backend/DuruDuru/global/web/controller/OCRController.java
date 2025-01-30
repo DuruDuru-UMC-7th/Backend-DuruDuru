@@ -48,7 +48,7 @@ public class OCRController {
         return ApiResponse.onSuccess(SuccessStatus.OCR_OK, IngredientConverter.toIngredientOCRDetailListDTO(savedIngredients));
     }
 
-    @PatchMapping(value = "/receipt/{ingredient_id}")
+    @PatchMapping(value = "/ingredient/{ingredient_id}")
     @Operation (summary = "OCR 인식된 식재료 정보 수정 API", description = "OCR 인식된 식재료 이름 및 수량을 수정하는 API 입니다.")
     public ApiResponse<IngredientResponseDTO.UpdateOCRIngredientResultDTO> ingredientOcrUpdate(@PathVariable("ingredient_id") Long ingredientId, @RequestParam Long memberId, Long receiptId,
                                                                                          @RequestBody IngredientRequestDTO.UpdateOCRIngredientDTO request) {
