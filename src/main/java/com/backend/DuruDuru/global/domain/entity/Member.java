@@ -70,6 +70,17 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<LikeTrade> likeTrades = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Receipt> receipts = new ArrayList<>();
+
+    public void addReceipt(Receipt receipt) {
+        this.receipts.add(receipt);
+        if (receipt.getMember() != this) {
+            receipt.setMember(this);
+        }
+    }
+
+
     public void updateToken(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;

@@ -67,6 +67,10 @@ public class Ingredient extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "receipt_id", nullable = true)
+    private Receipt receipt;
+
     @OneToOne(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private IngredientImg ingredientImg;
 
@@ -80,9 +84,19 @@ public class Ingredient extends BaseEntity {
     public void setFridge(Fridge fridge) {
         this.fridge = fridge;
     }
+
     public void update(IngredientRequestDTO.UpdateIngredientDTO request){
         this.ingredientName = request.getIngredientName();
         this.count = request.getCount();
+    }
+
+    public void updateOCR(IngredientRequestDTO.UpdateOCRIngredientDTO request){
+        this.ingredientName = request.getIngredientName();
+        this.count = request.getCount();
+    }
+
+    public void setReceipt(Receipt receipt) {
+        this.receipt = receipt;
     }
 
     public void updateCategory(MajorCategory majorCategory, MinorCategory minorCategory) {

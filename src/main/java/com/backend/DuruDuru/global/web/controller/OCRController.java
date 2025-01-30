@@ -5,6 +5,7 @@ import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.service.OCRService.ClovaOCRReceiptService;
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -44,8 +45,15 @@ public class OCRController {
     public ApiResponse<IngredientResponseDTO.IngredientOCRDetailListDTO> ingredientOcrAdd(@RequestParam Long memberId, @RequestParam("file") MultipartFile file) throws IOException {
         List<Ingredient> savedIngredients = clovaOCRReceiptService.extractAndCategorizeProductNames(file, memberId);
 
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientOCRDetailListDTO(savedIngredients));
+        return ApiResponse.onSuccess(SuccessStatus.OCR_OK, IngredientConverter.toIngredientOCRDetailListDTO(savedIngredients));
     }
 
+    @PatchMapping(value = "/receipt/{ingredient_id}")
+    @Operation (summary = "OCR 인식된 식재료 정보 수정 API", description = "OCR 인식된 식재료 이름 및 수량을 수정하는 API 입니다.")
+    public ApiResponse<IngredientResponseDTO.UpdateOCRIngredientResultDTO> ingredientOcrUpdate(@PathVariable("ingredient_id") Long ingredientId, @RequestParam Long memberId, Long receiptId,
+                                                                                         @RequestBody IngredientRequestDTO.UpdateOCRIngredientDTO request) {
+        Ingredient updateOCRIngredient = clovaOCRReceiptService.updateOCRIngredient(memberId, ingredientId, receiptId, request);
+        return ApiResponse.onSuccess(SuccessStatus.OCR_OK, IngredientConverter.UpdateOCRIngredientResultDTO(updateOCRIngredient));
+    }
 
 }

@@ -33,7 +33,6 @@ public enum SuccessStatus implements BaseCode {
     // 채팅 관련 응답
     CHAT_OK(HttpStatus.OK, "CHAT_7000", "성공입니다.");
 
-
     private final HttpStatus httpStatus;
     private final String code;
     private final String message;

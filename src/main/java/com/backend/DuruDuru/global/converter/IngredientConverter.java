@@ -129,9 +129,11 @@ public class IngredientConverter {
     public static IngredientResponseDTO.CreateOCRIngredientResultDTO toCreateOCRResultDTO(Ingredient ingredient) {
         return IngredientResponseDTO.CreateOCRIngredientResultDTO.builder()
                 .memberId(ingredient.getMember().getMemberId())
+                .receiptId(ingredient.getReceipt().getReceiptId())
                 .fridgeId(ingredient.getFridge().getFridgeId())
                 .ingredientId(ingredient.getIngredientId())
                 .ingredientName(ingredient.getIngredientName())
+                .count(ingredient.getCount())
                 .majorCategory(ingredient.getMajorCategory().name())
                 .minorCategory(ingredient.getMinorCategory().name())
                 .build();
@@ -147,6 +149,19 @@ public class IngredientConverter {
         return IngredientResponseDTO.IngredientOCRDetailListDTO.builder()
                 .purchaseDate(purchaseDate)
                 .ingredients(ingredientOCRDetailDTOList)
+                .build();
+    }
+
+    public static IngredientResponseDTO.UpdateOCRIngredientResultDTO UpdateOCRIngredientResultDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.UpdateOCRIngredientResultDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .receiptId(ingredient.getReceipt().getReceiptId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .count(ingredient.getCount())
+                .majorCategory(ingredient.getMajorCategory().name())
+                .minorCategory(ingredient.getMinorCategory().name())
                 .build();
     }
 

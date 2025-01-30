@@ -136,10 +136,11 @@ public class IngredientResponseDTO {
     @NoArgsConstructor
     public static class CreateOCRIngredientResultDTO {
         private Long memberId;
+        private Long receiptId;
         private Long fridgeId;
         private Long ingredientId;
         private String ingredientName;
-        //private Long count;
+        private Long count;
         private String majorCategory;
         private String minorCategory;
     }
@@ -152,6 +153,22 @@ public class IngredientResponseDTO {
     public static class IngredientOCRDetailListDTO {
         private LocalDate purchaseDate;
         private List<CreateOCRIngredientResultDTO> ingredients;
+    }
+
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateOCRIngredientResultDTO {
+        Long memberId;
+        Long receiptId;
+        Long fridgeId;
+        Long ingredientId;
+        String ingredientName;
+        Long count;
+        String majorCategory;
+        String minorCategory;
     }
 
 }

@@ -3,12 +3,15 @@ package com.backend.DuruDuru.global.service.OCRService;
 import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
+import com.backend.DuruDuru.global.domain.entity.Receipt;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.repository.FridgeRepository;
 import com.backend.DuruDuru.global.repository.IngredientRepository;
 import com.backend.DuruDuru.global.repository.MemberRepository;
 
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
+import com.backend.DuruDuru.global.repository.ReceiptRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
@@ -47,6 +50,7 @@ public class ClovaOCRReceiptService {
     private final MemberRepository memberRepository;
     private final IngredientRepository ingredientRepository;
     private final FridgeRepository fridgeRepository;
+    private final ReceiptRepository receiptRepository;
 
     public List<String> extractProductNames(MultipartFile file) {
         try {
@@ -258,13 +262,14 @@ public class ClovaOCRReceiptService {
         if (fridge == null) {
             throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
         }
-        // 식재료 추출
-        List<String> productNames = extractProductNames(file);
 
+        Receipt receipt = createReceipt(member);
+
+        List<String> productNames = extractProductNames(file);
         List<Ingredient> savedIngredients = new ArrayList<>();
         for (String productName : productNames) {
             try {
-                Ingredient newIngredient = createAndSaveIngredient(productName, member, fridge);
+                Ingredient newIngredient = createAndSaveIngredient(productName, member, fridge, receipt);
                 savedIngredients.add(newIngredient);
             } catch (Exception e) {
                 log.error("식재료 분류 실패: {}", productName, e);
@@ -274,7 +279,7 @@ public class ClovaOCRReceiptService {
         return savedIngredients;
     }
 
-    private Ingredient createAndSaveIngredient(String productName, Member member, Fridge fridge) {
+    private Ingredient createAndSaveIngredient(String productName, Member member, Fridge fridge, Receipt receipt) {
         MinorCategory minorCategory = categoryMapper.mapToMinorCategory(productName);
         MajorCategory majorCategory = (minorCategory != null) ? minorCategory.getMajorCategory() : MajorCategory.기타;
         if (minorCategory == null) {
@@ -290,8 +295,21 @@ public class ClovaOCRReceiptService {
                 .count(1L)
                 .purchaseDate(LocalDate.now())
                 //.expiryDate(LocalDate.now().plusDays(7))
+                .receipt(receipt)
                 .build();
         return ingredientRepository.save(ingredient);
+    }
+
+
+    public Ingredient updateOCRIngredient(Long memberId, Long ingredientId, Long receiptId, IngredientRequestDTO.UpdateOCRIngredientDTO request) {
+        Member member = findMemberById(memberId);
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+        Receipt receipt = receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
+
+        ingredient.updateOCR(request);
+        return ingredient;
     }
 
 
@@ -305,4 +323,10 @@ public class ClovaOCRReceiptService {
                 .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
     }
 
+    private Receipt createReceipt(Member member) {
+        Receipt receipt = Receipt.builder()
+                .member(member)
+                .build();
+        return receiptRepository.save(receipt);
+    }
 }
