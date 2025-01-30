@@ -93,4 +93,9 @@ public class Member extends BaseEntity {
         }
     }
 
+    public Long getFridgeId() {
+        return fridge != null ? fridge.getFridgeId() : null;
+    }
+
+
 }

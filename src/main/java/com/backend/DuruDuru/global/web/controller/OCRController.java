@@ -4,6 +4,7 @@ import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Receipt;
 import com.backend.DuruDuru.global.service.OCRService.ClovaOCRReceiptService;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
@@ -54,6 +55,14 @@ public class OCRController {
                                                                                          @RequestBody IngredientRequestDTO.UpdateOCRIngredientDTO request) {
         Ingredient updateOCRIngredient = clovaOCRReceiptService.updateOCRIngredient(memberId, ingredientId, receiptId, request);
         return ApiResponse.onSuccess(SuccessStatus.OCR_OK, IngredientConverter.UpdateOCRIngredientResultDTO(updateOCRIngredient));
+    }
+
+    @PatchMapping(value = "/{receipt_id}/purchase-date")
+    @Operation(summary = "영수증 인식 식재료 구매 날짜 수정 API", description = "영수증 인식된 식재료의 구매 날짜를 수정하는 API 입니다.")
+    public ApiResponse<IngredientResponseDTO.UpdateOCRPurchaseDateResultDTO> updateOCRPurchaseDate(@PathVariable("receipt_id") Long receiptId, @RequestParam Long memberId,
+                                                                                                   @RequestBody IngredientRequestDTO.PurchaseDateRequestDTO request) {
+        Receipt updatePurchaseDate = clovaOCRReceiptService.updateOCRPurchaseDate(memberId, receiptId, request);
+        return ApiResponse.onSuccess(SuccessStatus.OCR_OK, IngredientConverter.toOCRPurchaseDateResultDTO(updatePurchaseDate));
     }
 
 }
