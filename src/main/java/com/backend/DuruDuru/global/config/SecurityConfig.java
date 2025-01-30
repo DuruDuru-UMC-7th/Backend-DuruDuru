@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 // Fridge 관련 접근
                                 .requestMatchers("/fridge/{member_id}/all-ingredients", "/fridge/{member_id}/near-expiry").permitAll()
                                 // OCR 관련 접근
-                                .requestMatchers("/OCR/receipt").permitAll()
+                                .requestMatchers("/OCR/receipt", "/OCR/ingredient/{ingredient_id}", "/OCR/{receipt_id/purchase-date").permitAll()
                                 // Town 관련 접근
                                 .requestMatchers("/town").permitAll()
                                 // 기타 관련 접근
