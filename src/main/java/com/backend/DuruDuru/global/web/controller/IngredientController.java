@@ -139,8 +139,8 @@ public class IngredientController {
     // 식재료 삭제
     @DeleteMapping("/{ingredient_id}")
     @Operation(summary = "식재료 삭제 API", description = "식재료를 삭제하는 API 입니다.")
-    public ApiResponse<?> deleteIngredient(@RequestParam Long memberId, @RequestParam Long fridgeId, @PathVariable("ingredient_id") Long ingredientId){
-        ingredientCommandService.deleteIngredient(memberId, fridgeId, ingredientId);
+    public ApiResponse<?> deleteIngredient(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId){
+        ingredientCommandService.deleteIngredient(memberId, ingredientId);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
