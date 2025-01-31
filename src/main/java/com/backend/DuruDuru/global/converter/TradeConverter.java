@@ -26,8 +26,8 @@ public class TradeConverter {
 
     public static Trade toCreateTrade(TradeRequestDTO.CreateTradeRequestDTO request, Member member, Ingredient ingredient) {
         // 요청한 식재료의 개수가 현재 재고보다 적을 경우
-        if(request.getIngredientCount() < ingredient.getCount()) {
-            throw new IllegalArgumentException("요청한 식재료의 개수가 현재 재고보다 적습니다.");
+        if(request.getIngredientCount() > ingredient.getCount()) {
+            throw new IllegalArgumentException("요청한 식재료의 개수가 현재 재고보다 많습니다.");
         }
 
         return Trade.builder()
