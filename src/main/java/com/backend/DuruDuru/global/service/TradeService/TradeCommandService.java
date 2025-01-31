@@ -9,4 +9,6 @@ public interface TradeCommandService {
     Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request);
     // 품앗이 게시글 상세 조회
     Trade getTrade(Long tradeId);
+    // 품앗이 게시글 수정
+    Trade updateTrade(Long memberId, Long tradeId, TradeRequestDTO.UpdateTradeRequestDTO request);
 }

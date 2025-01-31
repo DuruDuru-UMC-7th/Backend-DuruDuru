@@ -55,4 +55,12 @@ public class Trade extends BaseEntity {
 
     @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeTrade> likeTrades = new ArrayList<>();
+
+    public void updateTrade(Trade trade) {
+        this.title = trade.getTitle();
+        this.body = trade.getBody();
+        this.ingredientCount = trade.getIngredientCount();
+        this.status = trade.getStatus();
+        this.tradeType = trade.getTradeType();
+    }
 }

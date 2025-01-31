@@ -33,7 +33,7 @@ public class TradeController {
     // 품앗이 게시글 등록
     @PostMapping("/")
     @Operation(summary = "품앗이 게시글 등록 API", description = "품앗이 게시글을 등록하는 API 입니다.")
-    public ApiResponse<TradeResponseDTO.CreateTradeResultDTO> createTrade(
+    public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> createTrade(
             @RequestParam Long memberId, Long ingredientId,
             @RequestBody TradeRequestDTO.CreateTradeRequestDTO request
             ){
@@ -51,14 +51,18 @@ public class TradeController {
     // 품앗이 게시글 수정
     @PatchMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다.")
-    public ApiResponse<?> updateTrade(){
+    public ApiResponse<TradeResponseDTO.UpdateTradeResultDTO> updateTrade(
+            @PathVariable("trade_id") Long memberId, Long tradeId,
+            @RequestBody TradeRequestDTO.UpdateTradeRequestDTO request
+    ){
+        Trade trade = tradeCommandService.updateTrade(memberId, tradeId, request);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 상세 조회
     @GetMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 상세 조회 API", description = "특정 품앗이 게시글을 상세 조회하는 API 입니다.")
-    public ApiResponse<TradeResponseDTO.CreateTradeResultDTO> findTradeById(
+    public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> findTradeById(
             @PathVariable("trade_id") Long tradeId
     ){
         Trade trade = tradeCommandService.getTrade(tradeId);

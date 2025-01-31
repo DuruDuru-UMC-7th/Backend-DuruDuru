@@ -16,4 +16,14 @@ public class TradeRequestDTO {
         TradeType tradeType;
         // TradeImg[] tradeImg;
     }
+
+    @Getter
+    public static class UpdateTradeRequestDTO {
+        Long ingredientCount;
+        String title;
+        String body;
+        Status status;
+        TradeType tradeType;
+        // TradeImg[] tradeImg;
+    }
 }

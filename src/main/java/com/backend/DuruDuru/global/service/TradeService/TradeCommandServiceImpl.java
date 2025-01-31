@@ -30,6 +30,11 @@ public class TradeCommandServiceImpl implements TradeCommandService {
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
     }
 
+    private Trade findTradeById(Long tradeId) {
+        return tradeRepository.findById(tradeId)
+                .orElseThrow(() -> new IllegalArgumentException("Trade not found. ID: " + tradeId));
+    }
+
     // Trade 엔티티를 저장하는 메서드
     @Override
     @Transactional
@@ -37,10 +42,11 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
-        Trade newTrade = TradeConverter.toTrade(request, member, ingredient);
+        Trade newTrade = TradeConverter.toCreateTrade(request, member, ingredient);
         member.addTrades(newTrade);
-        memberRepository.save(member);
 
+        memberRepository.save(member);
+        tradeRepository.save(newTrade);
         return newTrade;
     }
 
@@ -48,8 +54,14 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     @Override
     @Transactional
     public Trade getTrade(Long tradeId) {
-        Trade trade = tradeRepository.findById(tradeId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade not found. ID: " + tradeId));
-        return trade;
+        return findTradeById(tradeId);
+    }
+
+    @Override
+    @Transactional
+    public Trade updateTrade(Long memberId, Long tradeId, TradeRequestDTO.UpdateTradeRequestDTO request) {
+        Trade updateTrade = findTradeById(tradeId);
+
+        return tradeRepository.save(updateTrade);
     }
 }

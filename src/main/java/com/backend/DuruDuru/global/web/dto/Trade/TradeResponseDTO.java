@@ -14,7 +14,7 @@ public class TradeResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
-    public static class CreateTradeResultDTO {
+    public static class TradeDetailResultDTO {
         Long tradeId;
         Long memberId;
         Long ingredientId;
@@ -25,6 +25,26 @@ public class TradeResponseDTO {
         Status status;
         TradeType tradeType;
         LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+        // String[] tradeImgUrls;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateTradeResultDTO {
+        Long tradeId;
+        Long memberId;
+        Long ingredientId;
+        Long ingredientCount;
+        LocalDateTime expiryDate;
+        String title;
+        String body;
+        Status status;
+        TradeType tradeType;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
         // String[] tradeImgUrls;
     }
 }
