@@ -2,6 +2,8 @@ package com.backend.DuruDuru.global.web.controller;
 
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
+import com.backend.DuruDuru.global.service.RecipeService.RecipeCommandService;
+import com.backend.DuruDuru.global.web.dto.Recipe.RecipeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
@@ -14,6 +16,19 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/recipes")
 @Tag(name = "레시피 API", description = "레시피 관련 API입니다.")
 public class RecipeController {
+
+    private final RecipeCommandService recipeService;
+
+    // 특정 레시피 조회
+    @GetMapping("/{recipeId}")
+    @Parameters({
+            @Parameter(name = "recipeId", description = "조회하려는 특정 레시피 id")
+    })
+    @Operation(summary = "특정 레시피 조회 API", description = "특정 레시피를 조회하는 API입니다")
+    public ApiResponse<?> getRecipeById(@PathVariable Long recipeId){
+        RecipeResponseDTO.DetailResponse response = recipeService.getRecipeById(recipeId);
+        return ApiResponse.onSuccess(SuccessStatus.RECIPE_FETCH_OK, response);
+    }
 
     // 식재료 목록 기반 레시피 추천
     @GetMapping("/recommend")
@@ -56,13 +71,5 @@ public class RecipeController {
         return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
     }
 
-    // 특정 레시피 조회
-    @GetMapping("/{recipeId}")
-    @Parameters({
-            @Parameter(name = "recipeId", description = "조회하려는 특정 레시피 id")
-    })
-    @Operation(summary = "특정 레시피 조회 API", description = "특정 레시피를 조회하는 API입니다")
-    public ApiResponse<?> getRecipeById(){
-        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
-    }
+
 }
