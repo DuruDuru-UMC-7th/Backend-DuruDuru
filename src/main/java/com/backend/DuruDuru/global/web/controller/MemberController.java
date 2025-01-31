@@ -4,8 +4,8 @@ package com.backend.DuruDuru.global.web.controller;
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.service.MemberService.MemberCommandService;
-import com.backend.DuruDuru.global.web.dto.Member.MemberRequestDTO;
-import com.backend.DuruDuru.global.web.dto.Member.MemberResponseDTO;
+import com.backend.DuruDuru.global.web.dto.Member.AuthRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Member.AuthResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
@@ -25,28 +25,35 @@ public class MemberController {
 
     private final MemberCommandService memberService;
 
+    // 카카오 로그인 API
+    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원가입을 진행하는 API 입니다.")
+    @GetMapping("/login/kakao")
+    public ApiResponse<AuthResponseDTO.OAuthResponse> kakaoLogin(@RequestParam("code") String code) {
+        return ApiResponse.onSuccess(SuccessStatus.USER_KAKAO_LOGIN_OK, memberService.kakaoLogin(code));
+    }
+
     // 이메일 회원가입 API
     @PostMapping("/register")
     @Operation(summary = "이메일 회원가입 API", description = "이메일 회원가입을 진행하는 API 입니다.")
-    public ApiResponse<?> emailSignUp(@RequestBody @Valid MemberRequestDTO.EmailRegisterRequestDTO request){
+    public ApiResponse<?> emailSignUp(@RequestBody @Valid AuthRequestDTO.EmailRegisterRequest request){
         memberService.emailRegister(request);
         return ApiResponse.onSuccess(SuccessStatus.USER_REGISTER_OK, null);
     }
 
     // 이메일 로그인 API
-    @PostMapping("/login")
+    @PostMapping("/login/email")
     @Operation(summary = "이메일 로그인 API", description = "이메일과 비밀번호로 로그인을 진행하는 API 입니다.")
-    public ApiResponse<MemberResponseDTO.EmailLoginResponseDTO> emailLogin(@RequestBody @Valid MemberRequestDTO.EmailLoginRequestDTO request){
-        MemberResponseDTO.EmailLoginResponseDTO response = memberService.emailLogin(request);
-        return ApiResponse.onSuccess(SuccessStatus.USER_LOGIN_OK, response);
+    public ApiResponse<AuthResponseDTO.EmailLoginResponse> emailLogin(@RequestBody @Valid AuthRequestDTO.EmailLoginRequest request){
+        AuthResponseDTO.EmailLoginResponse response = memberService.emailLogin(request);
+        return ApiResponse.onSuccess(SuccessStatus.USER_EMAIL_LOGIN_OK, response);
     }
 
     @PostMapping("/refresh")
     @Operation(
             summary = "JWT Access Token 재발급 API",
             description = "Refresh Token을 검증하고 새로운 Access Token과 Refresh Token을 응답합니다.")
-    public ApiResponse<MemberResponseDTO.TokenRefreshResponseDTO> refresh(@RequestBody MemberRequestDTO.RefreshTokenDTO request) {
-        MemberResponseDTO.TokenRefreshResponseDTO response = memberService.refreshToken(request.getRefreshToken());
+    public ApiResponse<AuthResponseDTO.TokenRefreshResponse> refresh(@RequestBody AuthRequestDTO.RefreshToken request) {
+        AuthResponseDTO.TokenRefreshResponse response = memberService.refreshToken(request.getRefreshToken());
         return ApiResponse.onSuccess(SuccessStatus.USER_REFRESH_OK, response);
     }
 

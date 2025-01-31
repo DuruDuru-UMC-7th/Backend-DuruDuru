@@ -11,7 +11,8 @@ import org.springframework.http.HttpStatus;
 public enum SuccessStatus implements BaseCode {
 
     // 보안
-    USER_LOGIN_OK(HttpStatus.OK, "AUTH2001", "회원 로그인이 완료되었습니다."),
+    USER_EMAIL_LOGIN_OK(HttpStatus.OK, "AUTH2001", "회원 이메일 로그인이 완료되었습니다."),
+    USER_KAKAO_LOGIN_OK(HttpStatus.OK, "AUTH2001", "회원 카카오 로그인이 완료되었습니다."),
     USER_DELETE_OK(HttpStatus.OK, "AUTH2002", "회원 탈퇴가 완료되었습니다."),
     USER_REFRESH_OK(HttpStatus.OK, "AUTH2003", "토큰 재발급이 완료되었습니다."),
     USER_REGISTER_OK(HttpStatus.OK, "AUTH2000", "회원 가입이 완료되었습니다."),
@@ -31,7 +32,6 @@ public enum SuccessStatus implements BaseCode {
     RECIPE_OK(HttpStatus.OK, "RECIPE_6000", "성공입니다."),
     // 채팅 관련 응답
     CHAT_OK(HttpStatus.OK, "CHAT_7000", "성공입니다.");
-
 
     private final HttpStatus httpStatus;
     private final String code;

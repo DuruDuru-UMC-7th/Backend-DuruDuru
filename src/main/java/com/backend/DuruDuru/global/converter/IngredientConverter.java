@@ -1,8 +1,14 @@
 package com.backend.DuruDuru.global.converter;
 
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Receipt;
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
+
+import java.time.LocalDate;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class IngredientConverter {
 
@@ -37,6 +43,34 @@ public class IngredientConverter {
                 .build();
     }
 
+    public static IngredientResponseDTO.IngredientDetailDTO toIngredientDetailDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.IngredientDetailDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .count(ingredient.getCount())
+                .purchaseDate(ingredient.getPurchaseDate())
+                .expiryDate(ingredient.getExpiryDate())
+                .storageType(String.valueOf(ingredient.getStorageType()))
+                .majorCategory(ingredient.getMajorCategory().name())
+                .minorCategory(ingredient.getMinorCategory().name())
+                .ingredientImageUrl(ingredient.getIngredientImg().getIngredientImgUrl())
+                .createdAt(ingredient.getCreatedAt())
+                .updatedAt(ingredient.getUpdatedAt())
+                .build();
+    }
+
+    public static IngredientResponseDTO.IngredientDetailListDTO toIngredientDetailListDTO(List<Ingredient> ingredients) {
+        List<IngredientResponseDTO.IngredientDetailDTO> ingredientDetailDTOList = ingredients.stream()
+                .map(IngredientConverter::toIngredientDetailDTO)
+                .collect(Collectors.toList());
+
+        return IngredientResponseDTO.IngredientDetailListDTO.builder()
+                .ingredients(ingredientDetailDTOList)
+                .count(ingredients.size())
+                .build();
+    }
 
     public static IngredientResponseDTO.PurchaseDateResultDTO toPurchaseDateResultDTO(Ingredient ingredient) {
         return IngredientResponseDTO.PurchaseDateResultDTO.builder()
@@ -78,6 +112,70 @@ public class IngredientConverter {
                 .ingredientName(ingredient.getIngredientName())
                 .majorCategory(ingredient.getMajorCategory().name()) // Enum to String
                 .minorCategory(ingredient.getMinorCategory().name()) // Enum to String
+                .build();
+    }
+
+    public static IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO toMinorCategoryIngredientPreviewListDTO(
+            MinorCategory minorCategory, List<Ingredient> ingredients) {
+        return IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO.builder()
+                .minorCategory(minorCategory.name())
+                .count(ingredients.size())
+                .ingredients(ingredients.stream()
+                        .map(IngredientConverter::toIngredientDetailDTO)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+
+    public static IngredientResponseDTO.CreateOCRIngredientResultDTO toCreateOCRResultDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.CreateOCRIngredientResultDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .receiptId(ingredient.getReceipt().getReceiptId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .count(ingredient.getCount())
+                .majorCategory(ingredient.getMajorCategory().name())
+                .minorCategory(ingredient.getMinorCategory().name())
+                .storageType(ingredient.getStorageType().name())
+                .expireDate(ingredient.getExpiryDate())
+                .build();
+    }
+
+    public static IngredientResponseDTO.IngredientOCRDetailListDTO toIngredientOCRDetailListDTO(List<Ingredient> ingredients) {
+        LocalDate purchaseDate = ingredients.isEmpty() ? null : ingredients.get(0).getPurchaseDate();
+
+        List<IngredientResponseDTO.CreateOCRIngredientResultDTO> ingredientOCRDetailDTOList = ingredients.stream()
+                .map(IngredientConverter::toCreateOCRResultDTO)
+                .collect(Collectors.toList());
+
+        return IngredientResponseDTO.IngredientOCRDetailListDTO.builder()
+                .purchaseDate(purchaseDate)
+                .ingredients(ingredientOCRDetailDTOList)
+                .build();
+    }
+
+    public static IngredientResponseDTO.UpdateOCRIngredientResultDTO UpdateOCRIngredientResultDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.UpdateOCRIngredientResultDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .receiptId(ingredient.getReceipt().getReceiptId())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .count(ingredient.getCount())
+                .majorCategory(ingredient.getMajorCategory().name())
+                .minorCategory(ingredient.getMinorCategory().name())
+                .storageType(ingredient.getStorageType().name())
+                .expireDate(ingredient.getExpiryDate())
+                .build();
+    }
+
+    public static IngredientResponseDTO.UpdateOCRPurchaseDateResultDTO toOCRPurchaseDateResultDTO(Receipt receipt) {
+        return IngredientResponseDTO.UpdateOCRPurchaseDateResultDTO.builder()
+                .memberId(receipt.getMember().getMemberId())
+                .receiptId(receipt.getReceiptId())
+                .fridgeId(receipt.getMember().getFridgeId())
+                .purchaseDate(receipt.getPurchaseDate())
                 .build();
     }
 

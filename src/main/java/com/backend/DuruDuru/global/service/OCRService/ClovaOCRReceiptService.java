@@ -1,17 +1,33 @@
 package com.backend.DuruDuru.global.service.OCRService;
 
+import com.backend.DuruDuru.global.domain.entity.Fridge;
+import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Member;
+import com.backend.DuruDuru.global.domain.entity.Receipt;
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
+import com.backend.DuruDuru.global.domain.enums.MinorCategory;
+import com.backend.DuruDuru.global.domain.enums.StorageType;
+import com.backend.DuruDuru.global.repository.FridgeRepository;
+import com.backend.DuruDuru.global.repository.IngredientRepository;
+import com.backend.DuruDuru.global.repository.MemberRepository;
+
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
+import com.backend.DuruDuru.global.repository.ReceiptRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import net.coobird.thumbnailator.Thumbnails;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -19,6 +35,8 @@ import java.util.UUID;
 
 
 @Service
+@RequiredArgsConstructor
+@Transactional
 @Slf4j
 public class ClovaOCRReceiptService {
 
@@ -27,6 +45,13 @@ public class ClovaOCRReceiptService {
 
     @Value("${clova.ocr.secret-key}")
     private String secretKey;
+
+
+    private final CategoryMapper categoryMapper;
+    private final MemberRepository memberRepository;
+    private final IngredientRepository ingredientRepository;
+    private final FridgeRepository fridgeRepository;
+    private final ReceiptRepository receiptRepository;
 
     public List<String> extractProductNames(MultipartFile file) {
         try {
@@ -228,8 +253,103 @@ public class ClovaOCRReceiptService {
     }
 
 
+    ////////////////////////////////////////////
+
+    // OCR Main 로직
+    @Transactional
+    public List<Ingredient> extractAndCategorizeProductNames(MultipartFile file, Long memberId) {
+        Member member = findMemberById(memberId);
+        Fridge fridge = member.getFridge();
+        if (fridge == null) {
+            throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
+        }
+
+        Receipt receipt = createReceipt(memberId);
+
+        List<String> productNames = extractProductNames(file);
+        List<Ingredient> savedIngredients = new ArrayList<>();
+        for (String productName : productNames) {
+            try {
+                Ingredient newIngredient = createAndSaveIngredient(productName, member, fridge, receipt);
+                savedIngredients.add(newIngredient);
+            } catch (Exception e) {
+                log.error("식재료 분류 실패: {}", productName, e);
+            }
+        }
+
+        return savedIngredients;
+    }
+
+    private Ingredient createAndSaveIngredient(String productName, Member member, Fridge fridge, Receipt receipt) {
+        MinorCategory minorCategory = categoryMapper.mapToMinorCategory(productName);
+        MajorCategory majorCategory = (minorCategory != null) ? minorCategory.getMajorCategory() : MajorCategory.기타;
+        if (minorCategory == null) {
+            minorCategory = MinorCategory.기타; // 매핑 안되면 소분류 기타로 설정
+        }
+
+        int shelfLifeDays = minorCategory.getShelfLifeDays();
+        StorageType storageType = minorCategory.getStorageType();
 
 
+        Ingredient ingredient = Ingredient.builder()
+                .member(member)
+                .fridge(fridge)
+                .ingredientName(productName)
+                .majorCategory(majorCategory)
+                .minorCategory(minorCategory != null ? minorCategory : MinorCategory.기타)
+                .storageType(storageType)
+                .count(1L)
+                .purchaseDate(receipt.getPurchaseDate())
+                .expiryDate(receipt.getPurchaseDate().plusDays(shelfLifeDays))
+                .receipt(receipt)
+                .build();
+        return ingredientRepository.save(ingredient);
+    }
 
+
+    public Ingredient updateOCRIngredient(Long memberId, Long ingredientId, Long receiptId, IngredientRequestDTO.UpdateOCRIngredientDTO request) {
+        Member member = findMemberById(memberId);
+        Ingredient ingredient = ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+        Receipt receipt = receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
+
+        ingredient.updateOCR(request);
+        return ingredient;
+    }
+
+
+    public Receipt updateOCRPurchaseDate(Long memberId, Long receiptId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
+        Member member = findMemberById(memberId);
+        Receipt receipt = receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
+
+        receipt.setPurchaseDate(request.getPurchaseDate());
+        for (Ingredient ingredient : receipt.getIngredients()) {
+            ingredient.setPurchaseDate(request.getPurchaseDate());
+        }
+        return receipt;
+    }
+
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+    }
+
+    private Fridge findFridgeById(Long fridgeId) {
+        return fridgeRepository.findById(fridgeId)
+                .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
+    }
+
+    @Transactional
+    public Receipt createReceipt(Long memberId) {
+        Member member = findMemberById(memberId);
+        Receipt receipt = Receipt.builder()
+                .member(member)
+                .purchaseDate(LocalDate.now()) // 영수증 등록한 날짜(응답 요청 날짜)로 설정
+                .build();
+        return receiptRepository.save(receipt);
+    }
 
 }

@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
-                                .requestMatchers("/member/register", "/member/login" ,"/member/refresh").permitAll()
+                                .requestMatchers("/member/register", "/member/login/kakao", "/member/login/email","/member/refresh").permitAll()
                                 // Trade 관련 접근
                                 .requestMatchers("/trade", "/trade/ingredient/available", "/trade/near", "/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert", "/trade/current", "/trade/history").permitAll()
                                 // 다른 엔티티 관련 접근
@@ -49,7 +49,7 @@ public class SecurityConfig {
                                 // Fridge 관련 접근
                                 .requestMatchers("/fridge/{member_id}/all-ingredients", "/fridge/{member_id}/near-expiry").permitAll()
                                 // OCR 관련 접근
-                                .requestMatchers("/OCR/receipt").permitAll()
+                                .requestMatchers("/OCR/receipt", "/OCR/ingredient/{ingredient_id}", "/OCR/{receipt_id}/purchase-date").permitAll()
                                 // Town 관련 접근
                                 .requestMatchers("/town").permitAll()
                                 // 기타 관련 접근

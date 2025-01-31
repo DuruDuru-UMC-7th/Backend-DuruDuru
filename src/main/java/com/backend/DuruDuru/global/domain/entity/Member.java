@@ -4,6 +4,7 @@ import com.backend.DuruDuru.global.domain.common.BaseEntity;
 import com.backend.DuruDuru.global.domain.enums.Gender;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,9 @@ public class Member extends BaseEntity {
     private Gender gender;
 
     private Long age;
+
+    @ColumnDefault("0") // 삭제시 1
+    private int isDelete;
 
     private String accessToken;
     private String refreshToken;
@@ -66,6 +70,17 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<LikeTrade> likeTrades = new ArrayList<>();
 
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Receipt> receipts = new ArrayList<>();
+
+    public void addReceipt(Receipt receipt) {
+        this.receipts.add(receipt);
+        if (receipt.getMember() != this) {
+            receipt.setMember(this);
+        }
+    }
+
+
     public void updateToken(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
@@ -77,6 +92,11 @@ public class Member extends BaseEntity {
             fridge.setMember(this);
         }
     }
+
+    public Long getFridgeId() {
+        return fridge != null ? fridge.getFridgeId() : null;
+    }
+
 
     public void addTrades(Trade trade) {
         this.trades.add(trade);

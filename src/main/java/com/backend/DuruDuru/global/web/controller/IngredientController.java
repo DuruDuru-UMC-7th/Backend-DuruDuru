@@ -19,10 +19,8 @@ import org.springframework.security.core.parameters.P;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import javax.management.relation.InvalidRelationIdException;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @RestController
@@ -90,9 +88,6 @@ public class IngredientController {
     }
 
 
-
-
-
     // 식재료 보관 방식 설정
     @PostMapping("/{ingredient_id}/storage-type")
     @Operation(summary = "식재료 보관 방식 설정 API", description = "식재료의 보관 방식을 설정하는 API 입니다.")
@@ -113,12 +108,12 @@ public class IngredientController {
     }
 
 
-    // 식재료 소비기한 등록 (자동 계산 포함)
-    @PostMapping("/{ingredient_id}/expiry-date")
-    @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
-    public ApiResponse<?> ingredientExpiryDate(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-    }
+//    // 식재료 소비기한 등록 (자동 계산 포함)
+//    @PostMapping("/{ingredient_id}/expiry-date")
+//    @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
+//    public ApiResponse<?> ingredientExpiryDate(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
 
 
     // 식재료 직접 등록
@@ -144,8 +139,8 @@ public class IngredientController {
     // 식재료 삭제
     @DeleteMapping("/{ingredient_id}")
     @Operation(summary = "식재료 삭제 API", description = "식재료를 삭제하는 API 입니다.")
-    public ApiResponse<?> deleteIngredient(@RequestParam Long memberId, @RequestParam Long fridgeId, @PathVariable("ingredient_id") Long ingredientId){
-        ingredientCommandService.deleteIngredient(memberId, fridgeId, ingredientId);
+    public ApiResponse<?> deleteIngredient(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId){
+        ingredientCommandService.deleteIngredient(memberId, ingredientId);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
@@ -153,25 +148,29 @@ public class IngredientController {
     // 식재료 이름으로 검색
     @GetMapping("/search/name")
     @Operation(summary = "식재료 이름으로 검색 API", description = "식재료를 이름으로 검색하는 API 입니다. 입력된 키워드가 포함된 식재료를 모두 반환합니다.")
-    public ApiResponse<?> searchIngredientByName(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    public ApiResponse<IngredientResponseDTO.IngredientDetailListDTO> searchIngredientByName(@RequestParam Optional<String> search){
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByName(Optional.of(search.orElse("")));
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientDetailListDTO(ingredients));
     }
 
 
     // 소분류 카테고리에 속하는 식재료 리스트 조회
     @GetMapping("/search/category/list")
-    @Operation(summary = "식재료 카테고리로 검색 API", description = "식재료를 카테고리로 검색하는 API 입니다. 입력된 카테고리에 속한 식재료를 모두 반환합니다.")
-    public ApiResponse<?> searchIngredientByCategory(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    @Operation(summary = "소분류 카테고리에 속하는 식재료 리스트 조회 API", description = "식재료를 카테고리로 검색하는 API 입니다. 입력된 카테고리에 속한 식재료를 모두 반환합니다.")
+    public ApiResponse<IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO> searchIngredientByMinorCategory(@RequestParam Long memberId,
+                                                                                                                    @RequestParam MinorCategory minorCategory) {
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMinorCategory(memberId, minorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK,
+                IngredientConverter.toMinorCategoryIngredientPreviewListDTO(minorCategory, ingredients));
     }
 
-    // 소분류 카테고리에 속하는 식재료 개수 조회
-    @GetMapping("/category/count")
-    @Operation(summary = "식재료 카테고리 개수 조회 API", description = "식재료 카테고리의 개수를 조회하는 API 입니다. 소분류 카테고리별 식재료 개수를 반환합니다.")
-    public ApiResponse<?> countIngredientByCategory(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-    }
 
+//    // 소분류 카테고리에 속하는 식재료 개수 조회
+//    @GetMapping("/category/count")
+//    @Operation(summary = "식재료 카테고리 개수 조회 API", description = "식재료 카테고리의 개수를 조회하는 API 입니다. 소분류 카테고리별 식재료 개수를 반환합니다.")
+//    public ApiResponse<?> countIngredientByCategory(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
 
 
 //    // 새로운 식재료 카테고리 추가

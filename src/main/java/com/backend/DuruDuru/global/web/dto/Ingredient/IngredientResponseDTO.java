@@ -1,10 +1,12 @@
 package com.backend.DuruDuru.global.web.dto.Ingredient;
 
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class IngredientResponseDTO {
 
@@ -35,6 +37,25 @@ public class IngredientResponseDTO {
         LocalDateTime updatedAt;
     }
 
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class IngredientDetailDTO {
+        Long memberId;
+        Long fridgeId;
+        Long ingredientId;
+        String ingredientName;
+        Long count;
+        LocalDate purchaseDate;
+        LocalDate expiryDate;
+        String storageType;
+        String majorCategory;
+        String minorCategory;
+        String ingredientImageUrl;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+    }
 
     @Getter
     @Builder
@@ -87,5 +108,81 @@ public class IngredientResponseDTO {
         private String minorCategory;
     }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MinorCategoryIngredientPreviewListDTO {
+        private String minorCategory;
+        private int count;
+        private List<IngredientDetailDTO> ingredients;
+    }
 
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class IngredientDetailListDTO {
+        private int count;
+        private List<IngredientDetailDTO> ingredients;
+    }
+
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CreateOCRIngredientResultDTO {
+        private Long memberId;
+        private Long receiptId;
+        private Long fridgeId;
+        private Long ingredientId;
+        private String ingredientName;
+        private Long count;
+        private String majorCategory;
+        private String minorCategory;
+        private String storageType;
+        private LocalDate expireDate;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class IngredientOCRDetailListDTO {
+        private LocalDate purchaseDate;
+        private List<CreateOCRIngredientResultDTO> ingredients;
+    }
+
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateOCRIngredientResultDTO {
+        private Long memberId;
+        private Long receiptId;
+        private Long fridgeId;
+        private Long ingredientId;
+        private String ingredientName;
+        private Long count;
+        private String majorCategory;
+        private String minorCategory;
+        private String storageType;
+        private LocalDate expireDate;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class UpdateOCRPurchaseDateResultDTO {
+        Long memberId;
+        Long fridgeId;
+        Long receiptId;
+        LocalDate purchaseDate;
+    }
 }

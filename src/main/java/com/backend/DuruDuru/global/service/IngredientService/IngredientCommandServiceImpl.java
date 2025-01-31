@@ -5,6 +5,7 @@ import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.*;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
+import com.backend.DuruDuru.global.domain.enums.StorageType;
 import com.backend.DuruDuru.global.repository.*;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import jakarta.persistence.EntityManager;
@@ -14,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.UUID;
 
@@ -65,7 +67,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient updateIngredient(Long memberId, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
         Member member = findMemberById(memberId);
-        //Fridge fridge = findFridgeById(fridgeId);
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
 
@@ -75,9 +76,8 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     }
 
     @Override
-    public void deleteIngredient(Long memberId, Long fridgeId, Long ingredientId) {
+    public void deleteIngredient(Long memberId, Long ingredientId) {
         Member member = findMemberById(memberId);
-        Fridge fridge = findFridgeById(fridgeId);
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
 
@@ -161,7 +161,14 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 식재료 ID입니다."));
 
+        int shelfLifeDays = minorCategory.getShelfLifeDays();
+        LocalDate updatedExpiryDate = ingredient.getPurchaseDate().plusDays(shelfLifeDays);
+        StorageType storageType = minorCategory.getStorageType();
+
         ingredient.updateCategory(majorCategory, minorCategory);
+        ingredient.setExpiryDate(updatedExpiryDate); // 소비기한 자동 설정
+        ingredient.setStorageType(storageType); // 보관 방식 자동 설정 (사용자 변경가능)
+
         return ingredientRepository.save(ingredient);
     }
 
