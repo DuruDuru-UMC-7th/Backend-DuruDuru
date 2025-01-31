@@ -3,6 +3,13 @@ package com.backend.DuruDuru.global.web.controller;
 
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
+import com.backend.DuruDuru.global.converter.TradeConverter;
+import com.backend.DuruDuru.global.domain.entity.Trade;
+import com.backend.DuruDuru.global.repository.TradeRepository;
+import com.backend.DuruDuru.global.service.TradeService.TradeCommandService;
+import com.backend.DuruDuru.global.service.TradeService.TradeQueryService;
+import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
@@ -19,32 +26,47 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "품앗이 API", description = "품앗이 API입니다.")
 public class TradeController {
 
+    private final TradeCommandService tradeCommandService;
+    private final TradeQueryService tradeQueryService;
+    private final TradeRepository tradeRepository;
+
     // 품앗이 게시글 등록
     @PostMapping("/")
     @Operation(summary = "품앗이 게시글 등록 API", description = "품앗이 게시글을 등록하는 API 입니다.")
-    public ApiResponse<?> createTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> createTrade(
+            @RequestParam Long memberId, Long ingredientId,
+            @RequestBody TradeRequestDTO.CreateTradeRequestDTO request
+            ){
+        Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
     }
 
     // 품앗이 게시글 삭제
-    @DeleteMapping("/{trade-id}")
+    @DeleteMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 삭제 API", description = "특정 품앗이를 삭제하는 API 입니다.")
-    public ApiResponse<?> deleteTradeById(){
+    public ApiResponse<?> deleteTrade(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 게시글 수정
-    @PatchMapping("/{trade-id}")
+    @PatchMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다.")
-    public ApiResponse<?> updateTradeById(){
+    public ApiResponse<TradeResponseDTO.UpdateTradeResultDTO> updateTrade(
+            @PathVariable("trade_id") Long memberId, Long tradeId,
+            @RequestBody TradeRequestDTO.UpdateTradeRequestDTO request
+    ){
+        Trade trade = tradeCommandService.updateTrade(memberId, tradeId, request);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 상세 조회
-    @GetMapping("/{trade-id}")
+    @GetMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 상세 조회 API", description = "특정 품앗이 게시글을 상세 조회하는 API 입니다.")
-    public ApiResponse<?> findTradeById(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> findTradeById(
+            @PathVariable("trade_id") Long tradeId
+    ){
+        Trade trade = tradeCommandService.getTrade(tradeId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
     }
 
     // 품앗이 가능한 식재료 조회

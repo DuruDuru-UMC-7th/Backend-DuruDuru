@@ -28,6 +28,9 @@ public class Trade extends BaseEntity {
     @Column(name = "body", nullable = false, columnDefinition = "varchar(500)")
     private String body;
 
+    @Column(name = "ingredient_count", nullable = false, columnDefinition = "bigint")
+    private Long ingredientCount;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false, columnDefinition = "varchar(50)")
     private Status status;
@@ -52,4 +55,12 @@ public class Trade extends BaseEntity {
 
     @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<LikeTrade> likeTrades = new ArrayList<>();
+
+    public void updateTrade(Trade trade) {
+        this.title = trade.getTitle();
+        this.body = trade.getBody();
+        this.ingredientCount = trade.getIngredientCount();
+        this.status = trade.getStatus();
+        this.tradeType = trade.getTradeType();
+    }
 }

@@ -4,8 +4,8 @@ import lombok.Getter;
 
 @Getter
 public enum TradeType {
-    Share("나눔"),
-    Exchange("교환");
+    SHARE("나눔"),
+    EXCHANGE("교환");
 
     private final String type;
 
