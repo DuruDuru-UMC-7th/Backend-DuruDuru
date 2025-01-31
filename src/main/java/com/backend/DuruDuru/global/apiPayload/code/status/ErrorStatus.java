@@ -39,6 +39,9 @@ public enum ErrorStatus implements BaseErrorCode {
     MEMBER_EMAIL_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1009", "이미 가입된 이메일입니다."),
     MEMBER_NICKNAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "MEMBER_1010", "이미 존재하는 닉네임입니다."),
 
+    // 레시피 관련 에러
+    RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "RECIPE_2001", "해당 레시피를 찾을 수 없습니다."),
+    RECIPE_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "RECIPE_2002", "잘못된 요청입니다."),
 
     ;
 

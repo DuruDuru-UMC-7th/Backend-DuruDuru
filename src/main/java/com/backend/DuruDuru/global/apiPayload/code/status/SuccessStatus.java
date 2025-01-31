@@ -29,7 +29,7 @@ public enum SuccessStatus implements BaseCode {
     // 냉장고 관련 응답
     FRIDGE_OK(HttpStatus.OK, "FRIDGE_5000", "성공입니다."),
     // 레시피 관련 응답
-    RECIPE_OK(HttpStatus.OK, "RECIPE_6000", "성공입니다."),
+    RECIPE_FETCH_OK(HttpStatus.OK, "RECIPE_6000", "해당 레시피 조회 성공"),
     // 채팅 관련 응답
     CHAT_OK(HttpStatus.OK, "CHAT_7000", "성공입니다.");
 
