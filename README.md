@@ -2,7 +2,7 @@
 
 ## 🔨 Architecture
 
-<img width="80%" alt="DuruDuru_BE_아키텍처" src="https://github.com/user-attachments/assets/15b08e88-944d-403f-809f-423acf91d981" />
+<img width="90%" alt="DuruDuru_BE_아키텍처" src="https://github.com/user-attachments/assets/15b08e88-944d-403f-809f-423acf91d981" />
 
 
 <br/>
