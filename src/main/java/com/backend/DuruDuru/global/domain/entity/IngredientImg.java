@@ -19,6 +19,6 @@ public class IngredientImg {
     @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
 
-    @Column(name = "ingredient_img_url", length = 200, nullable = false)
+    @Column(name = "ingredient_img_url", length = 200, nullable = true)
     private String ingredientImgUrl;
 }
