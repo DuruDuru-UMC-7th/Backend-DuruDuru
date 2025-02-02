@@ -103,4 +103,9 @@ public class Ingredient extends BaseEntity {
         this.majorCategory = majorCategory;
         this.minorCategory = minorCategory;
     }
+
+    public void setIngredientImg(IngredientImg ingredientImg) {
+        this.ingredientImg = ingredientImg;
+        ingredientImg.setIngredient(this);
+    }
 }

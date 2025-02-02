@@ -54,10 +54,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Transactional
     public Ingredient createRawIngredient(Long memberId, IngredientRequestDTO.CreateRawIngredientDTO request) {
         Member member = findMemberById(memberId);
-        Fridge fridge = member.getFridge();
-        if (fridge == null) {
-            throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
-        }
+        Fridge fridge = findFridgeById(member.getFridgeId());
 
         Ingredient newIngredient = IngredientConverter.toIngredient(request);
         newIngredient.setMember(member);
