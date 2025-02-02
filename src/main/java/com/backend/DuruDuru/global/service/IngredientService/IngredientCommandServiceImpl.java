@@ -157,11 +157,13 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
         Ingredient ingredient = findIngredientById(ingredientId);
 
+        LocalDate purchaseDate = (ingredient.getPurchaseDate() != null) ? ingredient.getPurchaseDate() : LocalDate.now();
         int shelfLifeDays = minorCategory.getShelfLifeDays();
         LocalDate updatedExpiryDate = ingredient.getPurchaseDate().plusDays(shelfLifeDays);
         StorageType storageType = minorCategory.getStorageType();
 
         ingredient.updateCategory(majorCategory, minorCategory);
+        ingredient.setPurchaseDate(purchaseDate);
         ingredient.setExpiryDate(updatedExpiryDate); // 소비기한 자동 설정
         ingredient.setStorageType(storageType); // 보관 방식 자동 설정 (사용자 변경가능)
 
