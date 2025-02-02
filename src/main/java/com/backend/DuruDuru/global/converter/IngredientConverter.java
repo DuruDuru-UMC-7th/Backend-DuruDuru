@@ -55,7 +55,8 @@ public class IngredientConverter {
                 .storageType(String.valueOf(ingredient.getStorageType()))
                 .majorCategory(ingredient.getMajorCategory().name())
                 .minorCategory(ingredient.getMinorCategory().name())
-                .ingredientImageUrl(ingredient.getIngredientImg().getIngredientImgUrl())
+                .ingredientImageUrl(ingredient.getIngredientImg() != null ?
+                                ingredient.getIngredientImg().getIngredientImgUrl() : "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a")
                 .createdAt(ingredient.getCreatedAt())
                 .updatedAt(ingredient.getUpdatedAt())
                 .build();
@@ -99,7 +100,8 @@ public class IngredientConverter {
                 .fridgeId(ingredient.getFridge().getFridgeId())
                 .ingredientId(ingredient.getIngredientId())
                 .ingredientName(ingredient.getIngredientName())
-                .ingredientImageUrl(ingredient.getIngredientImg().getIngredientImgUrl())
+                .ingredientImageUrl(ingredient.getIngredientImg() != null ?
+                        ingredient.getIngredientImg().getIngredientImgUrl() : "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a")
                 .build();
     }
 
