@@ -159,7 +159,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
         LocalDate purchaseDate = (ingredient.getPurchaseDate() != null) ? ingredient.getPurchaseDate() : LocalDate.now();
         int shelfLifeDays = minorCategory.getShelfLifeDays();
-        LocalDate updatedExpiryDate = ingredient.getPurchaseDate().plusDays(shelfLifeDays);
+        LocalDate updatedExpiryDate = purchaseDate.plusDays(shelfLifeDays);
         StorageType storageType = minorCategory.getStorageType();
 
         ingredient.updateCategory(majorCategory, minorCategory);
