@@ -10,7 +10,6 @@ public class RecipeConverter {
                 .recipeId(recipe.getRecipeId())
                 .title(recipe.getTitle())
                 .content(recipe.getContent())
-                .bookmark(recipe.getBookmark())
                 .build();
     }
 }

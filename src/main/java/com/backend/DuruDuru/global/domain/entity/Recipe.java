@@ -26,9 +26,6 @@ public class Recipe extends BaseEntity {
     @Column(name = "content", nullable = false, columnDefinition = "varchar(500)")
     private String content;
 
-    @Column(name = "bookmark", nullable = false, columnDefinition = "bigint default 0")
-    private Long bookmark;
-
     @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRecipe> memberRecipes = new ArrayList<>();
 
