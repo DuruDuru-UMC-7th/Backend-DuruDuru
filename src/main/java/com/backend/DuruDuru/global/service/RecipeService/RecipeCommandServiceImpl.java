@@ -12,14 +12,13 @@ import com.backend.DuruDuru.global.repository.RecipeRepository;
 import com.backend.DuruDuru.global.web.dto.Recipe.RecipeResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.reactive.TransactionalOperator;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
-
-import static com.amazonaws.services.ec2.model.LaunchTemplateHttpTokensState.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -31,7 +30,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     @Override
     @Transactional
-    public RecipeResponseDTO.DetailResponse getRecipeById(Long recipeId) {
+    public RecipeResponseDTO.RecipeResponse getRecipeById(Long recipeId) {
         Recipe recipe = recipeRepository.findById(recipeId)
                 .orElseThrow(() -> new RecipeException(ErrorStatus.RECIPE_NOT_FOUND));
 
@@ -65,7 +64,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     }
 
     @Override
-    public List<RecipeResponseDTO.DetailResponse> getFavoriteRecipes(Member member) {
+    public List<RecipeResponseDTO.RecipeResponse> getFavoriteRecipes(Member member) {
         // MemberRecipe에서 특정 회원의 즐겨찾기 목록 조회
         List<MemberRecipe> favorites = memberRecipeRepository.findAllByMember(member);
 
@@ -73,4 +72,28 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .map(favorite -> RecipeConverter.toDetailResponse(favorite.getRecipe()))
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public RecipeResponseDTO.RecipePageResponse getPopularRecipes(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<Recipe> recipes = recipeRepository.findAllByPopular(pageable);
+
+        List<RecipeResponseDTO.RecipeResponse> recipeResponses = recipes.stream()
+                .map(recipe -> RecipeResponseDTO.RecipeResponse.builder()
+                        .recipeId(recipe.getRecipeId())
+                        .title(recipe.getTitle())
+                        .content(recipe.getContent())
+                        .build()
+                )
+                .toList();
+
+        return RecipeResponseDTO.RecipePageResponse.builder()
+                .page(page)
+                .size(size)
+                .totalPages(recipes.getTotalPages())
+                .totalElements(recipes.getTotalElements())
+                .recipes(recipeResponses)
+                .build();
+    }
+
 }
