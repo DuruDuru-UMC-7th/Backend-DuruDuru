@@ -30,7 +30,7 @@ public class RecipeController {
     })
     @Operation(summary = "특정 레시피 조회 API", description = "특정 레시피를 조회하는 API입니다")
     public ApiResponse<?> getRecipeById(@PathVariable Long recipeId){
-        RecipeResponseDTO.DetailResponse response = recipeService.getRecipeById(recipeId);
+        RecipeResponseDTO.RecipeResponse response = recipeService.getRecipeById(recipeId);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FETCH_OK, response);
     }
 
@@ -49,10 +49,27 @@ public class RecipeController {
     // 내가 즐겨찾기 설정한 레시피 목록 확인
     @GetMapping("/favorite")
     @Operation(summary = "내가 즐겨찾기 설정한 레시피 목록 확인 API", description = "로그인한 사용자가 즐겨찾기 설정한 레시피 목록을 확인하는 API입니다")
-    public ApiResponse<List<RecipeResponseDTO.DetailResponse>> getFavoriteRecipes(@Parameter(name = "user", hidden = true) @AuthUser Member member){
-        List<RecipeResponseDTO.DetailResponse> favorites = recipeService.getFavoriteRecipes(member);
+    public ApiResponse<List<RecipeResponseDTO.RecipeResponse>> getFavoriteRecipes(@Parameter(name = "user", hidden = true) @AuthUser Member member){
+        List<RecipeResponseDTO.RecipeResponse> favorites = recipeService.getFavoriteRecipes(member);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FAVORITE_FETCH_OK, favorites);
     }
+
+
+    // 즐겨찾기 수가 많은 레시피 추천
+    @GetMapping("/popular")
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호, 기본값은 1입니다"),
+            @Parameter(name = "size", description = "페이지 당 항목 수, 기본값은 10입니다.")
+    })
+    @Operation(summary = "즐겨찾기 수가 많은 레시피 추천 API", description = "즐겨찾기 수가 많은 레시피를 추천하는 API입니다")
+    public ApiResponse<RecipeResponseDTO.RecipePageResponse> getPopularRecipes(
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        RecipeResponseDTO.RecipePageResponse response = recipeService.getPopularRecipes(page, size);
+        return ApiResponse.onSuccess(SuccessStatus.RECIPE_FAVORITE_SORT_OK, response);
+    }
+
 
     // 식재료 목록 기반 레시피 추천
     @GetMapping("/recommend")
@@ -61,12 +78,6 @@ public class RecipeController {
         return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
     }
 
-    // 즐겨찾기 수가 많은 레시피 추천
-    @GetMapping("/popular")
-    @Operation(summary = "즐겨찾기 수가 많은 레시피 추천 API", description = "즐겨찾기 수가 많은 레시피를 추천하는 API입니다")
-    public ApiResponse<?> recommendPopularRecipes(){
-        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
-    }
 
 
 
