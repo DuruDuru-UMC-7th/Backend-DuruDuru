@@ -13,6 +13,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/recipes")
@@ -43,6 +45,15 @@ public class RecipeController {
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FAVORITE_SET_OK, null);
     }
 
+
+    // 내가 즐겨찾기 설정한 레시피 목록 확인
+    @GetMapping("/favorite")
+    @Operation(summary = "내가 즐겨찾기 설정한 레시피 목록 확인 API", description = "로그인한 사용자가 즐겨찾기 설정한 레시피 목록을 확인하는 API입니다")
+    public ApiResponse<List<RecipeResponseDTO.DetailResponse>> getFavoriteRecipes(@Parameter(name = "user", hidden = true) @AuthUser Member member){
+        List<RecipeResponseDTO.DetailResponse> favorites = recipeService.getFavoriteRecipes(member);
+        return ApiResponse.onSuccess(SuccessStatus.RECIPE_FAVORITE_FETCH_OK, favorites);
+    }
+
     // 식재료 목록 기반 레시피 추천
     @GetMapping("/recommend")
     @Operation(summary = "식재료 목록 기반 레시피 추천 API", description = "보유하고 있는 식재료 목록을 기반으로 레시피를 추천하는 API입니다")
@@ -69,12 +80,6 @@ public class RecipeController {
         return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
     }
 
-    // 내가 즐겨찾기 설정한 레시피 목록 확인
-    @GetMapping("/bookmark")
-    @Operation(summary = "내가 즐겨찾기 설정한 레시피 목록 확인 API", description = "내가 즐겨찾기 설정한 레시피 목록을 확인하는 API입니다")
-    public ApiResponse<?> getFavoriteRecipes(){
-        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
-    }
 
 
 }

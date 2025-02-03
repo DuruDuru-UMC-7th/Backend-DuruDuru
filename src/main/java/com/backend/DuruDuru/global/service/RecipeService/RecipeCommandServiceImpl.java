@@ -15,7 +15,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.reactive.TransactionalOperator;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import static com.amazonaws.services.ec2.model.LaunchTemplateHttpTokensState.Optional;
 
@@ -60,5 +62,15 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
             memberRecipeRepository.save(newFavorite);
         }
+    }
+
+    @Override
+    public List<RecipeResponseDTO.DetailResponse> getFavoriteRecipes(Member member) {
+        // MemberRecipe에서 특정 회원의 즐겨찾기 목록 조회
+        List<MemberRecipe> favorites = memberRecipeRepository.findAllByMember(member);
+
+        return favorites.stream()
+                .map(favorite -> RecipeConverter.toDetailResponse(favorite.getRecipe()))
+                .collect(Collectors.toList());
     }
 }
