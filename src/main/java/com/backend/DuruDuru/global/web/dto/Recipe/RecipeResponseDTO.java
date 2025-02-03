@@ -12,7 +12,6 @@ public class RecipeResponseDTO {
         private Long recipeId;
         private String title;
         private String content;
-        private Long bookmark;
     }
 
 }
