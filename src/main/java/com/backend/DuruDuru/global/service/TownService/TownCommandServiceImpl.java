@@ -30,7 +30,7 @@ public class TownCommandServiceImpl implements TownCommandService {
     public Town createTown(Long memberId, TownRequestDTO.ToTownRequestDTO request) {
         Member member =  findMemberById(memberId);
 
-        Town newTown = TownConverter.toTown(request);
+        Town newTown = TownConverter.toCreateTown(request, member);
         newTown.setMember(member);
 
         return townRepository.save(newTown);
