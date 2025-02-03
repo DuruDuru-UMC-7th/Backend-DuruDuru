@@ -32,4 +32,10 @@ public class FridgeController {
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
     }
 
+    // 식재료 남은 일 수 조회
+    @GetMapping("/{member_id}/days-left")
+    @Operation(summary = "식재료 남은 일 수 조회 API", description = "식재료의 남은 일 수를 조회하는 API 입니다.")
+    public ApiResponse<?> ingredientLeftDays() {
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
+    }
 }

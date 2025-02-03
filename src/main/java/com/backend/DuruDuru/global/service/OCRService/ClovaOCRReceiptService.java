@@ -290,6 +290,8 @@ public class ClovaOCRReceiptService {
         int shelfLifeDays = minorCategory.getShelfLifeDays();
         StorageType storageType = minorCategory.getStorageType();
 
+        LocalDate purchaseDate = (receipt.getPurchaseDate() != null) ? receipt.getPurchaseDate() : LocalDate.now();
+        LocalDate expiryDate = purchaseDate.plusDays(shelfLifeDays);
 
         Ingredient ingredient = Ingredient.builder()
                 .member(member)
@@ -299,10 +301,11 @@ public class ClovaOCRReceiptService {
                 .minorCategory(minorCategory != null ? minorCategory : MinorCategory.기타)
                 .storageType(storageType)
                 .count(1L)
-                .purchaseDate(receipt.getPurchaseDate())
-                .expiryDate(receipt.getPurchaseDate().plusDays(shelfLifeDays))
+                .purchaseDate(purchaseDate)
+                .expiryDate(expiryDate)
                 .receipt(receipt)
                 .build();
+
         return ingredientRepository.save(ingredient);
     }
 

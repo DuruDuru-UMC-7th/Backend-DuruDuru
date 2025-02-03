@@ -45,14 +45,16 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
                 .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
     }
 
+    private Ingredient findIngredientById(Long ingredientId) {
+        return ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+    }
+
     @Override
     @Transactional
     public Ingredient createRawIngredient(Long memberId, IngredientRequestDTO.CreateRawIngredientDTO request) {
         Member member = findMemberById(memberId);
-        Fridge fridge = member.getFridge();
-        if (fridge == null) {
-            throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
-        }
+        Fridge fridge = findFridgeById(member.getFridgeId());
 
         Ingredient newIngredient = IngredientConverter.toIngredient(request);
         newIngredient.setMember(member);
@@ -67,8 +69,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient updateIngredient(Long memberId, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
         Member member = findMemberById(memberId);
-        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+        Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.update(request);
         return ingredient;
@@ -78,8 +79,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public void deleteIngredient(Long memberId, Long ingredientId) {
         Member member = findMemberById(memberId);
-        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+        Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredientRepository.delete(ingredient);
     }
@@ -88,8 +88,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient registerPurchaseDate(Long memberId, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         Member member = findMemberById(memberId);
-        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+        Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.setPurchaseDate(request.getPurchaseDate());
         return ingredient;
@@ -98,8 +97,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient setStorageType(Long memberId, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request) {
         Member member = findMemberById(memberId);
-        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+        Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.setStorageType(request.getStorageType());
         return ingredient;
@@ -110,8 +108,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Transactional
     @Override
     public Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
-        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+        Ingredient ingredient = findIngredientById(ingredientId);
         if (ingredient.getIngredientImg() != null) {
             IngredientImg existingImage = ingredient.getIngredientImg();
 
@@ -158,14 +155,15 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
             throw new IllegalArgumentException("대분류와 소분류가 일치하지 않습니다.");
         }
 
-        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 식재료 ID입니다."));
+        Ingredient ingredient = findIngredientById(ingredientId);
 
+        LocalDate purchaseDate = (ingredient.getPurchaseDate() != null) ? ingredient.getPurchaseDate() : LocalDate.now();
         int shelfLifeDays = minorCategory.getShelfLifeDays();
-        LocalDate updatedExpiryDate = ingredient.getPurchaseDate().plusDays(shelfLifeDays);
+        LocalDate updatedExpiryDate = purchaseDate.plusDays(shelfLifeDays);
         StorageType storageType = minorCategory.getStorageType();
 
         ingredient.updateCategory(majorCategory, minorCategory);
+        ingredient.setPurchaseDate(purchaseDate);
         ingredient.setExpiryDate(updatedExpiryDate); // 소비기한 자동 설정
         ingredient.setStorageType(storageType); // 보관 방식 자동 설정 (사용자 변경가능)
 

@@ -34,28 +34,6 @@ public class IngredientController {
     private final IngredientCommandService ingredientCommandService;
     private final IngredientQueryService ingredientQueryService;
 
-//    // 영수증 이미지 업로드 (식재료 목록 자동 인식)
-//    @PostMapping("/receipt/upload")
-//    @Operation(summary = "영수증 이미지 업로드 (식재료 목록 자동 인식) API", description = "영수증 이미지 업로드 (식재료 목록 자동 인식) API")
-//    public ApiResponse<?> receiptUpload(){
-//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-//    }
-
-    // 식재료 카테고리 분류 (식재료 목록 자동 인식)
-    @PostMapping("/receipt/classify")
-    @Operation(summary = "식재료 카테고리 분류 (식재료 목록 자동 인식) API", description = "OCR을 통해 인식된 식재료들의 카테고리를 분류하는 API 입니다.")
-    public ApiResponse<?> receiptClassify(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-    }
-
-
-    // 구매한 식재료 목록 조회 (식재료 목록 자동 인식)
-    @GetMapping("/purchased")
-    @Operation(summary = "구매한 식재료 목록 조회 (식재료 목록 자동 인식) API", description = "OCR을 통해 자동 등록된 식재료들의 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> purchasedIngredientsList(){
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-    }
-
 
     // 추가할 식재료 사진 등록
     @PostMapping(path = "/{ingredient_id}/photo", consumes = "multipart/form-data")
@@ -107,13 +85,6 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toPurchaseDateResultDTO(ingredient));
     }
 
-
-//    // 식재료 소비기한 등록 (자동 계산 포함)
-//    @PostMapping("/{ingredient_id}/expiry-date")
-//    @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
-//    public ApiResponse<?> ingredientExpiryDate(){
-//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-//    }
 
 
     // 식재료 직접 등록
@@ -180,5 +151,34 @@ public class IngredientController {
 //        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
 //    }
 
+    //    // 영수증 이미지 업로드 (식재료 목록 자동 인식)
+//    @PostMapping("/receipt/upload")
+//    @Operation(summary = "영수증 이미지 업로드 (식재료 목록 자동 인식) API", description = "영수증 이미지 업로드 (식재료 목록 자동 인식) API")
+//    public ApiResponse<?> receiptUpload(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
+
+//    // 식재료 카테고리 분류 (식재료 목록 자동 인식)
+//    @PostMapping("/receipt/classify")
+//    @Operation(summary = "식재료 카테고리 분류 (식재료 목록 자동 인식) API", description = "OCR을 통해 인식된 식재료들의 카테고리를 분류하는 API 입니다.")
+//    public ApiResponse<?> receiptClassify(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
+
+
+//    // 구매한 식재료 목록 조회 (식재료 목록 자동 인식)
+//    @GetMapping("/purchased")
+//    @Operation(summary = "구매한 식재료 목록 조회 (식재료 목록 자동 인식) API", description = "OCR을 통해 자동 등록된 식재료들의 목록을 조회하는 API 입니다.")
+//    public ApiResponse<?> purchasedIngredientsList(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
+
+
+    //    // 식재료 소비기한 등록 (자동 계산 포함)
+//    @PostMapping("/{ingredient_id}/expiry-date")
+//    @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
+//    public ApiResponse<?> ingredientExpiryDate(){
+//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+//    }
 
 }
