@@ -12,6 +12,8 @@ public class TownResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TownResultDTO {
+        Long townId;
+        Long memberId;
         double latitude;
         double longitude;
         String sido;

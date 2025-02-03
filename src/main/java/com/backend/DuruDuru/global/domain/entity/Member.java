@@ -80,7 +80,6 @@ public class Member extends BaseEntity {
         }
     }
 
-
     public void updateToken(String accessToken, String refreshToken) {
         this.accessToken = accessToken;
         this.refreshToken = refreshToken;
@@ -97,11 +96,17 @@ public class Member extends BaseEntity {
         return fridge != null ? fridge.getFridgeId() : null;
     }
 
-
     public void addTrades(Trade trade) {
         this.trades.add(trade);
         if (trade.getMember() != this) {
             trade.setMember(this);
+        }
+    }
+
+    public void setTown(Town town) {
+        this.town = town;
+        if (town.getMember() != this) {
+            town.setMember(this);
         }
     }
 
