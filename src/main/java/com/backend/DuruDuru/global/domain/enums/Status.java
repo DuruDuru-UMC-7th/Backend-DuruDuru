@@ -4,9 +4,9 @@ import lombok.Getter;
 
 @Getter
 public enum Status {
-    COMPLETE("완료"),
+    ACTIVE("등록"),
     PROCEEDING("진행중"),
-    ACTIVE("등록");
+    COMPLETE("완료");
 
     private final String status;
 

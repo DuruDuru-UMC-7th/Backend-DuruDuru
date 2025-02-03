@@ -41,6 +41,16 @@ public class TradeController {
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
     }
 
+    // 품앗이 상세 조회
+    @GetMapping("/{trade_id}")
+    @Operation(summary = "품앗이 게시글 상세 조회 API", description = "특정 품앗이 게시글을 상세 조회하는 API 입니다.")
+    public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> findTradeById(
+            @PathVariable("trade_id") Long tradeId
+    ){
+        Trade trade = tradeCommandService.getTrade(tradeId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
+    }
+
     // 품앗이 게시글 삭제
     @DeleteMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 삭제 API", description = "특정 품앗이를 삭제하는 API 입니다.")
@@ -57,16 +67,6 @@ public class TradeController {
     ){
         Trade trade = tradeCommandService.updateTrade(memberId, tradeId, request);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
-    }
-
-    // 품앗이 상세 조회
-    @GetMapping("/{trade_id}")
-    @Operation(summary = "품앗이 게시글 상세 조회 API", description = "특정 품앗이 게시글을 상세 조회하는 API 입니다.")
-    public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> findTradeById(
-            @PathVariable("trade_id") Long tradeId
-    ){
-        Trade trade = tradeCommandService.getTrade(tradeId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
     }
 
     // 품앗이 가능한 식재료 조회

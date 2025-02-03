@@ -12,7 +12,6 @@ public class TradeRequestDTO {
         Long ingredientCount;
         String title;
         String body;
-        Status status;
         TradeType tradeType;
         // TradeImg[] tradeImg;
     }

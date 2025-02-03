@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class TradeResponseDTO {
@@ -19,7 +21,7 @@ public class TradeResponseDTO {
         Long memberId;
         Long ingredientId;
         Long ingredientCount;
-        LocalDateTime expiryDate;
+        LocalDate expiryDate;
         String title;
         String body;
         Status status;
@@ -38,7 +40,7 @@ public class TradeResponseDTO {
         Long memberId;
         Long ingredientId;
         Long ingredientCount;
-        LocalDateTime expiryDate;
+        LocalDate expiryDate;
         String title;
         String body;
         Status status;
