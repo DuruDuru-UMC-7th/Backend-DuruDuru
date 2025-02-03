@@ -18,6 +18,7 @@ public class TradeConverter {
                 .expiryDate(trade.getIngredient().getExpiryDate())
                 .title(trade.getTitle())
                 .body(trade.getBody())
+                .eupmyeondong(trade.getEupmyeondong())
                 .status(trade.getStatus())
                 .tradeType(trade.getTradeType())
                 //.tradeImgUrls(trade.getTradeImgs())
@@ -31,13 +32,20 @@ public class TradeConverter {
         if(request.getIngredientCount() > ingredient.getCount()) {
             throw new IllegalArgumentException("요청한 식재료의 개수가 현재 재고보다 많습니다.");
         }
+        // Member에 Town 정보가 없을 경우
+        if(member.getTown() == null) {
+            throw new IllegalArgumentException("Member가 Town 정보를 가지고 있지 않습니다.");
+        }
 
         return Trade.builder()
                 .member(member)
                 .ingredient(ingredient)
-                .title(request.getTitle())
-                .body(request.getBody())
                 .ingredientCount(request.getIngredientCount())
+                .title(ingredient.getIngredientName())      // 식재료 이름으로 제목 자동 설정
+                .body(request.getBody())
+                .latitude(member.getTown().getLatitude())
+                .longitude(member.getTown().getLongitude())
+                .eupmyeondong(member.getTown().getEupmyeondong())       // 읍면동 정보 저장
                 .status(Status.ACTIVE)
                 .tradeType(request.getTradeType())
                 //.tradeImgs(request.)

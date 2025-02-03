@@ -24,6 +24,7 @@ public class TradeResponseDTO {
         LocalDate expiryDate;
         String title;
         String body;
+        String eupmyeondong;
         Status status;
         TradeType tradeType;
         LocalDateTime createdAt;
@@ -43,6 +44,7 @@ public class TradeResponseDTO {
         LocalDate expiryDate;
         String title;
         String body;
+        String eupmyeondong;
         Status status;
         TradeType tradeType;
         LocalDateTime createdAt;
