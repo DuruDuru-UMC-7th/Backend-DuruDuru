@@ -29,10 +29,12 @@ public class TownCommandServiceImpl implements TownCommandService {
     @Transactional
     public Town createTown(Long memberId, TownRequestDTO.ToTownRequestDTO request) {
         Member member =  findMemberById(memberId);
+        if(member.getTown() != null) {
+            throw new IllegalArgumentException("이미 Town이 존재합니다.");
+        }
 
         Town newTown = TownConverter.toCreateTown(request, member);
-        newTown.setMember(member);
-
+        member.setTown(newTown);
         return townRepository.save(newTown);
     }
 
@@ -41,14 +43,12 @@ public class TownCommandServiceImpl implements TownCommandService {
     @Transactional
     public Town updateTown(Long memberId, TownRequestDTO.ToTownRequestDTO request) {
         Member member =  findMemberById(memberId);
-        Town currentTown = member.getTown();
-
-        if(currentTown == null) {
-            throw new IllegalArgumentException("Member doesn't have town.");
+        if(member.getTown() == null) {
+            throw new IllegalArgumentException("Town이 존재하지 않습니다.");
         }
-        currentTown.update(request);
-        Town updatedTown = member.getTown();
 
-        return townRepository.save(updatedTown);
+        Town currentTown = member.getTown();
+        currentTown.update(request);
+        return townRepository.save(member.getTown());
     }
 }

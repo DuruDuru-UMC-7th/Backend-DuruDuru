@@ -22,6 +22,10 @@ public class TownQueryServiceImpl implements TownQueryService{
         Member member = memberRepository.findById(memberId)
                 .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
 
+        if(member.getTown() == null) {
+            throw new IllegalArgumentException("Town not found. memberID: " + memberId);
+        }
+
         return member.getTown();
     }
 }
