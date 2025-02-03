@@ -42,16 +42,13 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
+        if(!member.getIngredients().contains(ingredient)) {
+            throw new IllegalArgumentException("사용자가 접근할 수 있는 식재료가 아닙니다.");
+        }
+
         Trade newTrade = TradeConverter.toCreateTrade(request, member, ingredient);
         member.addTrades(newTrade);
         return tradeRepository.save(newTrade);
-    }
-
-    // 품앗이 게시글 상세 조회
-    @Override
-    @Transactional
-    public Trade getTrade(Long tradeId) {
-        return findTradeById(tradeId);
     }
 
     @Override

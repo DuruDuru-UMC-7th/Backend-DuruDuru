@@ -10,7 +10,6 @@ public class TradeRequestDTO {
     @Getter
     public static class CreateTradeRequestDTO {
         Long ingredientCount;
-        String title;
         String body;
         TradeType tradeType;
         // TradeImg[] tradeImg;
@@ -19,7 +18,6 @@ public class TradeRequestDTO {
     @Getter
     public static class UpdateTradeRequestDTO {
         Long ingredientCount;
-        String title;
         String body;
         Status status;
         TradeType tradeType;
