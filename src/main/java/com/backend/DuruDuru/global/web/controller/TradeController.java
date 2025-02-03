@@ -5,6 +5,7 @@ import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.TradeConverter;
 import com.backend.DuruDuru.global.domain.entity.Trade;
+import com.backend.DuruDuru.global.domain.enums.TradeType;
 import com.backend.DuruDuru.global.repository.TradeRepository;
 import com.backend.DuruDuru.global.service.TradeService.TradeCommandService;
 import com.backend.DuruDuru.global.service.TradeService.TradeQueryService;
@@ -36,7 +37,7 @@ public class TradeController {
     public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> createTrade(
             @RequestParam Long memberId, Long ingredientId,
             @RequestBody TradeRequestDTO.CreateTradeRequestDTO request
-            ){
+    ){
         Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
     }
@@ -47,7 +48,7 @@ public class TradeController {
     public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> findTradeById(
             @PathVariable("trade_id") Long tradeId
     ){
-        Trade trade = tradeCommandService.getTrade(tradeId);
+        Trade trade = tradeQueryService.getTrade(tradeId);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
     }
 
@@ -55,6 +56,7 @@ public class TradeController {
     @DeleteMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 삭제 API", description = "특정 품앗이를 삭제하는 API 입니다.")
     public ApiResponse<?> deleteTrade(){
+
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
@@ -79,7 +81,10 @@ public class TradeController {
     // 내 근처 품앗이 나눔/교환별 조회
     @GetMapping("/near")
     @Operation(summary = "내 근처 품앗이 나눔/교환별 조회 API", description = "나눔/교환별로 내 근처 품앗이 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> findNearTradeByType(){
+    public ApiResponse<?> findNearTradeByType(
+            @RequestParam Long memberId, TradeType tradeType
+    ){
+        Trade[] trades = tradeQueryService.getTradesByType(memberId, tradeType);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 

@@ -47,13 +47,6 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         return tradeRepository.save(newTrade);
     }
 
-    // 품앗이 게시글 상세 조회
-    @Override
-    @Transactional
-    public Trade getTrade(Long tradeId) {
-        return findTradeById(tradeId);
-    }
-
     @Override
     @Transactional
     public Trade updateTrade(Long memberId, Long tradeId, TradeRequestDTO.UpdateTradeRequestDTO request) {
