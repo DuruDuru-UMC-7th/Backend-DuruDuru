@@ -44,10 +44,8 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
         Trade newTrade = TradeConverter.toCreateTrade(request, member, ingredient);
         member.addTrades(newTrade);
-
-        memberRepository.save(member);
-        // tradeRepository.save(newTrade);
-        return newTrade;
+        // memberRepository.save(member);
+        return tradeRepository.save(newTrade);
     }
 
     // 품앗이 게시글 상세 조회
