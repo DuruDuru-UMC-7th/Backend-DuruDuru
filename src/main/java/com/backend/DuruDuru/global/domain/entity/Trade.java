@@ -39,6 +39,15 @@ public class Trade extends BaseEntity {
     @Column(name = "trade_type", nullable = false, columnDefinition = "varchar(50)")
     private TradeType tradeType;
 
+    @Column(name = "latitude", nullable = false, columnDefinition = "double precision")
+    private Double latitude;
+
+    @Column(name = "longitude", nullable = false, columnDefinition = "double precision")
+    private Double longitude;
+
+    @Column(name = "eupmyeondong", nullable = false, columnDefinition = "varchar(50)")
+    private String eupmyeondong;
+
     @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChattingRoom> chattingRooms = new ArrayList<>();
 
