@@ -3,6 +3,8 @@ package com.backend.DuruDuru.global.domain.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Getter
 @Setter
@@ -22,4 +24,14 @@ public class Message {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "chatting_id", nullable = false)
     private Chatting chatting;
+
+    @Column(name = "sent_time", nullable = false)
+    private LocalDateTime sentTime;
+
+    @Column(name = "is_read", nullable = false)
+    private boolean isRead;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member;
 }
