@@ -12,11 +12,16 @@ import com.backend.DuruDuru.global.service.TradeService.TradeQueryService;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -80,12 +85,15 @@ public class TradeController {
 
     // 내 근처 품앗이 나눔/교환별 조회
     @GetMapping("/near")
-    @Operation(summary = "내 근처 품앗이 나눔/교환별 조회 API", description = "내 근처 품앗이 목록을 나눔/교환별로 조회하는 API 입니다.")
-    public ApiResponse<?> findNearTradeByType(
-            @RequestParam Long memberId, TradeType tradeType
+    @Operation(summary = "내 근처 품앗이 나눔/교환별 조회 API", description = "내 근처 품앗이 목록을 나눔/교환별로 조회하는 API 입니다. 페이징을 포함하며 query String 으로 page 번호를 주세요")
+    public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findNearTradeByType(
+            @RequestParam Long memberId,
+            @RequestParam TradeType tradeType,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "1") int size
     ){
-        Trade[] trades = tradeQueryService.getTradesByType(memberId, tradeType);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+        Page<Trade> tradeList = tradeQueryService.getNearTradesByType(memberId, tradeType, page, size);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 나의 품앗이 목록 조회 API
@@ -123,6 +131,4 @@ public class TradeController {
     public ApiResponse<?> tradeAlarm(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
-
-
 }

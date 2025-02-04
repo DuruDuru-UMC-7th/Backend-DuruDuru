@@ -6,8 +6,14 @@ import com.backend.DuruDuru.global.domain.enums.TradeType;
 import com.backend.DuruDuru.global.repository.MemberRepository;
 import com.backend.DuruDuru.global.repository.TradeRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -33,32 +39,16 @@ public class TradeQueryServiceImpl implements TradeQueryService {
         return findTradeById(tradeId);
     }
 
+    // 가까운 거리의 게시글 중에서 TradeType별로 분류된 게시글 리스트 반환
     @Override
     @Transactional
-    public Trade[] getTradesByType(Long memberId, TradeType tradeType) {
+    public Page<Trade> getNearTradesByType(Long memberId, TradeType tradeType, Integer page, Integer size) {
         Member member = findMemberById(memberId);
-        return new Trade[0];
-    }
+        double memberLat = member.getTown().getLatitude();
+        double memberLon = member.getTown().getLongitude();
 
-    // 두 좌표 사이의 거리를 구하는 함수
-    // dsitance(첫번쨰 좌표의 위도, 첫번째 좌표의 경도, 두번째 좌표의 위도, 두번째 좌표의 경도)
-    private static double distance(double lat1, double lon1, double lat2, double lon2){
-        double theta = lon1 - lon2;
-        double dist = Math.sin(deg2rad(lat1))* Math.sin(deg2rad(lat2)) + Math.cos(deg2rad(lat1))*Math.cos(deg2rad(lat2))*Math.cos(deg2rad(theta));
-        dist = Math.acos(dist);
-        dist = rad2deg(dist);
-        dist = dist * 60*1.1515*1609.344;
-
-        return dist; //단위 meter
+        Pageable pageable = PageRequest.of(page, size);
+        List<Trade> results = tradeRepository.findNearbyTrades(memberLat, memberLon, tradeType.name(), pageable.getPageSize(), (int) pageable.getOffset());
+        return new PageImpl<>(results, pageable, results.size());
     }
-
-    //10진수를 radian(라디안)으로 변환
-    private static double deg2rad(double deg){
-        return (deg * Math.PI/180.0);
-    }
-    //radian(라디안)을 10진수로 변환
-    private static double rad2deg(double rad){
-        return (rad * 180 / Math.PI);
-    }
-
 }
