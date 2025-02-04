@@ -33,7 +33,8 @@ public class Town extends BaseEntity {
     @Column(name = "longitude", nullable = false, columnDefinition = "double precision")
     private Double longitude;
 
-    @OneToOne(mappedBy = "town")
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
     public void update(TownRequestDTO.ToTownRequestDTO request) {
