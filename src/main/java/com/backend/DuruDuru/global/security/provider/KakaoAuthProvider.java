@@ -24,6 +24,7 @@ public class KakaoAuthProvider {
     @Value("${kakao.auth.client}")
     private String client;
 
+
     @Value("${kakao.auth.redirect-uri}")
     private String redirect;
 
