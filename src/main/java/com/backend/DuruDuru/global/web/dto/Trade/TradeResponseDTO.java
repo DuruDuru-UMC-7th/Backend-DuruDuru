@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 
 public class TradeResponseDTO {
 
@@ -19,6 +20,7 @@ public class TradeResponseDTO {
     public static class TradeDetailResultDTO {
         Long tradeId;
         Long memberId;
+        String nickName;
         Long ingredientId;
         Long ingredientCount;
         LocalDate expiryDate;
@@ -39,6 +41,7 @@ public class TradeResponseDTO {
     public static class UpdateTradeResultDTO {
         Long tradeId;
         Long memberId;
+        String nickName;
         Long ingredientId;
         Long ingredientCount;
         LocalDate expiryDate;
@@ -50,5 +53,37 @@ public class TradeResponseDTO {
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
         // String[] tradeImgUrls;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TradePreviewDTO {
+        Long tradeId;
+        Long memberId;
+        Long ingredientId;
+        Long ingredientCount;
+        LocalDate expiryDate;
+        String title;
+        String eupmyeondong;
+        Status status;
+        TradeType tradeType;
+        LocalDateTime createdAt;
+        LocalDateTime updatedAt;
+        // String thumbnailImgUrl;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class TradePreviewListDTO {
+        Integer listSize;
+        Integer totalPage;
+        Long totalElements;
+        Boolean isFirst;
+        Boolean isLast;
+        List<TradePreviewDTO> tradeList;
     }
 }

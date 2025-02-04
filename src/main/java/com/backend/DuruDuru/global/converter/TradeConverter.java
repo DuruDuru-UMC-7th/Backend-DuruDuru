@@ -6,6 +6,10 @@ import com.backend.DuruDuru.global.domain.entity.Trade;
 import com.backend.DuruDuru.global.domain.enums.Status;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
+import org.springframework.data.domain.Page;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class TradeConverter {
 
@@ -13,6 +17,7 @@ public class TradeConverter {
         return TradeResponseDTO.TradeDetailResultDTO.builder()
                 .tradeId(trade.getTradeId())
                 .memberId(trade.getMember().getMemberId())
+                .nickName(trade.getMember().getNickName())
                 .ingredientId(trade.getIngredient().getIngredientId())
                 .ingredientCount(trade.getIngredientCount())
                 .expiryDate(trade.getIngredient().getExpiryDate())
@@ -49,6 +54,36 @@ public class TradeConverter {
                 .status(Status.ACTIVE)
                 .tradeType(request.getTradeType())
                 //.tradeImgs(request.)
+                .build();
+    }
+
+    public static TradeResponseDTO.TradePreviewDTO tradePreviewDTO(Trade trade) {
+        return TradeResponseDTO.TradePreviewDTO.builder()
+                .tradeId(trade.getTradeId())
+                .memberId(trade.getMember().getMemberId())
+                .ingredientId(trade.getIngredient().getIngredientId())
+                .ingredientCount(trade.getIngredientCount())
+                .expiryDate(trade.getIngredient().getExpiryDate())
+                .title(trade.getTitle())
+                .eupmyeondong(trade.getEupmyeondong())
+                .status(trade.getStatus())
+                .tradeType(trade.getTradeType())
+                .createdAt(trade.getCreatedAt())
+                .updatedAt(trade.getUpdatedAt())
+                .build();
+    }
+
+    public static TradeResponseDTO.TradePreviewListDTO toTradePreviewListDTO(Page<Trade> tradeList) {
+        List<TradeResponseDTO.TradePreviewDTO> tradePreViewDTOList = tradeList.stream()
+                .map(TradeConverter::tradePreviewDTO).collect(Collectors.toList());
+
+        return TradeResponseDTO.TradePreviewListDTO.builder()
+                .isLast(tradeList.isLast())
+                .isFirst(tradeList.isFirst())
+                .totalPage(tradeList.getTotalPages())
+                .totalElements(tradeList.getTotalElements())
+                .listSize(tradePreViewDTOList.size())
+                .tradeList(tradePreViewDTOList)
                 .build();
     }
 }
