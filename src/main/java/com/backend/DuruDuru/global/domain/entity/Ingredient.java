@@ -50,9 +50,6 @@ public class Ingredient extends BaseEntity {
     @Column(name = "minor_category", nullable = true, columnDefinition = "varchar(50)")
     private MinorCategory minorCategory;
 
-//    @Column(name = "ingredient_image_url", length = 200, nullable = true)
-//    private String ingredientImageUrl;
-
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Trade> trades = new ArrayList<>();
 
@@ -74,8 +71,6 @@ public class Ingredient extends BaseEntity {
     @OneToOne(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private IngredientImg ingredientImg;
 
-//    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
-//    private List<IngredientCategory> ingredientCategoryList = new ArrayList<>();
 
     public void setMember(Member member) {
         this.member = member;
