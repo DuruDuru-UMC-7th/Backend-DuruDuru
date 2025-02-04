@@ -18,17 +18,25 @@ import org.springframework.web.bind.annotation.*;
 @Tag(name = "냉장고 API", description = "냉장고 관련 API입니다.")
 public class FridgeController {
 
-    // 전체 식재료 리스트 조회
-    @GetMapping("/{member_id}/all-ingredients")
-    @Operation(summary = "등록된 전체 식재료 리스트 조회 API", description = "등록된 전체 식재료 리스트를 조회하는 API 입니다.")
-    public ApiResponse<?> findAllIngredients() {
+    // 전체 식재료 리스트 조회 (최신 등록순)
+    @GetMapping("/{member_id}/all/recent")
+    @Operation(summary = "최신 등록된 순으로 전체 식재료 리스트 조회 API", description = "사용자의 냉장고에 최신 등록된 순으로 전체 식재료 리스트를 조회하는 API 입니다.")
+    public ApiResponse<?> findAllRecentIngredients() {
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
     }
+
 
     // 소비기한 임박 식재료 조회
     @GetMapping("/{member_id}/near-expiry")
     @Operation(summary = "소비기한 임박 식재료 조회 API", description = "소비기한이 임박한 순서대로 식재료 리스트를 조회하는 API 입니다.")
-        public ApiResponse<?> ingredientNearExpiry() {
+    public ApiResponse<?> ingredientNearExpiry() {
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
+    }
+
+    // 소비기한 여유 식재료 조회
+    @GetMapping("/{member_id}/far-expiry")
+    @Operation(summary = "소비기한 여유 식재료 조회 API", description = "소비기한이 여유로운 순서대로 식재료 리스트를 조회하는 API 입니다.")
+    public ApiResponse<?> ingredientFarExpiry() {
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
     }
 
