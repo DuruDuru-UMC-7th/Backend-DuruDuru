@@ -1,16 +1,19 @@
 package com.backend.DuruDuru.global.service.TradeService;
 
+import com.backend.DuruDuru.global.S3.AmazonS3Manager;
 import com.backend.DuruDuru.global.converter.TradeConverter;
-import com.backend.DuruDuru.global.domain.entity.Ingredient;
-import com.backend.DuruDuru.global.domain.entity.Member;
-import com.backend.DuruDuru.global.domain.entity.Trade;
-import com.backend.DuruDuru.global.repository.IngredientRepository;
-import com.backend.DuruDuru.global.repository.MemberRepository;
-import com.backend.DuruDuru.global.repository.TradeRepository;
+import com.backend.DuruDuru.global.converter.TradeImageConverter;
+import com.backend.DuruDuru.global.domain.entity.*;
+import com.backend.DuruDuru.global.repository.*;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +22,9 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     private final TradeRepository tradeRepository;
     private final MemberRepository memberRepository;
     private final IngredientRepository ingredientRepository;
+    private final TradeImageRepository tradeImageRepository;
+    private final UuidRepository uuidRepository;
+    private final AmazonS3Manager s3Manager;
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
@@ -38,7 +44,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     // Trade 엔티티를 저장하는 메서드
     @Override
     @Transactional
-    public Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request) {
+    public Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request, List<MultipartFile> tradeImgs) {
         Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
@@ -48,6 +54,25 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
         Trade newTrade = TradeConverter.toCreateTrade(request, member, ingredient);
         member.addTrades(newTrade);
+        tradeRepository.save(newTrade);
+
+        // 이미지 업로드 처리
+        if (tradeImgs != null) {
+            for (MultipartFile img : tradeImgs) {
+                if (img.isEmpty()) {
+                    continue;
+                }
+                String uuid = UUID.randomUUID().toString();
+                Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+                String tradeImgUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), img);
+
+                TradeImg newTradeImage = TradeImageConverter.toTradeImg(tradeImgUrl, newTrade);
+                tradeImageRepository.save(newTradeImage);
+
+                System.out.println("이미지 링크 받아오기 성공" + newTradeImage.getTradeImgUrl());
+                newTrade.getTradeImgs().add(newTradeImage);
+            }
+        }
         return tradeRepository.save(newTrade);
     }
 

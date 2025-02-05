@@ -1,6 +1,7 @@
 package com.backend.DuruDuru.global.domain.entity;
 
 import com.backend.DuruDuru.global.domain.common.BaseEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -19,8 +20,9 @@ public class TradeImg {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "trade_id", nullable = false)
+    @JsonIgnore
     private Trade trade;
 
-    @Column(name = "trade_img_url", nullable = false, columnDefinition = "varchar(50)")
+    @Column(name = "trade_img_url", nullable = false, columnDefinition = "varchar(200)")
     private String tradeImgUrl;
 }
