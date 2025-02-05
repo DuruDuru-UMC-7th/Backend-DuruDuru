@@ -1,5 +1,6 @@
 package com.backend.DuruDuru.global.web.dto.Trade;
 
+import com.backend.DuruDuru.global.domain.entity.TradeImg;
 import com.backend.DuruDuru.global.domain.enums.Status;
 import com.backend.DuruDuru.global.domain.enums.TradeType;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class TradeResponseDTO {
         TradeType tradeType;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
-        // String[] tradeImgUrls;
+        List<TradeImg> tradeImgs;
     }
 
     @Getter

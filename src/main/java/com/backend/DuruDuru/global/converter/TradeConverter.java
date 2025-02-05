@@ -8,12 +8,13 @@ import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
 import org.springframework.data.domain.Page;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class TradeConverter {
 
-    public static TradeResponseDTO.TradeDetailResultDTO toTradeResultDTO(Trade trade) {
+    public static TradeResponseDTO.TradeDetailResultDTO toTradeDetailDTO(Trade trade) {
         return TradeResponseDTO.TradeDetailResultDTO.builder()
                 .tradeId(trade.getTradeId())
                 .memberId(trade.getMember().getMemberId())
@@ -26,7 +27,7 @@ public class TradeConverter {
                 .eupmyeondong(trade.getEupmyeondong())
                 .status(trade.getStatus())
                 .tradeType(trade.getTradeType())
-                //.tradeImgUrls(trade.getTradeImgs())
+                .tradeImgs(trade.getTradeImgs())
                 .createdAt(trade.getCreatedAt())
                 .updatedAt(trade.getUpdatedAt())
                 .build();
@@ -53,7 +54,7 @@ public class TradeConverter {
                 .eupmyeondong(member.getTown().getEupmyeondong())       // 읍면동 정보 저장
                 .status(Status.ACTIVE)
                 .tradeType(request.getTradeType())
-                //.tradeImgs(request.)
+                .tradeImgs(new ArrayList<>())
                 .build();
     }
 

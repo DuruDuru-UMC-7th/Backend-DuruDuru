@@ -12,14 +12,13 @@ import com.backend.DuruDuru.global.service.TradeService.TradeQueryService;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -34,17 +33,21 @@ public class TradeController {
 
     private final TradeCommandService tradeCommandService;
     private final TradeQueryService tradeQueryService;
-    private final TradeRepository tradeRepository;
 
     // 품앗이 게시글 등록
-    @PostMapping("/")
+    @PostMapping(value = "/", consumes = "multipart/form-data")
     @Operation(summary = "품앗이 게시글 등록 API", description = "품앗이 게시글을 등록하는 API 입니다.")
     public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> createTrade(
-            @RequestParam Long memberId, Long ingredientId,
-            @RequestBody TradeRequestDTO.CreateTradeRequestDTO request
+            @RequestParam Long memberId,
+            @RequestParam Long ingredientId,
+            @RequestParam(value = "image", required = false) List<MultipartFile> tradeImgs, // 이미지 리스트 처리
+            @RequestParam TradeType tradeType,
+            @RequestParam String body,
+            @RequestParam Long ingredientCount
     ){
-        Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
+        TradeRequestDTO.CreateTradeRequestDTO request = new TradeRequestDTO.CreateTradeRequestDTO(ingredientCount, body, tradeType, tradeImgs);
+        Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request, tradeImgs);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 
     // 품앗이 상세 조회
@@ -54,7 +57,7 @@ public class TradeController {
             @PathVariable("trade_id") Long tradeId
     ){
         Trade trade = tradeQueryService.getTrade(tradeId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeResultDTO(trade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 
     // 품앗이 게시글 삭제
