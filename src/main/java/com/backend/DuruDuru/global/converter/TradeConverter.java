@@ -69,6 +69,9 @@ public class TradeConverter {
                 .eupmyeondong(trade.getEupmyeondong())
                 .status(trade.getStatus())
                 .tradeType(trade.getTradeType())
+                .thumbnailImgUrl((trade.getTradeImgs() != null && !trade.getTradeImgs().isEmpty())
+                        ? trade.getTradeImgs().get(0).getTradeImgUrl()
+                        : null)      // TradeImgs의 첫 번째 이미지를 thumbnailImg로 자동 등록
                 .createdAt(trade.getCreatedAt())
                 .updatedAt(trade.getUpdatedAt())
                 .build();
