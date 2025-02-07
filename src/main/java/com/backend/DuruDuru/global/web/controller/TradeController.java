@@ -5,8 +5,8 @@ import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.TradeConverter;
 import com.backend.DuruDuru.global.domain.entity.Trade;
+import com.backend.DuruDuru.global.domain.enums.Status;
 import com.backend.DuruDuru.global.domain.enums.TradeType;
-import com.backend.DuruDuru.global.repository.TradeRepository;
 import com.backend.DuruDuru.global.service.TradeService.TradeCommandService;
 import com.backend.DuruDuru.global.service.TradeService.TradeQueryService;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
@@ -15,7 +15,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -72,14 +71,21 @@ public class TradeController {
     }
 
     // 품앗이 게시글 수정
-    @PatchMapping("/{trade_id}")
+    @PatchMapping(value = "/{trade_id}", consumes = "multipart/form-data")
     @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다.")
-    public ApiResponse<TradeResponseDTO.UpdateTradeResultDTO> updateTrade(
-            @PathVariable("trade_id") Long memberId, Long tradeId,
-            @RequestBody TradeRequestDTO.UpdateTradeRequestDTO request
+    public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> updateTrade(
+            @PathVariable("trade_id") Long tradeId,
+            @RequestParam Long memberId,
+            @RequestParam(required = false) List<Long> deleteImgIds,
+            @RequestParam(value = "addImgs", required = false) List<MultipartFile> addImgs, // 이미지 리스트 처리
+            @RequestParam(required = false) TradeType tradeType,
+            @RequestParam(required = false) Status status,
+            @RequestParam(required = false) String body,
+            @RequestParam(required = false) Long ingredientCount
     ){
+        TradeRequestDTO.UpdateTradeRequestDTO request = new TradeRequestDTO.UpdateTradeRequestDTO(ingredientCount, body, tradeType, status, deleteImgIds, addImgs);
         Trade trade = tradeCommandService.updateTrade(memberId, tradeId, request);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 
     // 내 근처 품앗이 나눔/교환별 조회

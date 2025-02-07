@@ -32,8 +32,9 @@ public class TradeRequestDTO {
     public static class UpdateTradeRequestDTO {
         private Long ingredientCount;
         private String body;
-        private Status status;
         private TradeType tradeType;
-        // TradeImg[] tradeImg;
+        private Status status;
+        private List<Long> deleteImgIds;
+        private List<MultipartFile> addTradeImgs;
     }
 }
