@@ -59,10 +59,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     public Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request, List<MultipartFile> tradeImgs) {
         Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
-
-        if(!member.getIngredients().contains(ingredient)) {
-            throw new IllegalArgumentException("접근 권한이 없는 식재료입니다.");
-        }
+        if(!member.getIngredients().contains(ingredient)) throw new IllegalArgumentException("접근 권한이 없는 식재료입니다.");
 
         Trade newTrade = TradeConverter.toCreateTrade(request, member, ingredient);
         member.addTrades(newTrade);
@@ -90,9 +87,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         Trade trade = findTradeById(tradeId);
         Member member = findMemberById(memberId);
 
-        if(!trade.getMember().getMemberId().equals(member.getMemberId())) {
-            throw new IllegalArgumentException("접근 권한이 없는 게시글입니다.");
-        }
+        if(!trade.getMember().getMemberId().equals(member.getMemberId())) throw new IllegalArgumentException("접근 권한이 없는 게시글입니다.");
 
         tradeRepository.delete(trade);
     }
@@ -124,8 +119,10 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         if (request.getAddTradeImgs() != null) {
             for (MultipartFile img : request.getAddTradeImgs()) {
                 String tradeImgUrl = getImgUrl(img);
+
                 TradeImg newTradeImage = TradeImageConverter.toTradeImg(tradeImgUrl, trade);
                 tradeImageRepository.save(newTradeImage);
+                trade.getTradeImgs().add(newTradeImage);
             }
         }
 
