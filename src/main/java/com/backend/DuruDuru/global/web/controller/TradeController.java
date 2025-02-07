@@ -63,8 +63,11 @@ public class TradeController {
     // 품앗이 게시글 삭제
     @DeleteMapping("/{trade_id}")
     @Operation(summary = "품앗이 게시글 삭제 API", description = "특정 품앗이를 삭제하는 API 입니다.")
-    public ApiResponse<?> deleteTrade(){
-
+    public ApiResponse<?> deleteTrade(
+            @RequestParam Long memberId,
+            @PathVariable("trade_id") Long tradeId
+    ){
+        tradeCommandService.deleteTrade(memberId, tradeId);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 

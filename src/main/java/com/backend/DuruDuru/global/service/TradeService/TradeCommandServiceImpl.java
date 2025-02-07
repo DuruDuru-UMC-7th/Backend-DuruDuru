@@ -11,7 +11,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -74,6 +73,19 @@ public class TradeCommandServiceImpl implements TradeCommandService {
             }
         }
         return tradeRepository.save(newTrade);
+    }
+
+    // 품앗이 게시글 삭제
+    @Override
+    public void deleteTrade(Long memberId, Long tradeId) {
+        Trade trade = findTradeById(tradeId);
+        Member member = findMemberById(memberId);
+
+        if(!trade.getMember().getMemberId().equals(member.getMemberId())) {
+            throw new IllegalArgumentException("접근 권한이 없는 게시글입니다.");
+        }
+
+        tradeRepository.delete(trade);
     }
 
     @Override
