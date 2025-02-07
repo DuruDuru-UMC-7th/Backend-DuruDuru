@@ -74,16 +74,12 @@ public class TradeConverter {
                 .build();
     }
 
-    public static TradeResponseDTO.TradePreviewListDTO toTradePreviewListDTO(Page<Trade> tradeList) {
+    public static TradeResponseDTO.TradePreviewListDTO toTradePreviewListDTO(List<Trade> tradeList) {
         List<TradeResponseDTO.TradePreviewDTO> tradePreViewDTOList = tradeList.stream()
                 .map(TradeConverter::tradePreviewDTO).collect(Collectors.toList());
 
         return TradeResponseDTO.TradePreviewListDTO.builder()
-                .isLast(tradeList.isLast())
-                .isFirst(tradeList.isFirst())
-                .totalPage(tradeList.getTotalPages())
-                .totalElements(tradeList.getTotalElements())
-                .listSize(tradePreViewDTOList.size())
+                .totalCount(tradePreViewDTOList.size())
                 .tradeList(tradePreViewDTOList)
                 .build();
     }

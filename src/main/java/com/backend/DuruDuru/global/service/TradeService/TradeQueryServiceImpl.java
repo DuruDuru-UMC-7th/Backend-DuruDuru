@@ -42,13 +42,12 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     // 가까운 거리의 게시글 중에서 TradeType별로 분류된 게시글 리스트 반환
     @Override
     @Transactional
-    public Page<Trade> getNearTradesByType(Long memberId, TradeType tradeType, Integer page, Integer size) {
+    public List<Trade> getNearTradesByType(Long memberId, TradeType tradeType) {
         Member member = findMemberById(memberId);
         double memberLat = member.getTown().getLatitude();
         double memberLon = member.getTown().getLongitude();
 
-        Pageable pageable = PageRequest.of(page, size);
-        List<Trade> results = tradeRepository.findNearbyTrades(memberLat, memberLon, tradeType.name(), pageable.getPageSize(), (int) pageable.getOffset());
-        return new PageImpl<>(results, pageable, results.size());
+        List<Trade> results = tradeRepository.findNearbyTrades(memberLat, memberLon, tradeType.name());
+        return results;
     }
 }

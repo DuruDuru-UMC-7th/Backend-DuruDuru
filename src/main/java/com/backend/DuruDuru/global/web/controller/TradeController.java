@@ -79,23 +79,14 @@ public class TradeController {
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
-    // 품앗이 가능한 식재료 조회
-    @GetMapping("/ingredient/available")
-    @Operation(summary = "품앗이 가능한 식재료 조회 API", description = "품앗이 가능한 식재료 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> findAvailableIngredients(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
-    }
-
     // 내 근처 품앗이 나눔/교환별 조회
     @GetMapping("/near")
     @Operation(summary = "내 근처 품앗이 나눔/교환별 조회 API", description = "내 근처 품앗이 목록을 나눔/교환별로 조회하는 API 입니다. 페이징을 포함하며 query String 으로 page 번호를 주세요")
     public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findNearTradeByType(
             @RequestParam Long memberId,
-            @RequestParam TradeType tradeType,
-            @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "1") int size
+            @RequestParam TradeType tradeType
     ){
-        Page<Trade> tradeList = tradeQueryService.getNearTradesByType(memberId, tradeType, page, size);
+        List<Trade> tradeList = tradeQueryService.getNearTradesByType(memberId, tradeType);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 

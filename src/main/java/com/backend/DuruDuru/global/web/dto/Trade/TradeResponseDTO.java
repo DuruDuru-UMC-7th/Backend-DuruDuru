@@ -72,7 +72,8 @@ public class TradeResponseDTO {
         TradeType tradeType;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
-        // String thumbnailImgUrl;
+        String thumbnailImgUrl;
+        // double distance;
     }
 
     @Getter
@@ -80,11 +81,7 @@ public class TradeResponseDTO {
     @AllArgsConstructor
     @NoArgsConstructor
     public static class TradePreviewListDTO {
-        Integer listSize;
-        Integer totalPage;
-        Long totalElements;
-        Boolean isFirst;
-        Boolean isLast;
+        int totalCount;
         List<TradePreviewDTO> tradeList;
     }
 }
