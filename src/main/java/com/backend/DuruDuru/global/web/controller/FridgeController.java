@@ -52,10 +52,11 @@ public class FridgeController {
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
-    // 식재료 남은 일 수 조회 (5일 이내)
-    @GetMapping("/{member_id}/days-left")
-    @Operation(summary = "식재료 남은 일 수(5일 이내) 조회 API", description = "소비기한이 5일 이내로 남은 식재료의 남은 일 수를 조회하는 API 입니다.")
-    public ApiResponse<?> ingredientLeftDays() {
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
-    }
+//    // 식재료 남은 일 수 조회 (5일 이내)
+//    @GetMapping("/{member_id}/days-left")
+//    @Operation(summary = "식재료 남은 일 수(5일 이내) 조회 API", description = "소비기한이 5일 이내로 남은 식재료의 남은 일 수를 조회하는 API 입니다.")
+//    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> ingredientLeftDays(@PathVariable("member_id") Long memberId) {
+//        List<Ingredient> ingredients = fridgeQueryService.getIngredientsD_day(memberId);
+//        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
+//    }
 }
