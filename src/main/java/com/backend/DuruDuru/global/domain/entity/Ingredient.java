@@ -10,6 +10,7 @@ import lombok.*;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -37,6 +38,9 @@ public class Ingredient extends BaseEntity {
 
     @Column(name = "expiry_date", nullable = true, columnDefinition = "timestamp")
     private LocalDate expiryDate;
+
+    @Column(name = "d_day", nullable = false, columnDefinition = "bigint")
+    private Long dDay;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "storage_type", nullable = true, columnDefinition = "varchar(50)")
@@ -102,10 +106,24 @@ public class Ingredient extends BaseEntity {
     public void updateCategory(MajorCategory majorCategory, MinorCategory minorCategory) {
         this.majorCategory = majorCategory;
         this.minorCategory = minorCategory;
+        calculateDDay(); // 카테고리 변경시 D-Day 다시 계산
     }
 
     public void setIngredientImg(IngredientImg ingredientImg) {
         this.ingredientImg = ingredientImg;
         ingredientImg.setIngredient(this);
     }
+
+    public void calculateDDay() {
+        LocalDate today = LocalDate.now();
+        this.dDay = (this.expiryDate != null) ? ChronoUnit.DAYS.between(today, this.expiryDate) : Long.MAX_VALUE;
+    }
+
+    @PrePersist
+    @PreUpdate
+    public void updateDDay() {
+        calculateDDay();
+    }
+
+
 }
