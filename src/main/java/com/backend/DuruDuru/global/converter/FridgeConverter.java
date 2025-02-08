@@ -3,6 +3,8 @@ package com.backend.DuruDuru.global.converter;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.web.dto.Fridge.FridgeResponseDTO;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,6 +19,7 @@ public class FridgeConverter {
                 .count(ingredient.getCount())
                 .purchaseDate(ingredient.getPurchaseDate())
                 .expiryDate(ingredient.getExpiryDate())
+                .dDay(ingredient.getDDay())
                 .storageType(String.valueOf(ingredient.getStorageType()))
                 .majorCategory(ingredient.getMajorCategory().name())
                 .minorCategory(ingredient.getMinorCategory().name())

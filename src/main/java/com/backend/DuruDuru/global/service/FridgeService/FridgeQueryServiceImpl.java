@@ -1,6 +1,5 @@
 package com.backend.DuruDuru.global.service.FridgeService;
 
-
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.repository.FridgeRepository;
@@ -12,7 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -39,13 +41,13 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
     @Override
     public List<Ingredient> getIngredientsNearExpiry(Long memberId) {
         findMemberById(memberId);
-        return ingredientRepository.findAllByFridge_Member_MemberIdOrderByExpiryDateAsc(memberId);
+        return ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayAsc(memberId);
     }
 
     @Override
     public List<Ingredient> getIngredientsFarExpiry(Long memberId) {
         findMemberById(memberId);
-        return ingredientRepository.findAllByFridge_Member_MemberIdOrderByExpiryDateDesc(memberId);
+        return ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayDesc(memberId);
     }
 
 }

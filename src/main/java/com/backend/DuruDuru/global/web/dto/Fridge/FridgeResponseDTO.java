@@ -21,6 +21,7 @@ public class FridgeResponseDTO {
         Long count;
         LocalDate purchaseDate;
         LocalDate expiryDate;
+        Long dDay;
         String storageType;
         String majorCategory;
         String minorCategory;
