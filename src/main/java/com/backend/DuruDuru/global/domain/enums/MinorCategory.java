@@ -75,7 +75,7 @@ public enum MinorCategory {
 
     // 기타
     통조림(MajorCategory.기타, StorageType.실온, 365),
-    과자(MajorCategory.기타, StorageType.실온, 45),
+    과자(MajorCategory.기타, StorageType.실온, 90),
     초콜릿(MajorCategory.기타, StorageType.실온, 90),
     과채음료(MajorCategory.기타, StorageType.냉장, 20),
     탄산음료(MajorCategory.기타, StorageType.냉장, 365),
@@ -84,6 +84,7 @@ public enum MinorCategory {
     밀떡(MajorCategory.기타, StorageType.냉동, 270),
     쌀떡(MajorCategory.기타, StorageType.냉동, 270),
     건조면류(MajorCategory.기타, StorageType.실온, 365),
+    냉동면류(MajorCategory.기타, StorageType.냉동, 365),
     라면(MajorCategory.기타, StorageType.실온, 300),
     생면(MajorCategory.기타, StorageType.냉장, 12),
     소스류(MajorCategory.기타, StorageType.냉장, 180),
