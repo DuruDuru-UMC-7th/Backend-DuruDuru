@@ -8,4 +8,5 @@ public interface FridgeQueryService {
 
     List<Ingredient> getAllIngredients(Long memberId);
     List<Ingredient> getIngredientsNearExpiry(Long memberId);
+    List<Ingredient> getIngredientsFarExpiry(Long memberId);
 }

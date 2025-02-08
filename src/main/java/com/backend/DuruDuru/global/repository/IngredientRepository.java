@@ -15,5 +15,6 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     // 냉장고 관련 메서드
     List<Ingredient> findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(Long memberId);
     List<Ingredient> findAllByFridge_Member_MemberIdOrderByExpiryDateAsc(Long memberId);
+    List<Ingredient> findAllByFridge_Member_MemberIdOrderByExpiryDateDesc(Long memberId);
 
 }

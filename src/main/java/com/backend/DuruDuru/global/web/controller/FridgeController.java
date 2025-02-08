@@ -47,8 +47,9 @@ public class FridgeController {
     // 소비기한 여유순 식재료 리스트 조회
     @GetMapping("/{member_id}/far-expiry")
     @Operation(summary = "식재료 소비기한 여유순 리스트 조회 API", description = "식재료 리스트를 소비기한이 여유로운 순서대로 조회하는 API 입니다.")
-    public ApiResponse<?> ingredientFarExpiry() {
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, null);
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> ingredientFarExpiry(@PathVariable("member_id") Long memberId) {
+        List<Ingredient> ingredients = fridgeQueryService.getIngredientsFarExpiry(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 식재료 남은 일 수 조회 (5일 이내)

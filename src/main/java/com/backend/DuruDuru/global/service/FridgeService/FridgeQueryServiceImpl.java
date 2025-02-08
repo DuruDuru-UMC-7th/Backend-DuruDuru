@@ -42,4 +42,10 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
         return ingredientRepository.findAllByFridge_Member_MemberIdOrderByExpiryDateAsc(memberId);
     }
 
+    @Override
+    public List<Ingredient> getIngredientsFarExpiry(Long memberId) {
+        findMemberById(memberId);
+        return ingredientRepository.findAllByFridge_Member_MemberIdOrderByExpiryDateDesc(memberId);
+    }
+
 }
