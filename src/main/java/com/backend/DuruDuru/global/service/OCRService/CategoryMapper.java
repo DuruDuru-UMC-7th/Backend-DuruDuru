@@ -220,6 +220,11 @@ public class CategoryMapper {
         keywordToMinorCategoryMap.put("동원참치", MinorCategory.통조림);
 
         keywordToMinorCategoryMap.put("과자", MinorCategory.과자);
+        keywordToMinorCategoryMap.put("땅콩샌드", MinorCategory.과자);
+        keywordToMinorCategoryMap.put("초코파이", MinorCategory.과자);
+        keywordToMinorCategoryMap.put("칩", MinorCategory.과자);
+        keywordToMinorCategoryMap.put("쿠키", MinorCategory.과자);
+
         keywordToMinorCategoryMap.put("초콜릿", MinorCategory.초콜릿);
         keywordToMinorCategoryMap.put("탄산음료", MinorCategory.탄산음료);
 
@@ -242,6 +247,7 @@ public class CategoryMapper {
         keywordToMinorCategoryMap.put("건면", MinorCategory.건조면류);
         keywordToMinorCategoryMap.put("밀면", MinorCategory.생면);
         keywordToMinorCategoryMap.put("생면", MinorCategory.생면);
+        keywordToMinorCategoryMap.put("냉동중화면", MinorCategory.냉동면류);
 
         keywordToMinorCategoryMap.put("라면", MinorCategory.라면);
         keywordToMinorCategoryMap.put("신라면", MinorCategory.라면);
@@ -257,10 +263,13 @@ public class CategoryMapper {
         keywordToMinorCategoryMap.put("마요네즈", MinorCategory.소스류);
         keywordToMinorCategoryMap.put("머스타드", MinorCategory.소스류);
         keywordToMinorCategoryMap.put("바베큐소스", MinorCategory.소스류);
+        keywordToMinorCategoryMap.put("토마토소스", MinorCategory.소스류);
+        keywordToMinorCategoryMap.put("굴소스", MinorCategory.소스류);
 
         keywordToMinorCategoryMap.put("빵", MinorCategory.기타);
         keywordToMinorCategoryMap.put("밥", MinorCategory.기타);
         keywordToMinorCategoryMap.put("햇반", MinorCategory.기타);
+        keywordToMinorCategoryMap.put("식빵", MinorCategory.기타);
 
         keywordToMinorCategoryMap.put("설탕", MinorCategory.조미료류);
         keywordToMinorCategoryMap.put("소금", MinorCategory.조미료류);
