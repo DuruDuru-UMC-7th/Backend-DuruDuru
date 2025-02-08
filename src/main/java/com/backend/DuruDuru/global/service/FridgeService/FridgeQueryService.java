@@ -6,5 +6,6 @@ import java.util.List;
 
 public interface FridgeQueryService {
 
-    List<Ingredient> getIngredients(Long memberId);
+    List<Ingredient> getAllIngredients(Long memberId);
+    List<Ingredient> getIngredientsNearExpiry(Long memberId);
 }

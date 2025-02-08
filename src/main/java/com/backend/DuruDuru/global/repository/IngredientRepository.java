@@ -11,6 +11,9 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     List<Ingredient> findByMember_MemberIdAndMinorCategory(Long memberId, MinorCategory minorCategory);
     List<Ingredient> findAllByIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(String search);
     List<Ingredient> findAllByOrderByCreatedAtDesc();
+
+    // 냉장고 관련 메서드
     List<Ingredient> findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(Long memberId);
+    List<Ingredient> findAllByFridge_Member_MemberIdOrderByExpiryDateAsc(Long memberId);
 
 }
