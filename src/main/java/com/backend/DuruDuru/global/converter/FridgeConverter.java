@@ -20,6 +20,7 @@ public class FridgeConverter {
                 .purchaseDate(ingredient.getPurchaseDate())
                 .expiryDate(ingredient.getExpiryDate())
                 .dDay(ingredient.getDDay())
+                .dDayFormatted(ingredient.getFormattedDDay())
                 .storageType(String.valueOf(ingredient.getStorageType()))
                 .majorCategory(ingredient.getMajorCategory().name())
                 .minorCategory(ingredient.getMinorCategory().name())

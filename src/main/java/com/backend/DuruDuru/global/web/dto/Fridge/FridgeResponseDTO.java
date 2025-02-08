@@ -22,6 +22,7 @@ public class FridgeResponseDTO {
         LocalDate purchaseDate;
         LocalDate expiryDate;
         Long dDay;
+        String dDayFormatted;
         String storageType;
         String majorCategory;
         String minorCategory;

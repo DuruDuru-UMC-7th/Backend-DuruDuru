@@ -4,6 +4,7 @@ import com.backend.DuruDuru.global.domain.common.BaseEntity;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.domain.enums.StorageType;
+import com.backend.DuruDuru.global.service.IngredientService.DateFormatter;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import jakarta.persistence.*;
 import lombok.*;
@@ -124,6 +125,12 @@ public class Ingredient extends BaseEntity {
     public void updateDDay() {
         calculateDDay();
     }
+
+    @Transient
+    public String getFormattedDDay() {
+        return DateFormatter.formatRemainingDays(this.dDay);
+    }
+
 
 
 }
