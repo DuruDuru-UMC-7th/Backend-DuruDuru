@@ -93,7 +93,6 @@ public class IngredientConverter {
                 .build();
     }
 
-
     public static IngredientResponseDTO.IngredientImageDTO toIngredientImageDTO(Ingredient ingredient) {
         return IngredientResponseDTO.IngredientImageDTO.builder()
                 .memberId(ingredient.getMember().getMemberId())
