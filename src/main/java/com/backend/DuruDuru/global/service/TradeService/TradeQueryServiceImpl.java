@@ -47,7 +47,14 @@ public class TradeQueryServiceImpl implements TradeQueryService {
         double memberLat = member.getTown().getLatitude();
         double memberLon = member.getTown().getLongitude();
 
-        List<Trade> results = tradeRepository.findNearbyTrades(memberLat, memberLon, tradeType.name());
-        return results;
+        return tradeRepository.findNearbyTrades(memberLat, memberLon, tradeType.name());
+    }
+
+    // 멤버별 전체 품앗이 게시글 리스트 조회
+    @Override
+    @Transactional
+    public List<Trade> getAllTradesByMember(Long memberId) {
+        Member member = findMemberById(memberId);
+        return tradeRepository.findAllByMember(member);
     }
 }

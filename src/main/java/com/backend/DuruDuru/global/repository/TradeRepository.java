@@ -1,5 +1,6 @@
 package com.backend.DuruDuru.global.repository;
 
+import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.Trade;
 import com.backend.DuruDuru.global.domain.enums.TradeType;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,5 +22,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
             @Param("memberLon") double memberLon,
             @Param("tradeType") String tradeType
     );
+
+    List<Trade> findAllByMember(Member member);
 }
 
