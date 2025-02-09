@@ -88,17 +88,6 @@ public class TradeController {
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 
-    // 내 근처 품앗이 나눔/교환별 리스트 조회
-    @GetMapping("/near")
-    @Operation(summary = "내 근처 품앗이 나눔/교환별 리스트 조회 API", description = "내 근처 품앗이 **프리뷰 리스트**를 나눔/교환별로 조회하는 API 입니다.")
-    public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findNearTradeByType(
-            @RequestParam Long memberId,
-            @RequestParam TradeType tradeType
-    ){
-        List<Trade> tradeList = tradeQueryService.getNearTradesByType(memberId, tradeType);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
-    }
-
     // 나의 활성화 품앗이 리스트 조회
     @GetMapping("/my/active")
     @Operation(summary = "나의 활성화 품앗이 리스트 조회 API", description = "나의 활성화된 품앗이 **프리뷰 리스트**를 조회하는 API 입니다.")
@@ -117,6 +106,73 @@ public class TradeController {
     ){
         List<Trade> tradeList = tradeQueryService.getAllTradesByMember(memberId);
         return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, TradeConverter.toTradePreviewListDTO(tradeList));
+    }
+
+    // 내가 찜한 품앗이 리스트 조회
+    @GetMapping("/my/like")
+    @Operation(summary = "내가 찜한 품앗이 리스트 조회 API", description = "내가 찜한 품앗이 **프리뷰 리스트**를 조회하는 API 입니다.")
+    public ApiResponse<?> findLikeTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 내 근처 품앗이 나눔/교환별 리스트 조회
+    @GetMapping("/near/{trade_type}")
+    @Operation(summary = "내 근처 품앗이 나눔/교환별 리스트 조회 API", description = "내 근처 게시글 중에서 나눔/교환별로 **프리뷰 리스트**를 조회하는 API 입니다.")
+    public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findNearTradeByType(
+            @RequestParam Long memberId,
+            @PathVariable("trade_type") TradeType tradeType
+    ){
+        List<Trade> tradeList = tradeQueryService.getNearTradesByType(memberId, tradeType);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
+    }
+
+    // 내 근처 품앗이 최신 등록순 리스트 조회
+    @GetMapping("/near/recent")
+    @Operation(summary = "내 근처 품앗이 최신 등록순 리스트 조회 API", description = "내 근처 게시글 중에서 최신 등록순으로 **프리뷰 리스트**를 조회하는 API 입니다.")
+    public ApiResponse<?> findRecentTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 내 근처 품앗이 소비기한 임박순 리스트 조회
+    @GetMapping("/near/near-expiry")
+    @Operation(summary = "내 근처 품앗이 소비기한 임박순 리스트 조회 API", description = "내 근처 게시글 중에서 소비기한 임박순으로 **프리뷰 리스트**를 조회하는 API 입니다.")
+    public ApiResponse<?> findNearExpiryTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 내 근처 품앗이 소비기한 여유순 리스트 조회
+    @GetMapping("/near/far-expiry")
+    @Operation(summary = "내 근처 품앗이 소비기한 여유순 리스트 조회 API", description = "내 근처 게시글 중에서 소비기한 여유순으로 **프리뷰 리스트**를 조회하는 API 입니다.")
+    public ApiResponse<?> findFarExpiryTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 다른 품앗이 둘러보기
+    @GetMapping("/other-trade")
+    @Operation(summary = "다른 품앗이 둘러보기 API", description = "다른 품앗이를 추천하는 API 입니다.")
+    public ApiResponse<?> findOtherTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 품앗이 찜하기
+    @PostMapping("/like/{member_id}/{trade_id}")
+    @Operation(summary = "품앗이 찜하기 API", description = "품앗이 찜하기 API 입니다.")
+    public ApiResponse<?> likeTrade() {
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 품앗이 찜하기 취소
+    @DeleteMapping("/like/delete/{trade_id}")
+    @Operation(summary = "품앗이 찜하기 취소 API", description = "품앗이 찜하기를 취소하는 API 입니다.")
+    public ApiResponse<?> deleteLideTrade(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    }
+
+    // 특정 품앗이의 찜하기 개수 조회
+    @GetMapping("/like/count/{trade_id}")
+    @Operation(summary = "특정 품앗이의 찜하기 개수 조회 API", description = "특정 품앗이의 찜하기 개수를 조회하는 API 입니다.")
+    public ApiResponse<?> findLikeCount(){
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 품앗이 링크 공유
