@@ -59,6 +59,8 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     public Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request, List<MultipartFile> tradeImgs) {
         Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
+
+        if(tradeImgs.size() > 5) throw new IllegalArgumentException("게시글에 등록할 수 있는 이미지의 수는 최대 5개입니다.");
         if(!member.getIngredients().contains(ingredient)) throw new IllegalArgumentException("접근 권한이 없는 식재료입니다.");
 
         Trade newTrade = TradeConverter.toCreateTrade(request, member, ingredient);
@@ -77,6 +79,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
                 newTrade.getTradeImgs().add(newTradeImage);
             }
         }
+
         return tradeRepository.save(newTrade);
     }
 
@@ -117,6 +120,8 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
         // 새로운 이미지를 추가한 경우
         if (request.getAddTradeImgs() != null) {
+            if(request.getAddTradeImgs().size() + trade.getTradeImgs().size() > 5) throw new IllegalArgumentException("게시글에 등록할 수 있는 이미지의 수는 최대 5개입니다.");
+
             for (MultipartFile img : request.getAddTradeImgs()) {
                 String tradeImgUrl = getImgUrl(img);
 
