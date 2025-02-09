@@ -97,16 +97,6 @@ public class IngredientResponseDTO {
         String ingredientImageUrl;
     }
 
-//    @JsonInclude(JsonInclude.Include.NON_NULL)
-//    @JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
-//    @Builder
-//    public record IngredientImageDTO(String url) {
-//        public static IngredientImageDTO of(String url) {
-//            return IngredientImageDTO.builder()
-//                    .url(url)
-//                    .build();
-//        }
-//    }
 
     @Getter
     @Setter

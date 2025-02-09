@@ -107,61 +107,33 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     }
 
 
-//    @Transactional
-//    @Override
-//    public ApiResponse<IngredientResponseDTO.IngredientImageDTO> registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request){//Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
-//        Ingredient ingredient = findIngredientById(ingredientId);
-//
-//        if (ingredient.getIngredientImg() != null) {
-//            s3Manager.deleteFile(ingredient.getIngredientImg().getIngredientImgUrl());
-//            ingredientImageRepository.deleteByIngredientId(ingredientId);
-//            entityManager.flush(); // DB에서 Id에 해당하는 튜플삭제
-//            entityManager.clear(); // 영속성 컨텍스트 초기화
-//            ingredient.setIngredientImg(null);
-//        }
-//
-//        String uuid = UUID.randomUUID().toString();
-//        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-//        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
-//
-//        IngredientImg ingredientImg = IngredientImg.builder()
-//                .ingredientImgUrl(fileUrl)
-//                .ingredient(ingredient)
-//                .build();
-//
-//        ingredient.setIngredientImg(ingredientImg);
-//        ingredientImageRepository.save(ingredientImg);
-//
-//        IngredientResponseDTO.IngredientImageDTO response = new IngredientResponseDTO.IngredientImageDTO(ingredientImg.getIngredientImgUrl());
-//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, response);
-//    }
-@Transactional
-@Override
-public Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
-    Ingredient ingredient = findIngredientById(ingredientId);
+    @Transactional
+    @Override
+    public Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
+        Ingredient ingredient = findIngredientById(ingredientId);
 
-    if (ingredient.getIngredientImg() != null) {
-        s3Manager.deleteFile(ingredient.getIngredientImg().getIngredientImgUrl());
-        ingredientImageRepository.deleteByIngredientId(ingredientId);
-        entityManager.flush(); // DB에서 Id에 해당하는 튜플 삭제
-        entityManager.clear(); // 영속성 컨텍스트 초기화
-        ingredient.setIngredientImg(null);
+        if (ingredient.getIngredientImg() != null) {
+            s3Manager.deleteFile(ingredient.getIngredientImg().getIngredientImgUrl());
+            ingredientImageRepository.deleteByIngredientId(ingredientId);
+            entityManager.flush(); // DB에서 Id에 해당하는 튜플 삭제
+            entityManager.clear(); // 영속성 컨텍스트 초기화
+            ingredient.setIngredientImg(null);
+        }
+
+        String uuid = UUID.randomUUID().toString();
+        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
+
+        IngredientImg ingredientImg = IngredientImg.builder()
+                .ingredientImgUrl(fileUrl)
+                .ingredient(ingredient)
+                .build();
+
+        ingredient.setIngredientImg(ingredientImg);
+        ingredientImageRepository.save(ingredientImg);
+
+        return ingredient;
     }
-
-    String uuid = UUID.randomUUID().toString();
-    Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
-    String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
-
-    IngredientImg ingredientImg = IngredientImg.builder()
-            .ingredientImgUrl(fileUrl)
-            .ingredient(ingredient)
-            .build();
-
-    ingredient.setIngredientImg(ingredientImg);
-    ingredientImageRepository.save(ingredientImg);
-
-    return ingredient;
-}
 
 
     @Transactional
