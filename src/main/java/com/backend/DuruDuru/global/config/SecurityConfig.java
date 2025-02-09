@@ -41,12 +41,11 @@ public class SecurityConfig {
                                 .requestMatchers("/trade/near/{trade_type}", "/trade/near/recent", "trade/near/near-expiry", "trade/near/far-expiry").permitAll()
                                 .requestMatchers("trade/like/{member_id}/{trade_id}", "/trade/like/delete/{trade_id}", "/trade/like/count/{trade_id}").permitAll()
                                 .requestMatchers("trade/other-trade","/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert").permitAll()
-                                // 다른 엔티티 관련 접근
-                                .requestMatchers("/example/**").permitAll()
                                 // Ingredient 관련 접근
                                 .requestMatchers("/ingredient/{ingredient_id}/photo","/ingredient/{ingredient_id}/purchase-date", "/ingredient/").permitAll()
                                 .requestMatchers("/ingredient/{ingredient_id}","/ingredient/{ingredient_id}/category", "/ingredient/{ingredient_id}/storage-type").permitAll()
-                                .requestMatchers("/ingredient/search/name", "/ingredient/search/category/list", "/ingredient/category/major-to-minor").permitAll()
+                                .requestMatchers("/ingredient/search/name", "/ingredient/category/major-to-minor").permitAll()
+                                .requestMatchers("/ingredient/majorCategory/list", "/ingredient/minorCategory/list", "/ingredient/minorCategory/").permitAll()
                                 // Fridge 관련 접근
                                 .requestMatchers("/fridge/{member_id}/all/recent", "/fridge/{member_id}/near-expiry", "/fridge/{member_id}/far-expiry").permitAll()
                                 // OCR 관련 접근
@@ -56,6 +55,7 @@ public class SecurityConfig {
                                 // Recipe 관련 접근
                                 .requestMatchers("/recipes/{recipe_id}").permitAll()
                                 // 기타 관련 접근
+                                .requestMatchers("/example/**").permitAll()
                                 .requestMatchers("/", "/api-docs/**", "/api-docs/swagger-config/*", "/swagger-ui/*", "/swagger-ui/**", "/v3/api-docs/**", "/image/upload", "/image/delete").permitAll()
                                 .anyRequest().authenticated()
                 )

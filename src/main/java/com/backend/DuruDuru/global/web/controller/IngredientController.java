@@ -115,6 +115,13 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientDetailListDTO(ingredients));
     }
 
+    // 대분류에 속하는 소분류 카테고리 조회
+    @GetMapping("/category/major-to-minor")
+    @Operation(summary = "대분류에 속하는 소분류 카테고리 조회 API", description = "대분류에 속하는 소분류 카테고리를 조회하는 API 입니다.")
+    public ApiResponse<?> majorToMinorCategory(@RequestParam MajorCategory majorCategory) {
+        Map<String, Object> category = ingredientQueryService.getMinorCategoriesByMajor(majorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, category);
+    }
 
     // 소분류 카테고리에 속하는 식재료 리스트 조회
     @GetMapping("/minorCategory/list")
@@ -131,14 +138,6 @@ public class IngredientController {
     @Operation(summary = "대분류 카테고리에 속하는 식재료 리스트 조회 API", description = "대분류 카테고리에 속하는 식재료 리스트 조회하는 API 입니다.")
     public ApiResponse<?> searchIngredientByMajorCategory(){
         return null;
-    }
-
-    // 대분류에 속하는 소분류 카테고리 조회
-    @GetMapping("/category/major-to-minor")
-    @Operation(summary = "대분류에 속하는 소분류 카테고리 조회 API", description = "대분류에 속하는 소분류 카테고리를 조회하는 API 입니다.")
-    public ApiResponse<?> majorToMinorCategory(@RequestParam MajorCategory majorCategory) {
-        Map<String, Object> category = ingredientQueryService.getMinorCategoriesByMajor(majorCategory);
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, category);
     }
 
     // 소분류 카테고리 목록 전체 조회
