@@ -128,6 +128,17 @@ public class IngredientResponseDTO {
     @NoArgsConstructor
     @AllArgsConstructor
     @Builder
+    public static class MajorCategoryIngredientPreviewListDTO {
+        private String majorCategory;
+        private int count;
+        private List<IngredientDetailDTO> ingredients;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
     public static class IngredientDetailListDTO {
         private int count;
         private List<IngredientDetailDTO> ingredients;
