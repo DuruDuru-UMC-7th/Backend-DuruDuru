@@ -144,8 +144,9 @@ public class IngredientController {
     // 소분류 카테고리 목록 전체 조회
     @GetMapping("/minorCategory")
     @Operation(summary = "소분류 카테고리 목록 전체 조회 API", description = "소분류 카테고리 목록 전체를 조회하는 API 입니다.")
-    public ApiResponse<?> minorCategoryList(){
-        return null;
+    public ApiResponse<List<MinorCategory>> minorCategoryList(){
+        List<MinorCategory> categories = Arrays.asList(MinorCategory.values());
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, categories);
     }
 
 //    // 소분류 카테고리에 속하는 식재료 개수 조회
