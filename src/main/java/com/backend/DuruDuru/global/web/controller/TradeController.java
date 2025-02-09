@@ -88,7 +88,7 @@ public class TradeController {
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 
-    // 내 근처 품앗이 나눔/교환별 조회
+    // 내 근처 품앗이 나눔/교환별 리스트 조회
     @GetMapping("/near")
     @Operation(summary = "내 근처 품앗이 나눔/교환별 리스트 조회 API", description = "내 근처 품앗이 **프리뷰 리스트**를 나눔/교환별로 조회하는 API 입니다.")
     public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findNearTradeByType(
@@ -99,15 +99,18 @@ public class TradeController {
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
-    // 나의 품앗이 목록 조회 API
-    @GetMapping("/current")
+    // 나의 활성화 품앗이 리스트 조회
+    @GetMapping("/my/active")
     @Operation(summary = "나의 활성화 품앗이 리스트 조회 API", description = "나의 활성화된 품앗이 **프리뷰 리스트**를 조회하는 API 입니다.")
-    public ApiResponse<?> findCurrentTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, null);
+    public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findCurrentTrade(
+            @RequestParam Long memberId
+    ){
+        List<Trade> tradeList = tradeQueryService.getActiveTradesByMember(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
-    // 나의 품앗이 기록 조회 API
-    @GetMapping("/history")
+    // 나의 전체 품앗이 리스트 조회
+    @GetMapping("/my/history")
     @Operation(summary = "나의 전체 품앗이 리스트 조회 API", description = "나의 전체 품앗이 **프리뷰 리스트**를 조회하는 API 입니다.")
     public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findHistoryTrade(
             @RequestParam Long memberId

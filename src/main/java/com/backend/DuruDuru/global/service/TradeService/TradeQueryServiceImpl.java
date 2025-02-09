@@ -6,10 +6,6 @@ import com.backend.DuruDuru.global.domain.enums.TradeType;
 import com.backend.DuruDuru.global.repository.MemberRepository;
 import com.backend.DuruDuru.global.repository.TradeRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -55,6 +51,13 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     @Transactional
     public List<Trade> getAllTradesByMember(Long memberId) {
         Member member = findMemberById(memberId);
-        return tradeRepository.findAllByMember(member);
+        return tradeRepository.findAllByMemberOrderByUpdatedAtDesc(member);
+    }
+
+    // 멤버별 활성화 품앗이 게시글 리스트 조회
+    @Override
+    @Transactional
+    public List<Trade> getActiveTradesByMember(Long memberId) {
+        return tradeRepository.findActiveTradesByMember(memberId);
     }
 }

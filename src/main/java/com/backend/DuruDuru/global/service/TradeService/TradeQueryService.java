@@ -12,4 +12,6 @@ public interface TradeQueryService {
     List<Trade> getNearTradesByType(Long memberId, TradeType tradeType);
     // 멤버별 전체 품앗이 게시글 리스트 조회
     List<Trade> getAllTradesByMember(Long memberId);
+    // 멤버별 활성화 품앗이 게시글 리스트 조회
+    List<Trade> getActiveTradesByMember(Long memberId);
 }
