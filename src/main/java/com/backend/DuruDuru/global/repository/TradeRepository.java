@@ -25,6 +25,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     @Query(value = """
         SELECT * FROM trade
         WHERE trade_type = :tradeType
+        AND (status = 'ACTIVE' OR status = 'PROCEEDING')
         AND (6371 * acos(cos(radians(:memberLat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:memberLon)) + sin(radians(:memberLat)) * sin(radians(latitude)))) <= 1
         ORDER BY updated_at DESC
         """, nativeQuery = true)

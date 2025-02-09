@@ -4,6 +4,7 @@ import com.backend.DuruDuru.global.S3.AmazonS3Manager;
 import com.backend.DuruDuru.global.converter.TradeConverter;
 import com.backend.DuruDuru.global.converter.TradeImageConverter;
 import com.backend.DuruDuru.global.domain.entity.*;
+import com.backend.DuruDuru.global.domain.enums.Status;
 import com.backend.DuruDuru.global.repository.*;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -59,7 +59,10 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     public Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request, List<MultipartFile> tradeImgs) {
         Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
+
+        if(tradeRepository.findActiveTradesByMember(memberId).size() >= 4) throw new IllegalArgumentException("진행중인 품앗이 거래는 최대 4개까지 가능합니다.");
         if(!member.getIngredients().contains(ingredient)) throw new IllegalArgumentException("접근 권한이 없는 식재료입니다.");
+        if(tradeImgs.size() > 5) throw new IllegalArgumentException("게시글에 등록할 수 있는 이미지의 수는 최대 5개입니다.");
 
         Trade newTrade = TradeConverter.toCreateTrade(request, member, ingredient);
         member.addTrades(newTrade);
@@ -77,6 +80,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
                 newTrade.getTradeImgs().add(newTradeImage);
             }
         }
+
         return tradeRepository.save(newTrade);
     }
 
@@ -117,6 +121,8 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
         // 새로운 이미지를 추가한 경우
         if (request.getAddTradeImgs() != null) {
+            if(request.getAddTradeImgs().size() + trade.getTradeImgs().size() > 5) throw new IllegalArgumentException("게시글에 등록할 수 있는 이미지의 수는 최대 5개입니다.");
+
             for (MultipartFile img : request.getAddTradeImgs()) {
                 String tradeImgUrl = getImgUrl(img);
 
@@ -130,7 +136,16 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         if (request.getIngredientCount() != null) trade.setIngredientCount(request.getIngredientCount());
         if (request.getBody() != null) trade.setBody(request.getBody());
         if (request.getTradeType() != null) trade.setTradeType(request.getTradeType());
-        if (request.getStatus() != null) trade.setStatus(request.getStatus());
+        if (request.getStatus() != null) {
+            Status requestStatus = request.getStatus();
+
+            // 완료된 품앗이를 거래 전, 거래 중으로 바꾸는 경우
+            if((requestStatus == Status.ACTIVE || requestStatus == Status.PROCEEDING) && tradeRepository.findActiveTradesByMember(memberId).size() >= 4) {
+                throw new IllegalArgumentException("진행중인 품앗이 거래는 최대 4개까지 가능합니다.");
+            } else {
+                trade.setStatus(requestStatus);
+            }
+        }
 
         return tradeRepository.save(trade);
     }
