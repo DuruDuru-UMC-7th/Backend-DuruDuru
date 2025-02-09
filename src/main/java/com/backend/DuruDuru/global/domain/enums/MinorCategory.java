@@ -47,6 +47,7 @@ public enum MinorCategory {
     // 채소
     잎채소(MajorCategory.채소, StorageType.냉장, 3),
     뿌리채소(MajorCategory.채소, StorageType.냉장, 14),
+    //과채류(MajorCategory.채소, StorageType.냉장, 5),
     콩류(MajorCategory.채소, StorageType.실온, 150),
     마늘(MajorCategory.채소, StorageType.냉장, 20),
     대파(MajorCategory.채소, StorageType.냉장, 14),
