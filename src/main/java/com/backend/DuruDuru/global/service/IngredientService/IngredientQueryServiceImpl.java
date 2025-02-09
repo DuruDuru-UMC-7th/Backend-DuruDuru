@@ -34,11 +34,18 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
         return result;
     }
 
+    //소분류 카테고리에 속하는 식재료 조회
     @Override
     public List<Ingredient> getIngredientsByMinorCategory(Long memberId, MinorCategory minorCategory) {
-        //소분류 카테고리에 속하는 식재료 조회
         return ingredientRepository.findByMember_MemberIdAndMinorCategory(memberId, minorCategory);
     }
+
+    //소분류 카테고리에 속하는 식재료 조회
+    @Override
+    public List<Ingredient> getIngredientsByMajorCategory(Long memberId, MajorCategory majorCategory) {
+        return ingredientRepository.findByMember_MemberIdAndMajorCategory(memberId, majorCategory);
+    }
+
 
     @Override
     public List<Ingredient> getIngredientsByName(Optional<String> optSearch) {

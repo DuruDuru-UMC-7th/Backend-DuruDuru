@@ -129,15 +129,16 @@ public class IngredientController {
     public ApiResponse<IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO> searchIngredientByMinorCategory(@RequestParam Long memberId,
                                                                                                                     @RequestParam MinorCategory minorCategory) {
         List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMinorCategory(memberId, minorCategory);
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK,
-                IngredientConverter.toMinorCategoryIngredientPreviewListDTO(minorCategory, ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toMinorCategoryIngredientPreviewListDTO(minorCategory, ingredients));
     }
 
     // 대분류 카테고리에 속하는 식재료 리스트 조회
     @GetMapping("/majorCategory/list")
     @Operation(summary = "대분류 카테고리에 속하는 식재료 리스트 조회 API", description = "대분류 카테고리에 속하는 식재료 리스트 조회하는 API 입니다.")
-    public ApiResponse<?> searchIngredientByMajorCategory(){
-        return null;
+    public ApiResponse<IngredientResponseDTO.MajorCategoryIngredientPreviewListDTO> searchIngredientByMajorCategory(@RequestParam Long memberId,
+                                                                                                                    @RequestParam MajorCategory majorCategory){
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMajorCategory(memberId, majorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toMajorCategoryIngredientPreviewListDTO(majorCategory, ingredients));
     }
 
     // 소분류 카테고리 목록 전체 조회

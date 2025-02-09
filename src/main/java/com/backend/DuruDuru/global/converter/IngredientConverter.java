@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.converter;
 
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Receipt;
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
@@ -120,6 +121,17 @@ public class IngredientConverter {
             MinorCategory minorCategory, List<Ingredient> ingredients) {
         return IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO.builder()
                 .minorCategory(minorCategory.name())
+                .count(ingredients.size())
+                .ingredients(ingredients.stream()
+                        .map(IngredientConverter::toIngredientDetailDTO)
+                        .collect(Collectors.toList()))
+                .build();
+    }
+
+    public static IngredientResponseDTO.MajorCategoryIngredientPreviewListDTO toMajorCategoryIngredientPreviewListDTO(
+            MajorCategory majorCategory, List<Ingredient> ingredients) {
+        return IngredientResponseDTO.MajorCategoryIngredientPreviewListDTO.builder()
+                .majorCategory(majorCategory.name())
                 .count(ingredients.size())
                 .ingredients(ingredients.stream()
                         .map(IngredientConverter::toIngredientDetailDTO)

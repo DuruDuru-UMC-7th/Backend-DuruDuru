@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Optional;
 
 public interface IngredientQueryService {
-    // 대분류에 따른 소분류 가져오기
     Map<String, Object> getMinorCategoriesByMajor(MajorCategory majorCategory);
     List<Ingredient> getIngredientsByMinorCategory(Long memberId, MinorCategory minorCategory);
+    List<Ingredient> getIngredientsByMajorCategory(Long memberId, MajorCategory majorCategory);
     List<Ingredient> getIngredientsByName(Optional<String> optSearch);
 }
