@@ -72,7 +72,7 @@ public class TradeController {
 
     // 품앗이 게시글 수정
     @PatchMapping(value = "/{trade_id}", consumes = "multipart/form-data")
-    @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다.")
+    @Operation(summary = "품앗이 게시글 수정 API", description = "특정 품앗이를 수정하는 API 입니다. 삭제할 이미지는 해당 이미지의 id값으로 넣어주세요.")
     public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> updateTrade(
             @PathVariable("trade_id") Long tradeId,
             @RequestParam Long memberId,
