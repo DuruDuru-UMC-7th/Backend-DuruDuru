@@ -116,11 +116,11 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
             ingredient.setIngredientImg(null);
 
             ingredientRepository.save(ingredient);
-            // 삭제 작업을 DB에 반영
+            // 기존 업로드된 이미지 삭제 작업 DB에 반영
             entityManager.flush();
             entityManager.clear();
         }
-        // 새로운 식재료 이미지 업로드
+        // new 식재료 이미지 업로드
         String uuid = UUID.randomUUID().toString();
         String fileUrl = s3Manager.uploadFile(uuid, request.getImage());
 
@@ -129,8 +129,9 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
                 .ingredient(ingredient)
                 .build();
         ingredient.setIngredientImg(newImage);
-        // 식재료 이미지 업데이트
-        return ingredientRepository.save(ingredient);
+
+        ingredientImageRepository.save(newImage); // 먼저 이미지 저장한 다음
+        return ingredientRepository.save(ingredient); // 이후 식재료 저장
     }
 
     @Transactional
