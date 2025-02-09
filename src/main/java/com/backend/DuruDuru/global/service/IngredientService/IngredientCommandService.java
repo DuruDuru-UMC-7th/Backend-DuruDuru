@@ -1,7 +1,9 @@
 package com.backend.DuruDuru.global.service.IngredientService;
 
+import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 
 public interface IngredientCommandService {
 
@@ -13,6 +15,5 @@ public interface IngredientCommandService {
     Ingredient setStorageType(Long memberId, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request);
 
     Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request);
-
     Ingredient setCategory(Long memberId, Long ingredientId, IngredientRequestDTO.SetCategoryRequestDTO request);
 }
