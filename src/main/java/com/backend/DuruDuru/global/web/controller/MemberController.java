@@ -32,6 +32,13 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.USER_KAKAO_LOGIN_OK, memberService.kakaoLogin(code));
     }
 
+    // 네이버 로그인 API
+    @GetMapping("/login/naver")
+    @Operation(summary = "네이버 로그인 API", description = "네이버 로그인 및 회원가입을 진행하는 API 입니다.")
+    public ApiResponse<AuthResponseDTO.OAuthResponse> naverLogin(@RequestParam("code") String code) {
+        return ApiResponse.onSuccess(SuccessStatus.USER_NAVER_LOGIN_OK, memberService.naverLogin(code));
+    }
+
     // 이메일 회원가입 API
     @PostMapping("/register")
     @Operation(summary = "이메일 회원가입 API", description = "이메일 회원가입을 진행하는 API 입니다.")

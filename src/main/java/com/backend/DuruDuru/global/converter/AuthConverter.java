@@ -1,7 +1,9 @@
 package com.backend.DuruDuru.global.converter;
 
 import com.backend.DuruDuru.global.domain.entity.Member;
+import com.backend.DuruDuru.global.domain.enums.Gender;
 import com.backend.DuruDuru.global.web.dto.AuthDTO.KakaoProfile;
+import com.backend.DuruDuru.global.web.dto.AuthDTO.NaverProfile;
 import com.backend.DuruDuru.global.web.dto.Member.AuthResponseDTO;
 
 public class AuthConverter {
@@ -12,6 +14,16 @@ public class AuthConverter {
                 .email(kakaoProfile.getKakaoAccount().getEmail())
                 .build();
     }
+
+    public static Member toMember(NaverProfile naverProfile) {
+        return Member.builder()
+                .nickName(naverProfile.getNaverAccount().getNickname())
+                .email(naverProfile.getNaverAccount().getEmail())
+                .gender(Gender.fromString(naverProfile.getNaverAccount().getGender()))
+                .mobile(naverProfile.getNaverAccount().getMobile())
+                .build();
+    }
+
 
     public static AuthResponseDTO.OAuthResponse toOAuthResponse(
             String accessToken, String refreshToken, Member member) {

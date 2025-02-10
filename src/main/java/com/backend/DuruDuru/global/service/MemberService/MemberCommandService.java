@@ -11,4 +11,5 @@ public interface MemberCommandService {
     AuthResponseDTO.EmailLoginResponse emailLogin(AuthRequestDTO.EmailLoginRequest request);
     AuthResponseDTO.TokenRefreshResponse refreshToken(String refreshToken);
     AuthResponseDTO.OAuthResponse kakaoLogin(String code);
+    AuthResponseDTO.OAuthResponse naverLogin(String code);
 }

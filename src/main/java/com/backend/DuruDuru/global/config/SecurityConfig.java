@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
-                                .requestMatchers("/member/register", "/member/login/kakao", "/member/login/email","/member/refresh").permitAll()
+                                .requestMatchers("/member/register", "/member/login/kakao", "/member/login/naver", "/member/login/email","/member/refresh").permitAll()
                                 // Trade 관련 접근
                                 .requestMatchers("/trade/", "trade/{trade_id}","/trade/ingredient/available", "/trade/near", "/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert", "/trade/current", "/trade/history").permitAll()
                                 // 다른 엔티티 관련 접근
