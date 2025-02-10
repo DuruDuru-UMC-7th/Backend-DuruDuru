@@ -132,8 +132,10 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         }
 
         // 식재료 개수 업데이트
-        if(request.getIngredientCount() != null) {
-            if(trade.getIngredientCount() < request.getIngredientCount()) {
+        if (request.getIngredientCount() != null) {
+            long totalAvailable = getLeftCount(trade.getIngredient()) + trade.getIngredientCount();
+
+            if (request.getIngredientCount() > totalAvailable) {
                 // 품앗이 등록 가능한 식재료 개수보다 요청한 개수가 많을 경우
                 throw new IllegalArgumentException("요청한 식재료의 개수가 현재 품앗이 등록 가능한 재고보다 많습니다.");
             } else {
