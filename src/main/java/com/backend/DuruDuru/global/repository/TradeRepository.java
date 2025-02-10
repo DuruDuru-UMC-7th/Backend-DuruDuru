@@ -24,7 +24,7 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     // 품앗이 타입별로 사용자와의 거리가 1km 이내 게시글 리스트 반환
     @Query(value = """
         SELECT * FROM trade
-        WHERE (status = 'ACTIVE' OR status = 'PROCEEDING')
+        WHERE trade.status IN ('ACTIVE', 'PROCEEDING')
         AND trade_type = :tradeType
         AND (6371 * acos(cos(radians(:memberLat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:memberLon)) + sin(radians(:memberLat)) * sin(radians(latitude)))) <= 1
         ORDER BY updated_at DESC
@@ -38,11 +38,25 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     // 사용자와의 거리가 가까운 게시글을 최신순으로 정렬하여 리스트 반환
     @Query(value = """
         SELECT * FROM trade
-        WHERE (status = 'ACTIVE' OR status = 'PROCEEDING')
+        WHERE trade.status IN ('ACTIVE', 'PROCEEDING')
         AND (6371 * acos(cos(radians(:memberLat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:memberLon)) + sin(radians(:memberLat)) * sin(radians(latitude)))) <= 1
         ORDER BY updated_at DESC
         """, nativeQuery = true)
     List<Trade> findRecentTrades(
+            @Param("memberLat") double memberLat,
+            @Param("memberLon") double memberLon
+    );
+
+    // 사용자와의 거리가 가까운 게시글을 소비기한 임박순으로 정렬하여 리스트 반환
+    @Query(value = """
+        SELECT t.* FROM trade t
+        JOIN ingredient i ON t.ingredient_id = i.ingredient_id
+        WHERE t.ingredient_id = i.ingredient_id
+        AND t.status IN ('ACTIVE', 'PROCEEDING')
+        AND (6371 * acos(cos(radians(:memberLat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:memberLon)) + sin(radians(:memberLat)) * sin(radians(latitude)))) <= 1
+        ORDER BY i.d_day ASC
+        """, nativeQuery = true)
+    List<Trade> findNearExpiryTrades(
             @Param("memberLat") double memberLat,
             @Param("memberLon") double memberLon
     );
