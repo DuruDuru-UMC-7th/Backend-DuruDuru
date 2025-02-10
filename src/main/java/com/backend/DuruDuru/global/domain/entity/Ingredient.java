@@ -79,6 +79,22 @@ public class Ingredient extends BaseEntity {
     @OneToOne(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private IngredientImg ingredientImg;
 
+    @Builder
+    public Ingredient(String ingredientName, Long count, LocalDate purchaseDate, LocalDate expiryDate, StorageType storageType, MajorCategory majorCategory, MinorCategory minorCategory, Fridge fridge, Member member, Receipt receipt, IngredientImg ingredientImg) {
+        this.ingredientName = ingredientName;
+        this.count = count;
+        this.purchaseDate = purchaseDate;
+        this.expiryDate = expiryDate;
+        this.storageType = storageType;
+        this.majorCategory = majorCategory;
+        this.minorCategory = minorCategory;
+        this.fridge = fridge;
+        this.member = member;
+        this.receipt = receipt;
+        this.ingredientImg = new IngredientImg(this, "");
+        calculateDDay();
+    }
+
 //    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
 //    private List<IngredientCategory> ingredientCategoryList = new ArrayList<>();
 
@@ -111,9 +127,17 @@ public class Ingredient extends BaseEntity {
     }
 
     public void setIngredientImg(IngredientImg ingredientImg) {
-        this.ingredientImg = ingredientImg;
-        ingredientImg.setIngredient(this);
+        if (ingredientImg == null) {
+            this.ingredientImg = IngredientImg.builder()
+                    .ingredientImgUrl("https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a")
+                    .ingredient(this)
+                    .build();
+        } else {
+            this.ingredientImg = ingredientImg;
+            ingredientImg.setIngredient(this);
+        }
     }
+
 
     public void calculateDDay() {
         LocalDate today = LocalDate.now();
@@ -130,6 +154,7 @@ public class Ingredient extends BaseEntity {
     public String getFormattedDDay() {
         return DateFormatter.formatRemainingDays(this.dDay);
     }
+
 
 
 

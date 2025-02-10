@@ -9,6 +9,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -44,5 +46,14 @@ public class ChatController {
     public ApiResponse<?> deleteChatRoom(@PathVariable Long roomId) {
         return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, null);
     }
+
+//    @MessageMapping("/chat.{chatRoomId}")
+//    @SendTo("/subscribe/chat.{chatRoomId}")
+//    @Operation(summary = "WebSocket 채팅 메시지 전송", description = "채팅방에 메시지를 전송하고 구독자에게 브로드캐스트합니다.")
+//    public ChatMessageResponse sendMessage(ChatMessageRequest request, @DestinationVariable Long chatRoomId) {
+//        log.info("WebSocket 메시지 수신: chatRoomId={}, username={}, content={}",
+//                chatRoomId, request.getUsername(), request.getContent());
+//        return chatMessageService.saveMessage(chatRoomId, request);
+//    }
 
 }

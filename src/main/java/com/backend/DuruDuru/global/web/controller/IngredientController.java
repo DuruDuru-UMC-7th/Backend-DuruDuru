@@ -40,17 +40,8 @@ public class IngredientController {
     @Operation(summary = "추가할 식재료 사진 등록 API", description = "추가할 식재료의 사진을 등록하는 API 입니다.")
     public ApiResponse<IngredientResponseDTO.IngredientImageDTO> updateIngredientPhoto(@ModelAttribute IngredientRequestDTO.IngredientImageRequestDTO request,
                                                                                        @RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId) {
-        Ingredient ingredient = ingredientCommandService.registerIngredientImage(memberId, ingredientId, request);
+                Ingredient ingredient = ingredientCommandService.registerIngredientImage(memberId, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientImageDTO(ingredient));
-    }
-
-
-    // 대분류에 속하는 소분류 카테고리 조회
-    @GetMapping("/category/major-to-minor")
-    @Operation(summary = "대분류에 속하는 소분류 카테고리 조회 API", description = "대분류에 속하는 소분류 카테고리를 조회하는 API 입니다.")
-    public ApiResponse<?> majorToMinorCategory(@RequestParam MajorCategory majorCategory) {
-        Map<String, Object> category = ingredientQueryService.getMinorCategoriesByMajor(majorCategory);
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, category);
     }
 
 
@@ -124,17 +115,39 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientDetailListDTO(ingredients));
     }
 
+    // 대분류에 속하는 소분류 카테고리 조회
+    @GetMapping("/category/major-to-minor")
+    @Operation(summary = "대분류에 속하는 소분류 카테고리 조회 API", description = "대분류에 속하는 소분류 카테고리를 조회하는 API 입니다.")
+    public ApiResponse<?> majorToMinorCategory(@RequestParam MajorCategory majorCategory) {
+        Map<String, Object> category = ingredientQueryService.getMinorCategoriesByMajor(majorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, category);
+    }
 
     // 소분류 카테고리에 속하는 식재료 리스트 조회
-    @GetMapping("/search/category/list")
-    @Operation(summary = "소분류 카테고리에 속하는 식재료 리스트 조회 API", description = "식재료를 카테고리로 검색하는 API 입니다. 입력된 카테고리에 속한 식재료를 모두 반환합니다.")
+    @GetMapping("/minorCategory/list")
+    @Operation(summary = "소분류 카테고리에 속하는 식재료 리스트 조회 API", description = "소분류 카테고리에 속하는 식재료 리스트 조회하는 API 입니다.")
     public ApiResponse<IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO> searchIngredientByMinorCategory(@RequestParam Long memberId,
                                                                                                                     @RequestParam MinorCategory minorCategory) {
         List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMinorCategory(memberId, minorCategory);
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK,
-                IngredientConverter.toMinorCategoryIngredientPreviewListDTO(minorCategory, ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toMinorCategoryIngredientPreviewListDTO(minorCategory, ingredients));
     }
 
+    // 대분류 카테고리에 속하는 식재료 리스트 조회
+    @GetMapping("/majorCategory/list")
+    @Operation(summary = "대분류 카테고리에 속하는 식재료 리스트 조회 API", description = "대분류 카테고리에 속하는 식재료 리스트 조회하는 API 입니다.")
+    public ApiResponse<IngredientResponseDTO.MajorCategoryIngredientPreviewListDTO> searchIngredientByMajorCategory(@RequestParam Long memberId,
+                                                                                                                    @RequestParam MajorCategory majorCategory){
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMajorCategory(memberId, majorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toMajorCategoryIngredientPreviewListDTO(majorCategory, ingredients));
+    }
+
+    // 소분류 카테고리 목록 전체 조회
+    @GetMapping("/minorCategory")
+    @Operation(summary = "소분류 카테고리 목록 전체 조회 API", description = "소분류 카테고리 목록 전체를 조회하는 API 입니다.")
+    public ApiResponse<List<MinorCategory>> minorCategoryList(){
+        List<MinorCategory> categories = Arrays.asList(MinorCategory.values());
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, categories);
+    }
 
 //    // 소분류 카테고리에 속하는 식재료 개수 조회
 //    @GetMapping("/category/count")

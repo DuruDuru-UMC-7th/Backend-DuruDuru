@@ -29,7 +29,7 @@ public class ChattingResponseDTO {
     @AllArgsConstructor
     @Builder
     public static class ChattingRoomListDTO {
-        private int count;                                  // 채팅방 개수
-        private List<ChattingRoomDetailDTO> chatRooms;          // 채팅방 상세 정보 리스트
+        private int count;
+        private List<ChattingRoomDetailDTO> chatRooms;
     }
 }

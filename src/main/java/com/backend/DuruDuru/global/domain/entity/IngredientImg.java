@@ -4,7 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 @Entity
-@Builder
+//@Builder
 @Getter
 @Setter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -19,6 +19,12 @@ public class IngredientImg {
     @JoinColumn(name = "ingredient_id", nullable = false)
     private Ingredient ingredient;
 
-    @Column(name = "ingredient_img_url", length = 200, nullable = true)
+    @Column(name = "image_url", nullable = true, columnDefinition = "varchar(500)")
     private String ingredientImgUrl;
+
+    @Builder
+    public IngredientImg(Ingredient ingredient, String ingredientImgUrl) {
+        this.ingredient = ingredient;
+        this.ingredientImgUrl = ingredientImgUrl;
+    }
 }

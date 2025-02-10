@@ -2,6 +2,9 @@ package com.backend.DuruDuru.global.web.dto.Ingredient;
 
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.databind.PropertyNamingStrategies;
+import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -94,6 +97,7 @@ public class IngredientResponseDTO {
         String ingredientImageUrl;
     }
 
+
     @Getter
     @Setter
     @Builder
@@ -115,6 +119,17 @@ public class IngredientResponseDTO {
     @Builder
     public static class MinorCategoryIngredientPreviewListDTO {
         private String minorCategory;
+        private int count;
+        private List<IngredientDetailDTO> ingredients;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class MajorCategoryIngredientPreviewListDTO {
+        private String majorCategory;
         private int count;
         private List<IngredientDetailDTO> ingredients;
     }

@@ -1,12 +1,15 @@
 package com.backend.DuruDuru.global.service.IngredientService;
 
 import com.backend.DuruDuru.global.S3.AmazonS3Manager;
+import com.backend.DuruDuru.global.apiPayload.ApiResponse;
+import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.*;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.domain.enums.StorageType;
 import com.backend.DuruDuru.global.repository.*;
+import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import jakarta.persistence.EntityManager;
 import lombok.RequiredArgsConstructor;
@@ -104,34 +107,34 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     }
 
 
-
     @Transactional
     @Override
     public Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
         Ingredient ingredient = findIngredientById(ingredientId);
+
         if (ingredient.getIngredientImg() != null) {
-            IngredientImg existingImage = ingredient.getIngredientImg();
-
-            s3Manager.deleteFile(existingImage.getIngredientImgUrl());
+            s3Manager.deleteFile(ingredient.getIngredientImg().getIngredientImgUrl());
+            ingredientImageRepository.deleteByIngredientId(ingredientId);
+            entityManager.flush(); // DB에서 Id에 해당하는 튜플 삭제
+            entityManager.clear(); // 영속성 컨텍스트 초기화
             ingredient.setIngredientImg(null);
-
-            ingredientRepository.save(ingredient);
-            // 삭제 작업을 DB에 반영
-            entityManager.flush();
-            entityManager.clear();
         }
-        // 새로운 식재료 이미지 업로드
-        String uuid = UUID.randomUUID().toString();
-        String fileUrl = s3Manager.uploadFile(uuid, request.getImage());
 
-        IngredientImg newImage = IngredientImg.builder()
+        String uuid = UUID.randomUUID().toString();
+        Uuid savedUuid = uuidRepository.save(Uuid.builder().uuid(uuid).build());
+        String fileUrl = s3Manager.uploadFile(s3Manager.generatePostName(savedUuid), request.getImage());
+
+        IngredientImg ingredientImg = IngredientImg.builder()
                 .ingredientImgUrl(fileUrl)
                 .ingredient(ingredient)
                 .build();
-        ingredient.setIngredientImg(newImage);
-        // 식재료 이미지 업데이트
-        return ingredientRepository.save(ingredient);
+
+        ingredient.setIngredientImg(ingredientImg);
+        ingredientImageRepository.save(ingredientImg);
+
+        return ingredient;
     }
+
 
     @Transactional
     @Override
