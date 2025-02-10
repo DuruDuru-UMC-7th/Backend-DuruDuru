@@ -149,8 +149,11 @@ public class TradeController {
     // 내 근처 품앗이 소비기한 여유순 리스트 조회
     @GetMapping("/near/far-expiry")
     @Operation(summary = "내 근처 품앗이 소비기한 여유순 리스트 조회 API", description = "내 근처 게시글 중에서 소비기한 여유순으로 **프리뷰 리스트**를 조회하는 API 입니다.")
-    public ApiResponse<?> findFarExpiryTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findFarExpiryTrade(
+            @RequestParam Long memberId
+    ) {
+        List<Trade> tradeList = tradeQueryService.getFarExpiryTrade(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 다른 품앗이 둘러보기
