@@ -129,8 +129,11 @@ public class TradeController {
     // 내 근처 품앗이 최신 등록순 리스트 조회
     @GetMapping("/near/recent")
     @Operation(summary = "내 근처 품앗이 최신 등록순 리스트 조회 API", description = "내 근처 게시글 중에서 최신 등록순으로 **프리뷰 리스트**를 조회하는 API 입니다.")
-    public ApiResponse<?> findRecentTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findRecentTrade(
+            @RequestParam Long memberId
+    ){
+        List<Trade> tradeList = tradeQueryService.getRecentTrades(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 내 근처 품앗이 소비기한 임박순 리스트 조회

@@ -60,4 +60,12 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     public List<Trade> getActiveTradesByMember(Long memberId) {
         return tradeRepository.findActiveTradesByMember(memberId);
     }
+
+    // 근처 품앗이 최신 등록순 조회
+    @Override
+    @Transactional
+    public List<Trade> getRecentTrades(Long memberId) {
+        Member member = findMemberById(memberId);
+        return tradeRepository.findRecentTrades(member.getTown().getLatitude(), member.getTown().getLongitude());
+    }
 }

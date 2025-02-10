@@ -21,11 +21,11 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
         """, nativeQuery = true)
     List<Trade> findActiveTradesByMember(@Param("memberId") Long memberId);
 
-    // 사용자와의 거리가 1km 이내인 게시글 리스트 반환
+    // 품앗이 타입별로 사용자와의 거리가 1km 이내 게시글 리스트 반환
     @Query(value = """
         SELECT * FROM trade
-        WHERE trade_type = :tradeType
-        AND (status = 'ACTIVE' OR status = 'PROCEEDING')
+        WHERE (status = 'ACTIVE' OR status = 'PROCEEDING')
+        AND trade_type = :tradeType
         AND (6371 * acos(cos(radians(:memberLat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:memberLon)) + sin(radians(:memberLat)) * sin(radians(latitude)))) <= 1
         ORDER BY updated_at DESC
         """, nativeQuery = true)
@@ -33,6 +33,18 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
             @Param("memberLat") double memberLat,
             @Param("memberLon") double memberLon,
             @Param("tradeType") String tradeType
+    );
+
+    // 사용자와의 거리가 가까운 게시글을 최신순으로 정렬하여 리스트 반환
+    @Query(value = """
+        SELECT * FROM trade
+        WHERE (status = 'ACTIVE' OR status = 'PROCEEDING')
+        AND (6371 * acos(cos(radians(:memberLat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:memberLon)) + sin(radians(:memberLat)) * sin(radians(latitude)))) <= 1
+        ORDER BY updated_at DESC
+        """, nativeQuery = true)
+    List<Trade> findRecentTrades(
+            @Param("memberLat") double memberLat,
+            @Param("memberLon") double memberLon
     );
 
 }
