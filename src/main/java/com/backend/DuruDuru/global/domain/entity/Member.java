@@ -32,7 +32,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    private Long age;
+    private String mobile;
 
     @ColumnDefault("0") // 삭제시 1
     private int isDelete;

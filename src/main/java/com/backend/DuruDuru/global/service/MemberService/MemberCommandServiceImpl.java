@@ -10,7 +10,9 @@ import com.backend.DuruDuru.global.repository.FridgeRepository;
 import com.backend.DuruDuru.global.repository.MemberRepository;
 import com.backend.DuruDuru.global.security.provider.JwtTokenProvider;
 import com.backend.DuruDuru.global.security.provider.KakaoAuthProvider;
+import com.backend.DuruDuru.global.security.provider.NaverAuthProvider;
 import com.backend.DuruDuru.global.web.dto.AuthDTO.KakaoProfile;
+import com.backend.DuruDuru.global.web.dto.AuthDTO.NaverProfile;
 import com.backend.DuruDuru.global.web.dto.AuthDTO.OAuthToken;
 import com.backend.DuruDuru.global.web.dto.Member.AuthRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Member.AuthResponseDTO;
@@ -32,6 +34,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
     private final PasswordEncoder passwordEncoder;
     private final JwtTokenProvider jwtTokenProvider;
     private final KakaoAuthProvider kakaoAuthProvider;
+    private final NaverAuthProvider naverAuthProvider;
 
     @Override
     public Member findMemberById(Long memberId) {
@@ -78,6 +81,47 @@ public class MemberCommandServiceImpl implements MemberCommandService{
             }
         } else {
             Member member = memberRepository.save(AuthConverter.toMember(kakaoProfile, makeNickname()));
+            String accessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
+            String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
+            member.updateToken(accessToken, refreshToken);
+            memberRepository.save(member);
+            return AuthConverter.toOAuthResponse(accessToken, refreshToken, member);
+        }
+    }
+
+    @Override
+    public AuthResponseDTO.OAuthResponse naverLogin(String code) {
+
+        OAuthToken oAuthToken;
+        try {
+            oAuthToken = naverAuthProvider.requestToken(code);
+        } catch (Exception e) {
+            throw new MemberException(ErrorStatus.AUTH_INVALID_CODE);
+        }
+
+        NaverProfile naverProfile;
+        try {
+            naverProfile =
+                    naverAuthProvider.requestNaverProfile(oAuthToken.getAccess_token());
+        } catch (Exception e) {
+            throw new MemberException(ErrorStatus.INVALID_NAVER_REQUEST_INFO);
+        }
+
+        Optional<Member> queryMember = memberRepository.findByEmail(naverProfile.getNaverAccount().getEmail());
+
+        if (queryMember.isPresent()) {
+            Member member = queryMember.get();
+            if (member.getIsDelete() == 1) {
+                throw new MemberException(ErrorStatus.MEMBER_NOT_FOUND);
+            } else {
+                String accessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
+                String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
+                member.updateToken(accessToken, refreshToken);
+                memberRepository.save(member);
+                return AuthConverter.toOAuthResponse(accessToken, refreshToken, member);
+            }
+        } else {
+            Member member = memberRepository.save(AuthConverter.toMember(naverProfile));
             String accessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
             String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
             member.updateToken(accessToken, refreshToken);

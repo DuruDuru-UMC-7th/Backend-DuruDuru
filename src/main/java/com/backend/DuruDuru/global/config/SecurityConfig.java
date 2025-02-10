@@ -35,7 +35,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
-                                .requestMatchers("/member/register", "/member/login/kakao", "/member/login/email","/member/refresh").permitAll()
+                                .requestMatchers("/member/register", "/member/login/kakao", "/member/login/naver", "/member/login/email","/member/refresh").permitAll()
                                 // Trade 관련 접근
                                 .requestMatchers("/trade/", "trade/{trade_id}", "/trade/my/active", "/trade/my/history", "/trade/my/like").permitAll()
                                 .requestMatchers("/trade/near/{trade_type}", "/trade/near/recent", "trade/near/near-expiry", "trade/near/far-expiry").permitAll()
