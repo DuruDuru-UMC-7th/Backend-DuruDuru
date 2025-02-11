@@ -35,19 +35,34 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
     @Override
     public List<Ingredient> getAllIngredients(Long memberId) {
         findMemberById(memberId);
-        return ingredientRepository.findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(memberId);
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(memberId);
+        validateIngredientCategories(ingredients);
+        return ingredients;
     }
 
     @Override
     public List<Ingredient> getIngredientsNearExpiry(Long memberId) {
         findMemberById(memberId);
-        return ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayAsc(memberId);
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayAsc(memberId);
+        validateIngredientCategories(ingredients);
+        return ingredients;
     }
 
     @Override
     public List<Ingredient> getIngredientsFarExpiry(Long memberId) {
         findMemberById(memberId);
-        return ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayDesc(memberId);
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayDesc(memberId);
+        validateIngredientCategories(ingredients);
+        return ingredients;
+    }
+
+    // 식재료 카테고리 미설정 예외처리
+    private void validateIngredientCategories(List<Ingredient> ingredients) {
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient.getMajorCategory() == null || ingredient.getMinorCategory() == null) {
+                throw new IllegalStateException("식재료의 카테고리 설정은 필수입니다.");
+            }
+        }
     }
 
 }
