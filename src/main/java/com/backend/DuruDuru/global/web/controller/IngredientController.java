@@ -123,6 +123,14 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, category);
     }
 
+    // 소분류 카테고리 목록 전체 조회
+    @GetMapping("/minorCategory")
+    @Operation(summary = "소분류 카테고리 목록 전체 조회 API", description = "소분류 카테고리 목록 전체를 조회하는 API 입니다.")
+    public ApiResponse<List<MinorCategory>> minorCategoryList(){
+        List<MinorCategory> categories = Arrays.asList(MinorCategory.values());
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, categories);
+    }
+
     // 소분류 카테고리에 속하는 식재료 리스트 조회
     @GetMapping("/minorCategory/list")
     @Operation(summary = "소분류 카테고리에 속하는 식재료 리스트 조회 API", description = "소분류 카테고리에 속하는 식재료 리스트 조회하는 API 입니다.")
@@ -139,14 +147,6 @@ public class IngredientController {
                                                                                                                     @RequestParam MajorCategory majorCategory){
         List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMajorCategory(memberId, majorCategory);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toMajorCategoryIngredientPreviewListDTO(majorCategory, ingredients));
-    }
-
-    // 소분류 카테고리 목록 전체 조회
-    @GetMapping("/minorCategory")
-    @Operation(summary = "소분류 카테고리 목록 전체 조회 API", description = "소분류 카테고리 목록 전체를 조회하는 API 입니다.")
-    public ApiResponse<List<MinorCategory>> minorCategoryList(){
-        List<MinorCategory> categories = Arrays.asList(MinorCategory.values());
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, categories);
     }
 
 //    // 소분류 카테고리에 속하는 식재료 개수 조회
