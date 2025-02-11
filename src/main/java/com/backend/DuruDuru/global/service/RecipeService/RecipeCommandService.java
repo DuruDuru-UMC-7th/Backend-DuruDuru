@@ -7,8 +7,6 @@ import java.util.List;
 
 public interface RecipeCommandService {
     RecipeResponseDTO.RecipeDetailResponse getRecipeDetailById(String recipeId);
-    void setRecipeFavorite(Member member, Long recipeId);
-    List<RecipeResponseDTO.RecipeResponse> getFavoriteRecipes(Member member);
-    RecipeResponseDTO.RecipePageResponse getPopularRecipes(int page, int size);
+    public void setRecipeFavorite(Member member, String recipeSeq);
     RecipeResponseDTO.RecipePageResponse searchRecipes(String ingredients, int page, int size);
 }
