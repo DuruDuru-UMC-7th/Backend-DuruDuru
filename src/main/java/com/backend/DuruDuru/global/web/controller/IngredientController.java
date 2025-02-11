@@ -119,8 +119,19 @@ public class IngredientController {
     @GetMapping("/category/major-to-minor")
     @Operation(summary = "대분류에 속하는 소분류 카테고리 조회 API", description = "대분류에 속하는 소분류 카테고리를 조회하는 API 입니다.")
     public ApiResponse<?> majorToMinorCategory(@RequestParam MajorCategory majorCategory) {
-        Map<String, Object> category = ingredientQueryService.getMinorCategoriesByMajor(majorCategory);
-        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, category);
+        Map<String, Object> categoryMap = ingredientQueryService.getMinorCategoriesByMajor(majorCategory);
+
+        List<String> minorCategoryNames = (List<String>) categoryMap.get("minorCategoryList");
+        List<MinorCategory> minorCategories = minorCategoryNames.stream()
+                .map(MinorCategory::valueOf)
+                .collect(Collectors.toList());
+        List<IngredientResponseDTO.MinorCategoryDTO> minorCategoryWithImages =
+                IngredientResponseDTO.MinorCategoryDTO.fromMinorCategories(minorCategories);
+
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("majorCategory", categoryMap.get("majorCategory"));
+        response.put("minorCategoryList", minorCategoryWithImages);
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, response);
     }
 
     // 소분류 카테고리 목록 전체 조회
