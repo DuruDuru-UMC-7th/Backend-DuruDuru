@@ -37,7 +37,6 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     @Transactional
     public RecipeResponseDTO.RecipeDetailResponse getRecipeDetailByName(String recipeName) {
         String url = buildApiUrl(recipeName);
-        System.out.println("URL : " + url);
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
 
         if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
@@ -48,9 +47,10 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
         // 메뉴명 제거 및 재료 정보 콤마로 구분
         String cleanedIngredients = cleanIngredients(recipe.getRcpPartsDtls());
-
         // 만드는 법 단계에서 마지막 알파벳 제거
         List<String> cleanedManualSteps = cleanManualSteps(recipe.getManualSteps());
+
+        long favoriteCount = memberRecipeRepository.countByRecipeName(recipeName);
 
         return RecipeResponseDTO.RecipeDetailResponse.builder()
                 .recipeName(recipe.getRcpNm())
@@ -59,6 +59,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .ingredients(cleanedIngredients)
                 .imageUrl(recipe.getAttFileNoMk())
                 .manualSteps(cleanedManualSteps)
+                .favoriteCount(favoriteCount)
                 .build();
     }
 

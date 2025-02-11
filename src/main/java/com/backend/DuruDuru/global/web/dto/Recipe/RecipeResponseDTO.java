@@ -33,13 +33,13 @@ public class RecipeResponseDTO {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class RecipeDetailResponse {
+        private long favoriteCount; // 즐겨찾기 수
         private String recipeName; // 메뉴명
         private String cookingMethod; // 조리방법
         private String recipeType; // 요리종류
         private String ingredients; // 재료정보
         private String imageUrl; // 이미지 경로(대)
         private List<String> manualSteps; // 만드는 법 단계 목록
-
     }
 
     @Getter

@@ -10,4 +10,5 @@ public interface MemberRecipeRepository extends JpaRepository<MemberRecipe, Long
     Page<MemberRecipe> findByMember(Member member, Pageable pageable);
     boolean existsByMemberAndRecipeName(Member member, String recipeName);
     void deleteByMemberAndRecipeName(Member member, String recipeName);
+    long countByRecipeName(String recipeName);
 }
