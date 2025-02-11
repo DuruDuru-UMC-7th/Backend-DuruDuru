@@ -39,8 +39,8 @@ public class SecurityConfig {
                                 // Trade 관련 접근
                                 .requestMatchers("/trade/", "trade/{trade_id}", "/trade/my/active", "/trade/my/history", "/trade/my/like").permitAll()
                                 .requestMatchers("/trade/near/{trade_type}", "/trade/near/recent", "trade/near/near-expiry", "trade/near/far-expiry").permitAll()
-                                .requestMatchers("trade/like/{member_id}/{trade_id}", "/trade/like/delete/{trade_id}", "/trade/like/count/{trade_id}").permitAll()
-                                .requestMatchers("trade/other-trade","/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert").permitAll()
+                                .requestMatchers("trade/like/{trade_id}", "/trade/like/{trade_id}/delete", "/trade/like/{trade_id}/count").permitAll()
+                                .requestMatchers("trade/other-trade", "/trade/recommend/today", "/trade/keyword/alert").permitAll()
                                 // Ingredient 관련 접근
                                 .requestMatchers("/ingredient/{ingredient_id}/photo","/ingredient/{ingredient_id}/purchase-date", "/ingredient/").permitAll()
                                 .requestMatchers("/ingredient/{ingredient_id}","/ingredient/{ingredient_id}/category", "/ingredient/{ingredient_id}/storage-type").permitAll()

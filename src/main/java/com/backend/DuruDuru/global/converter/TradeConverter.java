@@ -1,6 +1,7 @@
 package com.backend.DuruDuru.global.converter;
 
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.LikeTrade;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.Trade;
 import com.backend.DuruDuru.global.domain.enums.Status;
@@ -27,6 +28,7 @@ public class TradeConverter {
                 .eupmyeondong(trade.getEupmyeondong())
                 .status(trade.getStatus())
                 .tradeType(trade.getTradeType())
+                .likeCount(trade.getLikeCount())
                 .tradeImgs(trade.getTradeImgs())
                 .createdAt(trade.getCreatedAt())
                 .updatedAt(trade.getUpdatedAt())
@@ -46,6 +48,7 @@ public class TradeConverter {
                 .status(Status.ACTIVE)
                 .tradeType(request.getTradeType())
                 .tradeImgs(new ArrayList<>())
+                .likeCount(0L)
                 .build();
     }
 
@@ -60,6 +63,7 @@ public class TradeConverter {
                 .eupmyeondong(trade.getEupmyeondong())
                 .status(trade.getStatus())
                 .tradeType(trade.getTradeType())
+                .likeCount(trade.getLikeCount())
                 .thumbnailImgUrl(
                         (trade.getTradeImgs() != null && !trade.getTradeImgs().isEmpty())
                         ? trade.getTradeImgs().get(0).getTradeImgUrl() : null)      // TradeImgs의 첫 번째 이미지를 thumbnailImg로 자동 등록
@@ -75,6 +79,21 @@ public class TradeConverter {
         return TradeResponseDTO.TradePreviewListDTO.builder()
                 .totalCount(tradePreViewDTOList.size())
                 .tradeList(tradePreViewDTOList)
+                .build();
+    }
+
+    public static LikeTrade toLikeTrade(Member member, Trade trade) {
+        return LikeTrade.builder()
+                .member(member)
+                .trade(trade)
+                .build();
+    }
+
+    public static TradeResponseDTO.LikeTradeResultDTO toLikeTradeResultDTO(LikeTrade likeTrade) {
+        return TradeResponseDTO.LikeTradeResultDTO.builder()
+                .memberId(likeTrade.getMember().getMemberId())
+                .tradeId(likeTrade.getTrade().getTradeId())
+                .likeCount(likeTrade.getTrade().getLikeCount())
                 .build();
     }
 }

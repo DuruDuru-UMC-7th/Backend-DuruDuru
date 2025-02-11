@@ -37,4 +37,13 @@ public class TradeRequestDTO {
         private List<Long> deleteImgIds;
         private List<MultipartFile> addTradeImgs;
     }
+
+    @Setter
+    @Getter
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class CreateLikeRequestDTO {
+        private Long memberId;
+        private Long tradeId;
+    }
 }
