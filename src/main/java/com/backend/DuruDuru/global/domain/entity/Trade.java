@@ -48,6 +48,9 @@ public class Trade extends BaseEntity {
     @Column(name = "eupmyeondong", nullable = false, columnDefinition = "varchar(50)")
     private String eupmyeondong;
 
+    @Column(name = "like_count", columnDefinition = "bigint")
+    private Long likeCount = 0L;
+
     @OneToMany(mappedBy = "trade", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ChattingRoom> chattingRooms = new ArrayList<>();
 
@@ -71,5 +74,16 @@ public class Trade extends BaseEntity {
         this.ingredientCount = trade.getIngredientCount();
         this.status = trade.getStatus();
         this.tradeType = trade.getTradeType();
+    }
+
+    public void addLikeTrades(LikeTrade likeTrade) {
+        this.likeTrades.add(likeTrade);
+        if (likeTrade.getTrade() != this) {
+            likeTrade.setTrade(this);
+        }
+    }
+
+    public void increaseLikeCount() {
+        likeCount++;
     }
 }

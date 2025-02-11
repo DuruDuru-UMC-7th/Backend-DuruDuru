@@ -4,6 +4,7 @@ package com.backend.DuruDuru.global.web.controller;
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.TradeConverter;
+import com.backend.DuruDuru.global.domain.entity.LikeTrade;
 import com.backend.DuruDuru.global.domain.entity.Trade;
 import com.backend.DuruDuru.global.domain.enums.Status;
 import com.backend.DuruDuru.global.domain.enums.TradeType;
@@ -164,30 +165,28 @@ public class TradeController {
     }
 
     // 품앗이 찜하기
-    @PostMapping("/like/{member_id}/{trade_id}")
+    @PostMapping("/like/{trade_id}")
     @Operation(summary = "품앗이 찜하기 API", description = "품앗이 찜하기 API 입니다.")
-    public ApiResponse<?> likeTrade() {
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+    public ApiResponse<TradeResponseDTO.LikeTradeResultDTO> likeTrade(
+            @RequestParam Long memberId,
+            @PathVariable("trade_id") Long tradeId
+
+    ) {
+        LikeTrade likeTrade = tradeCommandService.createLike(memberId, tradeId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toLikeTradeResultDTO(likeTrade));
     }
 
     // 품앗이 찜하기 취소
-    @DeleteMapping("/like/delete/{trade_id}")
+    @DeleteMapping("/like/{trade_id}/delete")
     @Operation(summary = "품앗이 찜하기 취소 API", description = "품앗이 찜하기를 취소하는 API 입니다.")
     public ApiResponse<?> deleteLideTrade(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 
     // 특정 품앗이의 찜하기 개수 조회
-    @GetMapping("/like/count/{trade_id}")
+    @GetMapping("/like/{trade_id}/count")
     @Operation(summary = "특정 품앗이의 찜하기 개수 조회 API", description = "특정 품앗이의 찜하기 개수를 조회하는 API 입니다.")
     public ApiResponse<?> findLikeCount(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
-    }
-
-    // 품앗이 링크 공유
-    @PostMapping("/shareUrl")
-    @Operation(summary = "품앗이 링크 공유 API", description = "품앗이 링크를 공유하는 API 입니다.")
-    public ApiResponse<?> shareUrl(){
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 

@@ -23,6 +23,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     private final TradeImageRepository tradeImageRepository;
     private final MemberRepository memberRepository;
     private final IngredientRepository ingredientRepository;
+    private final LikeTradeRepository likeTradeRepository;
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
 
@@ -167,6 +168,28 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         }
 
         return tradeRepository.save(trade);
+    }
+
+    // 찜하기 등록
+    @Override
+    @Transactional
+    public LikeTrade createLike(Long memberId, Long tradeId) {
+        Member member = findMemberById(memberId);
+        Trade trade = findTradeById(tradeId);
+
+        if(likeTradeRepository.findByMemberAndTrade(member, trade) != null) {
+            throw new IllegalArgumentException("이미 찜하기한 게시글입니다.");
+        }
+
+        // LieTrade 엔티티 생성 및 저장
+        LikeTrade likeTrade = TradeConverter.toLikeTrade(member, trade);
+        member.addLikeTrades(likeTrade);
+        trade.addLikeTrades(likeTrade);
+
+        // 찜하기 수 증가
+        trade.increaseLikeCount();
+
+        return likeTradeRepository.save(likeTrade);
     }
 
 
