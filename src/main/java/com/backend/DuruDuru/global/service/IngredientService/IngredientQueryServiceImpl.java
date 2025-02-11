@@ -66,19 +66,26 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
 
     // 식재료 필수 속성 미설정 예외처리 (카테고리, 보관방식, 구매날짜, 소비기한)
     private void validateIngredientProperties(List<Ingredient> ingredients) {
+        List<String> errorMessages = new ArrayList<>();
+
         for (Ingredient ingredient : ingredients) {
+            String ingredientInfo = "식재료 ID: " + ingredient.getIngredientId() + " (" + ingredient.getIngredientName() + ")";
+
             if (ingredient.getMajorCategory() == null || ingredient.getMinorCategory() == null) {
-                throw new IllegalStateException("카테고리 설정이 미완료된 식재료가 존재합니다.");
+                errorMessages.add(ingredientInfo + " → 카테고리 설정이 미완료 상태입니다.");
             }
             if (ingredient.getStorageType() == null) {
-                throw new IllegalStateException("보관방식 설정이 미완료된 식재료가 존재합니다.");
+                errorMessages.add(ingredientInfo + " → 보관방식 설정이 미완료 상태입니다.");
             }
             if (ingredient.getPurchaseDate() == null) {
-                throw new IllegalStateException("구매날짜 설정이 미완료된 식재료가 존재합니다.");
+                errorMessages.add(ingredientInfo + " → 구매날짜 설정이 미완료 상태입니다.");
             }
             if (ingredient.getExpiryDate() == null) {
-                throw new IllegalStateException("소비기한 설정이 미완료된 식재료가 존재합니다.");
+                errorMessages.add(ingredientInfo + " → 소비기한 설정이 미완료 상태입니다.");
             }
+        }
+        if (!errorMessages.isEmpty()) {
+            throw new IllegalStateException("식재료 필수 속성이 누락되어있습니다: " + String.join(" | ", errorMessages));
         }
     }
 
