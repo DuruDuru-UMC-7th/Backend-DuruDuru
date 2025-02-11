@@ -27,8 +27,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class RecipeCommandServiceImpl implements RecipeCommandService {
 
-    private final RecipeRepository recipeRepository;
-    private final MemberRepository memberRepository;
     private final MemberRecipeRepository memberRecipeRepository;
 
     @Value("${api.foodsafety.keyId}")
@@ -67,63 +65,21 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     }
 
 
+    // 레시피 즐겨찾기
     @Override
     @Transactional
-    public void setRecipeFavorite(Member member, Long recipeId) {
-        // MemberRecipe 조회
-        Recipe addRecipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new RecipeException(ErrorStatus.RECIPE_NOT_FOUND));
-        Member addMember = memberRepository.findById(member.getMemberId())
-                .orElseThrow(() -> new RecipeException(ErrorStatus.MEMBER_NOT_FOUND));
-
-        MemberRecipe favorite = memberRecipeRepository.findByMemberAndRecipe(addMember, addRecipe);
-
-        if (favorite != null) {
-            // 이미 즐겨찾기 된 경우 삭제
-            memberRecipeRepository.delete(favorite);
-        } else {
-            // 즐겨찾기 추가
-            MemberRecipe newFavorite = MemberRecipe.builder()
-                    .member(addMember)
-                    .recipe(addRecipe)
-                    .build();
-
-            memberRecipeRepository.save(newFavorite);
-        }
+    public void setRecipeFavorite(Member member, String recipeSeq) {
+      if (memberRecipeRepository.existsByMemberAndRecipeSeq(member, recipeSeq)) {
+          memberRecipeRepository.deleteByMemberAndRecipeSeq(member, recipeSeq);
+      } else {
+          MemberRecipe memberRecipe = MemberRecipe.builder()
+                  .member(member)
+                  .recipeSeq(recipeSeq)
+                  .build();
+          memberRecipeRepository.save(memberRecipe);
+      }
     }
 
-    @Override
-    public List<RecipeResponseDTO.RecipeResponse> getFavoriteRecipes(Member member) {
-        // MemberRecipe에서 특정 회원의 즐겨찾기 목록 조회
-        List<MemberRecipe> favorites = memberRecipeRepository.findAllByMember(member);
-
-        return favorites.stream()
-                .map(favorite -> RecipeConverter.toDetailResponse(favorite.getRecipe()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public RecipeResponseDTO.RecipePageResponse getPopularRecipes(int page, int size) {
-        Pageable pageable = PageRequest.of(page - 1, size);
-        Page<Recipe> recipes = recipeRepository.findAllByPopular(pageable);
-
-        List<RecipeResponseDTO.RecipeResponse> recipeResponses = recipes.stream()
-                .map(recipe -> RecipeResponseDTO.RecipeResponse.builder()
-                        //.recipeId(recipe.getRecipeId())
-                        //.title(recipe.getTitle())
-                        //.content(recipe.getContent())
-                        .build()
-                )
-                .toList();
-
-        return RecipeResponseDTO.RecipePageResponse.builder()
-                .page(page)
-                .size(size)
-                .totalPages(recipes.getTotalPages())
-                .totalElements(recipes.getTotalElements())
-                .recipes(recipeResponses)
-                .build();
-    }
 
     // 식재료 기반 레시피 추천
     @Override
@@ -142,6 +98,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         List<RecipeResponseDTO.RecipeResponse> recipes = apiResponse.getRecipes().stream()
                 .map(recipe -> RecipeResponseDTO.RecipeResponse.builder()
                         .recipeId(recipe.getRcpSeq())
+                        .recipeName(recipe.getRcpNm())
                         .imageUrl(recipe.getAttFileNoMain())
                         .build())
                 .collect(Collectors.toList());

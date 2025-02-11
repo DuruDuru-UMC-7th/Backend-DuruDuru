@@ -21,7 +21,14 @@ public class MemberRecipe extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recipe_id", nullable = false)
-    private Recipe recipe;
+    @Column(name = "recipe_seq", nullable = false , columnDefinition = "varchar(50)")
+    private String recipeSeq;
+
+    public void setMember(Member member) {
+        this.member = member;
+        if (!member.getMemberRecipes().contains(this)) {
+            member.getMemberRecipes().add(this);
+        }
+    }
+
 }

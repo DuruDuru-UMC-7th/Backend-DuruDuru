@@ -26,6 +26,7 @@ public class RecipeResponseDTO {
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class RecipeResponse {
         private String recipeId;
+        private String recipeName;
         private String imageUrl;
     }
     @Getter
