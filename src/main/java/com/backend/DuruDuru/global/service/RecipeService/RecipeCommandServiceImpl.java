@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -27,10 +26,10 @@ import java.util.stream.Collectors;
 public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     private final MemberRecipeRepository memberRecipeRepository;
+    private final RestTemplate restTemplate;
 
     @Value("${api.foodsafety.keyId}")
     private String keyId;
-    private final RestTemplate restTemplate;
 
     // 특정 레시피 조회
     @Override
@@ -82,6 +81,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     // 식재료 기반 레시피 추천
     @Override
+    @Transactional
     public RecipeResponseDTO.RecipePageResponse searchRecipes(String ingredients, int page, int size) {
         int startIdx = (page - 1) * size + 1;
         int endIdx = page * size;
@@ -112,6 +112,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     // 즐겨찾기한 레시피 목록
     @Override
+    @Transactional
     public RecipeResponseDTO.RecipePageResponse getFavoriteRecipes(Member member, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
         Page<MemberRecipe> memberRecipesPage = memberRecipeRepository.findByMember(member, pageable);
@@ -128,6 +129,52 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .totalPages(memberRecipesPage.getTotalPages())
                 .totalElements(memberRecipesPage.getTotalElements())
                 .recipes(recipes)
+                .build();
+    }
+
+    // 즐겨찾기 수가 많은 레시피 목록
+    @Override
+    @Transactional
+    public RecipeResponseDTO.RecipePageResponse getPopularRecipes(int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+
+        // 즐겨찾기 수가 많은 레시피 가져옴
+        Page<Object[]> popularRecipesPage = memberRecipeRepository.findPopularRecipes(pageable);
+
+        // 각 레시피에 대한 상세 정보
+        List<RecipeResponseDTO.RecipeResponse> recipes = popularRecipesPage.stream()
+                .map(record -> {
+                    String recipeName = (String) record[0];
+                    long favoriteCount = (long) record[1];
+                    return fetchRecipeDetailWithFavoriteCount(recipeName, favoriteCount);
+                })
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        return RecipeResponseDTO.RecipePageResponse.builder()
+                .page(page)
+                .size(size)
+                .totalPages(popularRecipesPage.getTotalPages())
+                .totalElements(popularRecipesPage.getTotalElements())
+                .recipes(recipes)
+                .build();
+    }
+
+    private RecipeResponseDTO.RecipeResponse fetchRecipeDetailWithFavoriteCount(String recipeName, long favoriteCount) {
+        String url = buildApiUrl(recipeName);
+
+        RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
+
+        if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
+            return null;
+        }
+
+        RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
+
+        return RecipeResponseDTO.RecipeResponse.builder()
+                .recipeName(recipe.getRcpNm())
+                .imageUrl(recipe.getAttFileNoMk())
+                .favoriteCount(favoriteCount)
                 .build();
     }
 

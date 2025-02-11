@@ -27,6 +27,7 @@ public class RecipeResponseDTO {
     public static class RecipeResponse {
         private String recipeName;
         private String imageUrl;
+        private long favoriteCount;
     }
     @Getter
     @Builder
