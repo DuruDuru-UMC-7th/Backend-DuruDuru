@@ -10,4 +10,5 @@ public interface RecipeCommandService {
     void setRecipeFavorite(Member member, Long recipeId);
     List<RecipeResponseDTO.RecipeResponse> getFavoriteRecipes(Member member);
     RecipeResponseDTO.RecipePageResponse getPopularRecipes(int page, int size);
+    RecipeResponseDTO.RecipePageResponse searchRecipes(String ingredients, int page, int size);
 }
