@@ -35,13 +35,35 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     private String keyId;
     private final RestTemplate restTemplate;
 
+    // 특정 레시피 조회
     @Override
     @Transactional
-    public RecipeResponseDTO.RecipeResponse getRecipeById(Long recipeId) {
-        Recipe recipe = recipeRepository.findById(recipeId)
-                .orElseThrow(() -> new RecipeException(ErrorStatus.RECIPE_NOT_FOUND));
+    public RecipeResponseDTO.RecipeDetailResponse getRecipeDetailById(String recipeId) {
+        String url = buildApiUrl(recipeId);
 
-        return RecipeConverter.toDetailResponse(recipe);
+        RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
+
+        if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
+            throw new RecipeException(ErrorStatus.RECIPE_NOT_FOUND);
+        }
+
+        RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
+
+        // 메뉴명 제거 및 재료 정보 콤마로 구분
+        String cleanedIngredients = cleanIngredients(recipe.getRcpNm(), recipe.getRcpPartsDtls());
+
+        // 만드는 법 단계에서 마지막 알파벳 제거
+        List<String> cleanedManualSteps = cleanManualSteps(recipe.getManualSteps());
+
+        return RecipeResponseDTO.RecipeDetailResponse.builder()
+                .recipeId(recipe.getRcpSeq())
+                .recipeName(recipe.getRcpNm())
+                .cookingMethod(recipe.getRcpWay2())
+                .recipeType(recipe.getRcpPat2())
+                .ingredients(cleanedIngredients)
+                .imageUrl(recipe.getAttFileNoMk())
+                .manualSteps(cleanedManualSteps)
+                .build();
     }
 
 
@@ -127,14 +149,14 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         return RecipeResponseDTO.RecipePageResponse.builder()
                 .page(page)
                 .size(size)
-                .totalPages(totalPages)  // 임시값, API에서 제공되는 데이터에 따라 변경 필요
-                .totalElements(totalElements)  // 임시값
+                .totalPages(totalPages)
+                .totalElements(totalElements)
                 .recipes(recipes)
                 .build();
     }
 
     private long getTotalElements(String ingredients) {
-        int batchSize = 1000;
+        int batchSize = 200;
         int currentStartIdx = 1;
         int currentEndIdx = batchSize;
         long totalCount = 0;
@@ -158,6 +180,16 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
         return totalCount;
     }
+
+    // 기본값
+    private String buildApiUrl(String recipeId) {
+        return UriComponentsBuilder.fromHttpUrl("http://openapi.foodsafetykorea.go.kr/api")
+                .pathSegment(keyId, "COOKRCP01", "json", "1", "1")
+                .queryParam("RCP_SEQ", recipeId)
+                .toUriString();
+    }
+
+    // 페이징용
     private String buildApiUrl(String ingredients, int startIdx, int endIdx) {
         return UriComponentsBuilder.fromHttpUrl("http://openapi.foodsafetykorea.go.kr/api")
                 .pathSegment(keyId, "COOKRCP01", "json", String.valueOf(startIdx), String.valueOf(endIdx))
@@ -165,4 +197,30 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .toUriString();
     }
 
+    private String cleanIngredients(String recipeName, String ingredients) {
+        // 메뉴명에서 공백을 제거한 형태로 비교
+        String normalizedRecipeName = recipeName.replace(" ", "");
+
+        // 메뉴명 제거 및 여분의 첫 번째 콤마 제거
+        String cleanedIngredients = ingredients.replace(normalizedRecipeName, "").trim();
+
+        // 메뉴명 뒤에 있는 첫 번째 콤마 제거
+        if (cleanedIngredients.startsWith(",")) {
+            cleanedIngredients = cleanedIngredients.substring(1).trim();
+        }
+
+        // 개행으로 감싸진 불필요한 섹션 제거 후 줄바꿈을 콤마로 변환
+        cleanedIngredients = cleanedIngredients.replaceAll("\n[^,\n]+\n", "\n")
+                .replace("\n", ", ")
+                .trim();
+
+        return cleanedIngredients;
+    }
+
+
+    private List<String> cleanManualSteps(List<String> manualSteps) {
+        return manualSteps.stream()
+                .map(step -> step.replaceAll("[a-zA-Z]$", "").trim())  // 마지막 알파벳 제거
+                .collect(Collectors.toList());
+    }
 }

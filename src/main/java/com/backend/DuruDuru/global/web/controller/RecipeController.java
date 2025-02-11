@@ -29,8 +29,10 @@ public class RecipeController {
             @Parameter(name = "recipeId", description = "조회하려는 특정 레시피 id")
     })
     @Operation(summary = "특정 레시피 조회 API", description = "특정 레시피를 조회하는 API입니다")
-    public ApiResponse<?> getRecipeById(@PathVariable Long recipeId){
-        RecipeResponseDTO.RecipeResponse response = recipeService.getRecipeById(recipeId);
+    public ApiResponse<RecipeResponseDTO.RecipeDetailResponse> getRecipeById(
+            @PathVariable String recipeId
+    ){
+        RecipeResponseDTO.RecipeDetailResponse response = recipeService.getRecipeDetailById(recipeId);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FETCH_OK, response);
     }
 
@@ -85,7 +87,7 @@ public class RecipeController {
             @RequestParam(defaultValue = "10") int size
     ){
         RecipeResponseDTO.RecipePageResponse recipes = recipeService.searchRecipes(ingredients, page, size);
-        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, recipes);
+        return ApiResponse.onSuccess(SuccessStatus.RECIPE_RECOMMEND_OK, recipes);
     }
 
 }
