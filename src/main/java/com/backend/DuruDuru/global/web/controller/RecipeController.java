@@ -73,24 +73,19 @@ public class RecipeController {
 
     // 식재료 목록 기반 레시피 추천
     @GetMapping("/recommend")
-    @Operation(summary = "식재료 목록 기반 레시피 추천 API", description = "보유하고 있는 식재료 목록을 기반으로 레시피를 추천하는 API입니다")
-    public ApiResponse<?> recommendRecipesByIngredients(){
-        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
-    }
-
-
-
-
-    // 레시피 공유 (링크, Kakao)
-    @PostMapping("/{recipeId}/share")
     @Parameters({
-            @Parameter(name = "recipeId", description = "공유하려는 레시피 id")
+            @Parameter(name = "ingredients", description = "레시피 추천을 위한 식재료 입니다."),
+            @Parameter(name = "page", description = "페이지 번호, 기본값은 1입니다"),
+            @Parameter(name = "size", description = "페이지 당 항목 수, 기본값은 10입니다.")
     })
-    @Operation(summary = "레시피 공유 API", description = "레시피 공유(링크, Kakao)를 하는 API입니다")
-    public ApiResponse<?> shareRecipes(){
-        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
+    @Operation(summary = "식재료 목록 기반 레시피 추천 API", description = "보유하고 있는 식재료 목록을 기반으로 레시피를 추천하는 API입니다")
+    public ApiResponse<RecipeResponseDTO.RecipePageResponse> recommendRecipesByIngredients(
+            @RequestParam String ingredients,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        RecipeResponseDTO.RecipePageResponse recipes = recipeService.searchRecipes(ingredients, page, size);
+        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, recipes);
     }
-
-
 
 }

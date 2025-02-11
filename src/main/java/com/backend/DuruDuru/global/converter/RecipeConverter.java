@@ -7,9 +7,9 @@ public class RecipeConverter {
 
     public static RecipeResponseDTO.RecipeResponse toDetailResponse(Recipe recipe) {
         return RecipeResponseDTO.RecipeResponse.builder()
-                .recipeId(recipe.getRecipeId())
-                .title(recipe.getTitle())
-                .content(recipe.getContent())
+//                .recipeId(recipe.getRecipeId())
+//                .title(recipe.getTitle())
+//                .content(recipe.getContent())
                 .build();
     }
 }
