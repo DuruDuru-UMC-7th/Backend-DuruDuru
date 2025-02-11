@@ -53,7 +53,6 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         List<String> cleanedManualSteps = cleanManualSteps(recipe.getManualSteps());
 
         return RecipeResponseDTO.RecipeDetailResponse.builder()
-                .recipeId(recipe.getRcpSeq())
                 .recipeName(recipe.getRcpNm())
                 .cookingMethod(recipe.getRcpWay2())
                 .recipeType(recipe.getRcpPat2())
@@ -96,7 +95,6 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
         List<RecipeResponseDTO.RecipeResponse> recipes = apiResponse.getRecipes().stream()
                 .map(recipe -> RecipeResponseDTO.RecipeResponse.builder()
-                        .recipeId(recipe.getRcpSeq())
                         .recipeName(recipe.getRcpNm())
                         .imageUrl(recipe.getAttFileNoMain())
                         .build())
@@ -115,13 +113,10 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     @Override
     public RecipeResponseDTO.RecipePageResponse getFavoriteRecipes(Member member, int page, int size) {
         Pageable pageable = PageRequest.of(page - 1, size);
-        Page<MemberRecipe> memberRecipePage = memberRecipeRepository.findByMember(member, pageable);
+        Page<MemberRecipe> memberRecipesPage = memberRecipeRepository.findByMember(member, pageable);
 
-        // 병렬 스트림을 사용하여 API 호출 속도 개선
-        List<RecipeResponseDTO.RecipeResponse> recipes = memberRecipePage.stream()
+        List<RecipeResponseDTO.RecipeResponse> recipes = memberRecipesPage.stream()
                 .map(MemberRecipe::getRecipeName)
-                .distinct()  // 중복 제거
-                .parallel()  // 병렬로 처리하여 성능 개선
                 .map(this::fetchRecipeDetailFromApi)
                 .filter(Objects::nonNull)  // null 응답 제거
                 .collect(Collectors.toList());
@@ -129,38 +124,26 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         return RecipeResponseDTO.RecipePageResponse.builder()
                 .page(page)
                 .size(size)
-                .totalPages(memberRecipePage.getTotalPages())
-                .totalElements(memberRecipePage.getTotalElements())
+                .totalPages(memberRecipesPage.getTotalPages())
+                .totalElements(memberRecipesPage.getTotalElements())
                 .recipes(recipes)
                 .build();
     }
 
-    private RecipeResponseDTO.RecipeResponse fetchRecipeDetailFromApi(String recipeSeq) {
-        String url = buildApiUrl(recipeSeq);
+    private RecipeResponseDTO.RecipeResponse fetchRecipeDetailFromApi(String recipeName) {
+        String url = buildApiUrl(recipeName);
 
-        // API 응답 및 상태 확인을 위한 디버깅 출력
-        try {
-            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
-            System.out.println("요청 URL : " + url);
-            System.out.println("응답 상태 코드: " + response.getStatusCode());
-            System.out.println("응답 본문: " + response.getBody());
-
-            RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
-            if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
-                System.out.println("유효한 레시피 데이터가 없음");
-                return null;
-            }
-
-            RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
-            return RecipeResponseDTO.RecipeResponse.builder()
-                    .recipeId(recipe.getRcpSeq())
-                    .recipeName(recipe.getRcpNm())
-                    .imageUrl(recipe.getAttFileNoMk())
-                    .build();
-        } catch (Exception e) {
-            e.printStackTrace();
+        RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
+        if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
             return null;
         }
+
+        RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
+
+        return RecipeResponseDTO.RecipeResponse.builder()
+                .recipeName(recipe.getRcpNm())
+                .imageUrl(recipe.getAttFileNoMk())
+                .build();
     }
 
     private long getTotalElements(String ingredients) {
@@ -191,7 +174,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     // 기본 URL 생성
     private String buildApiUrl(String recipeName) {
-        String quotedName = "\"" + recipeName + "\"";  // 큰따옴표 추가
+        String quotedName = "\"" + recipeName + "\"";
         String baseUrl = "http://openapi.foodsafetykorea.go.kr/api/" + keyId + "/COOKRCP01/json/1/1";
         return baseUrl + "/RCP_NM=" + quotedName;
     }

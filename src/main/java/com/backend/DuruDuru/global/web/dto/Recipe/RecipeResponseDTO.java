@@ -25,7 +25,6 @@ public class RecipeResponseDTO {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class RecipeResponse {
-        private String recipeId;
         private String recipeName;
         private String imageUrl;
     }
@@ -34,7 +33,6 @@ public class RecipeResponseDTO {
     @AllArgsConstructor(access = AccessLevel.PROTECTED)
     @NoArgsConstructor(access = AccessLevel.PROTECTED)
     public static class RecipeDetailResponse {
-        private String recipeId; // 일련번호
         private String recipeName; // 메뉴명
         private String cookingMethod; // 조리방법
         private String recipeType; // 요리종류
