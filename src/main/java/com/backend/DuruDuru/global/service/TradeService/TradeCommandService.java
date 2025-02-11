@@ -16,4 +16,6 @@ public interface TradeCommandService {
     Trade updateTrade(Long memberId, Long tradeId, TradeRequestDTO.UpdateTradeRequestDTO request);
     // 찜하기 등록
     LikeTrade createLike(Long memberId, Long tradeId);
+    // 찜하기 취소
+    void deleteLike(Long memberId, Long tradeId);
 }

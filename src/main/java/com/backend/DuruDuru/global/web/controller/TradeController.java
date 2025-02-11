@@ -179,7 +179,11 @@ public class TradeController {
     // 품앗이 찜하기 취소
     @DeleteMapping("/like/{trade_id}/delete")
     @Operation(summary = "품앗이 찜하기 취소 API", description = "품앗이 찜하기를 취소하는 API 입니다.")
-    public ApiResponse<?> deleteLideTrade(){
+    public ApiResponse<?> deleteLideTrade(
+            @RequestParam Long memberId,
+            @PathVariable("trade_id") Long tradeId
+    ){
+        tradeCommandService.deleteLike(memberId, tradeId);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
     }
 

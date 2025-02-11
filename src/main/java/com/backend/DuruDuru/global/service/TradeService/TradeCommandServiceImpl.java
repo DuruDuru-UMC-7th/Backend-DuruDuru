@@ -192,6 +192,22 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         return likeTradeRepository.save(likeTrade);
     }
 
+    @Override
+    @Transactional
+    public void deleteLike(Long memberId, Long tradeId) {
+        Member member = findMemberById(memberId);
+        Trade trade = findTradeById(tradeId);
+
+        LikeTrade likeTrade = likeTradeRepository.findByMemberAndTrade(member, trade);
+
+        if(likeTrade == null) {
+            throw new IllegalArgumentException("찜하기한 게시글이 아닙니다");
+        }
+
+        trade.decreaseLikeCount();
+        likeTradeRepository.delete(likeTrade);
+    }
+
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
