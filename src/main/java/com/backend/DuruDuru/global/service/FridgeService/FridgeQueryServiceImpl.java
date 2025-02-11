@@ -36,7 +36,7 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
     public List<Ingredient> getAllIngredients(Long memberId) {
         findMemberById(memberId);
         List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(memberId);
-        validateIngredientCategories(ingredients);
+        validateIngredientProperties(ingredients);
         return ingredients;
     }
 
@@ -44,7 +44,7 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
     public List<Ingredient> getIngredientsNearExpiry(Long memberId) {
         findMemberById(memberId);
         List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayAsc(memberId);
-        validateIngredientCategories(ingredients);
+        validateIngredientProperties(ingredients);
         return ingredients;
     }
 
@@ -52,15 +52,24 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
     public List<Ingredient> getIngredientsFarExpiry(Long memberId) {
         findMemberById(memberId);
         List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayDesc(memberId);
-        validateIngredientCategories(ingredients);
+        validateIngredientProperties(ingredients);
         return ingredients;
     }
 
-    // 식재료 카테고리 미설정 예외처리
-    private void validateIngredientCategories(List<Ingredient> ingredients) {
+    // 식재료 필수 속성 미설정 예외처리 (카테고리, 보관방식, 구매날짜, 소비기한)
+    private void validateIngredientProperties(List<Ingredient> ingredients) {
         for (Ingredient ingredient : ingredients) {
             if (ingredient.getMajorCategory() == null || ingredient.getMinorCategory() == null) {
-                throw new IllegalStateException("식재료의 카테고리 설정은 필수입니다.");
+                throw new IllegalStateException("카테고리 설정이 미완료된 식재료가 존재합니다.");
+            }
+            if (ingredient.getStorageType() == null) {
+                throw new IllegalStateException("보관방식 설정이 미완료된 식재료가 존재합니다.");
+            }
+            if (ingredient.getPurchaseDate() == null) {
+                throw new IllegalStateException("구매날짜 설정이 미완료된 식재료가 존재합니다.");
+            }
+            if (ingredient.getExpiryDate() == null) {
+                throw new IllegalStateException("소비기한 설정이 미완료된 식재료가 존재합니다.");
             }
         }
     }
