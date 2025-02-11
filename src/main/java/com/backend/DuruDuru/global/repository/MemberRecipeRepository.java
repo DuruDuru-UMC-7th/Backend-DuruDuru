@@ -2,12 +2,12 @@ package com.backend.DuruDuru.global.repository;
 
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.MemberRecipe;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import java.util.List;
-
 public interface MemberRecipeRepository extends JpaRepository<MemberRecipe, Long> {
-    List<MemberRecipe> findAllByMember(Member member);
-    boolean existsByMemberAndRecipeSeq(Member member, String recipeSeq);
-    void deleteByMemberAndRecipeSeq(Member member, String recipeSeq);
+    Page<MemberRecipe> findByMember(Member member, Pageable pageable);
+    boolean existsByMemberAndRecipeName(Member member, String recipeName);
+    void deleteByMemberAndRecipeName(Member member, String recipeName);
 }

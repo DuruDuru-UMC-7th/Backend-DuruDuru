@@ -21,8 +21,8 @@ public class MemberRecipe extends BaseEntity {
     @JoinColumn(name = "member_id", nullable = false)
     private Member member;
 
-    @Column(name = "recipe_seq", nullable = false , columnDefinition = "varchar(50)")
-    private String recipeSeq;
+    @Column(name = "recipe_name", nullable = false , columnDefinition = "varchar(50)")
+    private String recipeName;
 
     public void setMember(Member member) {
         this.member = member;

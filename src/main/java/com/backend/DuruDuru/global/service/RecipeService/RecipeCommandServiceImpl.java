@@ -2,13 +2,9 @@ package com.backend.DuruDuru.global.service.RecipeService;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.RecipeException;
-import com.backend.DuruDuru.global.converter.RecipeConverter;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.MemberRecipe;
-import com.backend.DuruDuru.global.domain.entity.Recipe;
 import com.backend.DuruDuru.global.repository.MemberRecipeRepository;
-import com.backend.DuruDuru.global.repository.MemberRepository;
-import com.backend.DuruDuru.global.repository.RecipeRepository;
 import com.backend.DuruDuru.global.web.dto.Recipe.RecipeResponseDTO;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -16,11 +12,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
@@ -36,9 +35,9 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     // 특정 레시피 조회
     @Override
     @Transactional
-    public RecipeResponseDTO.RecipeDetailResponse getRecipeDetailById(String recipeId) {
-        String url = buildApiUrl(recipeId);
-
+    public RecipeResponseDTO.RecipeDetailResponse getRecipeDetailByName(String recipeName) {
+        String url = buildApiUrl(recipeName);
+        System.out.println("URL : " + url);
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
 
         if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
@@ -48,7 +47,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
 
         // 메뉴명 제거 및 재료 정보 콤마로 구분
-        String cleanedIngredients = cleanIngredients(recipe.getRcpNm(), recipe.getRcpPartsDtls());
+        String cleanedIngredients = cleanIngredients(recipe.getRcpPartsDtls());
 
         // 만드는 법 단계에서 마지막 알파벳 제거
         List<String> cleanedManualSteps = cleanManualSteps(recipe.getManualSteps());
@@ -68,13 +67,13 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     // 레시피 즐겨찾기
     @Override
     @Transactional
-    public void setRecipeFavorite(Member member, String recipeSeq) {
-      if (memberRecipeRepository.existsByMemberAndRecipeSeq(member, recipeSeq)) {
-          memberRecipeRepository.deleteByMemberAndRecipeSeq(member, recipeSeq);
+    public void setRecipeFavorite(Member member, String recipeName) {
+      if (memberRecipeRepository.existsByMemberAndRecipeName(member, recipeName)) {
+          memberRecipeRepository.deleteByMemberAndRecipeName(member, recipeName);
       } else {
           MemberRecipe memberRecipe = MemberRecipe.builder()
                   .member(member)
-                  .recipeSeq(recipeSeq)
+                  .recipeName(recipeName)
                   .build();
           memberRecipeRepository.save(memberRecipe);
       }
@@ -112,6 +111,58 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .build();
     }
 
+    // 즐겨찾기한 레시피 목록
+    @Override
+    public RecipeResponseDTO.RecipePageResponse getFavoriteRecipes(Member member, int page, int size) {
+        Pageable pageable = PageRequest.of(page - 1, size);
+        Page<MemberRecipe> memberRecipePage = memberRecipeRepository.findByMember(member, pageable);
+
+        // 병렬 스트림을 사용하여 API 호출 속도 개선
+        List<RecipeResponseDTO.RecipeResponse> recipes = memberRecipePage.stream()
+                .map(MemberRecipe::getRecipeName)
+                .distinct()  // 중복 제거
+                .parallel()  // 병렬로 처리하여 성능 개선
+                .map(this::fetchRecipeDetailFromApi)
+                .filter(Objects::nonNull)  // null 응답 제거
+                .collect(Collectors.toList());
+
+        return RecipeResponseDTO.RecipePageResponse.builder()
+                .page(page)
+                .size(size)
+                .totalPages(memberRecipePage.getTotalPages())
+                .totalElements(memberRecipePage.getTotalElements())
+                .recipes(recipes)
+                .build();
+    }
+
+    private RecipeResponseDTO.RecipeResponse fetchRecipeDetailFromApi(String recipeSeq) {
+        String url = buildApiUrl(recipeSeq);
+
+        // API 응답 및 상태 확인을 위한 디버깅 출력
+        try {
+            ResponseEntity<String> response = restTemplate.getForEntity(url, String.class);
+            System.out.println("요청 URL : " + url);
+            System.out.println("응답 상태 코드: " + response.getStatusCode());
+            System.out.println("응답 본문: " + response.getBody());
+
+            RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
+            if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
+                System.out.println("유효한 레시피 데이터가 없음");
+                return null;
+            }
+
+            RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
+            return RecipeResponseDTO.RecipeResponse.builder()
+                    .recipeId(recipe.getRcpSeq())
+                    .recipeName(recipe.getRcpNm())
+                    .imageUrl(recipe.getAttFileNoMk())
+                    .build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     private long getTotalElements(String ingredients) {
         int batchSize = 200;
         int currentStartIdx = 1;
@@ -138,15 +189,14 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         return totalCount;
     }
 
-    // 기본값
-    private String buildApiUrl(String recipeId) {
-        return UriComponentsBuilder.fromHttpUrl("http://openapi.foodsafetykorea.go.kr/api")
-                .pathSegment(keyId, "COOKRCP01", "json", "1", "1")
-                .queryParam("RCP_SEQ", recipeId)
-                .toUriString();
+    // 기본 URL 생성
+    private String buildApiUrl(String recipeName) {
+        String quotedName = "\"" + recipeName + "\"";  // 큰따옴표 추가
+        String baseUrl = "http://openapi.foodsafetykorea.go.kr/api/" + keyId + "/COOKRCP01/json/1/1";
+        return baseUrl + "/RCP_NM=" + quotedName;
     }
 
-    // 페이징용
+    // 페이징용 URL 생성
     private String buildApiUrl(String ingredients, int startIdx, int endIdx) {
         return UriComponentsBuilder.fromHttpUrl("http://openapi.foodsafetykorea.go.kr/api")
                 .pathSegment(keyId, "COOKRCP01", "json", String.valueOf(startIdx), String.valueOf(endIdx))
@@ -154,17 +204,9 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .toUriString();
     }
 
-    private String cleanIngredients(String recipeName, String ingredients) {
-        // 메뉴명에서 공백을 제거한 형태로 비교
-        String normalizedRecipeName = recipeName.replace(" ", "");
-
-        // 메뉴명 제거 및 여분의 첫 번째 콤마 제거
-        String cleanedIngredients = ingredients.replace(normalizedRecipeName, "").trim();
-
-        // 메뉴명 뒤에 있는 첫 번째 콤마 제거
-        if (cleanedIngredients.startsWith(",")) {
-            cleanedIngredients = cleanedIngredients.substring(1).trim();
-        }
+    private String cleanIngredients(String ingredients) {
+        // 처음 콤마 앞부분과 콤마 제거
+        String cleanedIngredients = ingredients.replaceFirst("^[^,]+,\\s*", "").trim();
 
         // 개행으로 감싸진 불필요한 섹션 제거 후 줄바꿈을 콤마로 변환
         cleanedIngredients = cleanedIngredients.replaceAll("\n[^,\n]+\n", "\n")
@@ -175,9 +217,11 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     }
 
 
+
     private List<String> cleanManualSteps(List<String> manualSteps) {
         return manualSteps.stream()
                 .map(step -> step.replaceAll("[a-zA-Z]$", "").trim())  // 마지막 알파벳 제거
+                .map(step -> step.replaceAll("^[0-9]+\\.\\s*", "").trim())
                 .collect(Collectors.toList());
     }
 }
