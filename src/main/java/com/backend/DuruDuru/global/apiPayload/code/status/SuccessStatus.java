@@ -25,6 +25,14 @@ public enum SuccessStatus implements BaseCode {
     OCR_OK(HttpStatus.OK, "OCR_2000", "성공입니다."),
     // 품앗이 관련 응답
     TRADE_OK(HttpStatus.OK, "TRADE_3000", "성공입니다."),
+    TRADE_CREATE_OK(HttpStatus.OK, "TRADE_3001", "품앗이 게시글을 성공적으로 작성하였습니다."),
+    TRADE_GET_DETAIL_OK(HttpStatus.OK, "TRADE_3002", "품앗이 게시글을 성공적으로 상세 조회하였습니다."),
+    TRADE_DELETE_OK(HttpStatus.OK, "TRADE_3003", "품앗이 게시글을 성공적으로 삭제하였습니다."),
+    TRADE_UPDATE_OK(HttpStatus.OK, "TRADE_3004", "품앗이 게시글을 성공적으로 수정하였습니다."),
+    TRADE_GET_LIST_OK(HttpStatus.OK, "TRADE_3005", "품앗이 게시글 리스트를 성공적으로 조회하였습니다."),
+    TRADE_LIKE_OK(HttpStatus.OK, "TRADE_3006", "찜하기를 설정하였습니다."),
+    TRADE_LIKE_DELETE_OK(HttpStatus.OK, "TRADE_3007", "찜하기를 취소하였습니다"),
+    TRADE_LIKE_COUNT_OK(HttpStatus.OK, "TRADE_3008", "찜하기 개수를 성공적으로 조회하였습니다."),
     // 식재료 관련 응답
     INGREDIENT_OK(HttpStatus.OK, "INGREDIENT_4000", "성공입니다."),
     // 냉장고 관련 응답
@@ -38,7 +46,10 @@ public enum SuccessStatus implements BaseCode {
     // 채팅 관련 응답
     CHAT_OK(HttpStatus.OK, "CHAT_7000", "성공입니다."),
     // 동네 관련 응답
-    TOWN_OK(HttpStatus.OK, "TOWN_8000", "성공입니다.");
+    TOWN_OK(HttpStatus.OK, "TOWN_8000", "성공입니다."),
+    TOWN_CREATE_OK(HttpStatus.OK, "TOWN_8001", "동네를 성공적으로 설정하였습니다."),
+    TOWN_GET_DETAIL_OK(HttpStatus.OK, "TOWN_8002", "동네를 성공적으로 상세 조회하였습니다."),
+    TOWN_UPDATE_OK(HttpStatus.OK, "TOWN_8003", "동네를 성공적으로 수정하였습니다.");
 
     private final HttpStatus httpStatus;
     private final String code;

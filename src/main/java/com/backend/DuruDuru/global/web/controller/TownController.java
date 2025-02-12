@@ -35,7 +35,7 @@ public class TownController {
             @RequestBody TownRequestDTO.ToTownRequestDTO request
     ){
         Town town = townCommandService.createTown(memberId, request);
-        return ApiResponse.onSuccess(SuccessStatus.TOWN_OK, TownConverter.toTownResponseDTO(town));
+        return ApiResponse.onSuccess(SuccessStatus.TOWN_CREATE_OK, TownConverter.toTownResponseDTO(town));
     }
 
     // 내 동네 조회 API
@@ -45,7 +45,7 @@ public class TownController {
             @RequestParam Long memberId
     ){
         Town town = townQueryService.findTownByMember(memberId);
-        return ApiResponse.onSuccess(SuccessStatus.TOWN_OK, TownConverter.toTownResponseDTO(town));
+        return ApiResponse.onSuccess(SuccessStatus.TOWN_GET_DETAIL_OK, TownConverter.toTownResponseDTO(town));
     }
 
     // 내 동네 수정 API
@@ -56,6 +56,6 @@ public class TownController {
             @RequestBody TownRequestDTO.ToTownRequestDTO request
     ){
         Town town = townCommandService.updateTown(memberId, request);
-        return ApiResponse.onSuccess(SuccessStatus.TOWN_OK, TownConverter.toTownResponseDTO(town));
+        return ApiResponse.onSuccess(SuccessStatus.TOWN_UPDATE_OK, TownConverter.toTownResponseDTO(town));
     }
 }

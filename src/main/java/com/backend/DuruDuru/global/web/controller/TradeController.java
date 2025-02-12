@@ -47,7 +47,7 @@ public class TradeController {
     ){
         TradeRequestDTO.CreateTradeRequestDTO request = new TradeRequestDTO.CreateTradeRequestDTO(ingredientCount, body, tradeType, tradeImgs);
         Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request, tradeImgs);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeDetailDTO(trade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_CREATE_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 
     // 품앗이 상세 조회
@@ -57,7 +57,7 @@ public class TradeController {
             @PathVariable("trade_id") Long tradeId
     ){
         Trade trade = tradeQueryService.getTrade(tradeId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeDetailDTO(trade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_DETAIL_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 
     // 품앗이 게시글 삭제
@@ -68,7 +68,7 @@ public class TradeController {
             @PathVariable("trade_id") Long tradeId
     ){
         tradeCommandService.deleteTrade(memberId, tradeId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_DELETE_OK, null);
     }
 
     // 품앗이 게시글 수정
@@ -86,7 +86,7 @@ public class TradeController {
     ){
         TradeRequestDTO.UpdateTradeRequestDTO request = new TradeRequestDTO.UpdateTradeRequestDTO(ingredientCount, body, tradeType, status, deleteImgIds, addImgs);
         Trade trade = tradeCommandService.updateTrade(memberId, tradeId, request);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradeDetailDTO(trade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_UPDATE_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 
     // 나의 활성화 품앗이 리스트 조회
@@ -96,7 +96,7 @@ public class TradeController {
             @RequestParam Long memberId
     ){
         List<Trade> tradeList = tradeQueryService.getActiveTradesByMember(memberId);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, TradeConverter.toTradePreviewListDTO(tradeList));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 나의 전체 품앗이 리스트 조회
@@ -106,14 +106,14 @@ public class TradeController {
             @RequestParam Long memberId
     ){
         List<Trade> tradeList = tradeQueryService.getAllTradesByMember(memberId);
-        return ApiResponse.onSuccess(SuccessStatus.MEMBER_OK, TradeConverter.toTradePreviewListDTO(tradeList));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 내가 찜한 품앗이 리스트 조회
     @GetMapping("/my/like")
     @Operation(summary = "내가 찜한 품앗이 리스트 조회 API", description = "내가 찜한 품앗이 **프리뷰 리스트**를 조회하는 API 입니다.")
     public ApiResponse<?> findLikeTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, null);
     }
 
     // 내 근처 품앗이 나눔/교환별 리스트 조회
@@ -124,7 +124,7 @@ public class TradeController {
             @PathVariable("trade_type") TradeType tradeType
     ){
         List<Trade> tradeList = tradeQueryService.getNearTradesByType(memberId, tradeType);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 내 근처 품앗이 최신 등록순 리스트 조회
@@ -134,7 +134,7 @@ public class TradeController {
             @RequestParam Long memberId
     ){
         List<Trade> tradeList = tradeQueryService.getRecentTrades(memberId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 내 근처 품앗이 소비기한 임박순 리스트 조회
@@ -144,7 +144,7 @@ public class TradeController {
             @RequestParam Long memberId
     ) {
         List<Trade> tradeList = tradeQueryService.getNearExpiryTrade(memberId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 내 근처 품앗이 소비기한 여유순 리스트 조회
@@ -154,14 +154,14 @@ public class TradeController {
             @RequestParam Long memberId
     ) {
         List<Trade> tradeList = tradeQueryService.getFarExpiryTrade(memberId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toTradePreviewListDTO(tradeList));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 다른 품앗이 둘러보기
     @GetMapping("/other-trade")
     @Operation(summary = "다른 품앗이 둘러보기 API", description = "다른 품앗이를 추천하는 API 입니다.")
     public ApiResponse<?> findOtherTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, null);
     }
 
     // 품앗이 찜하기
@@ -173,7 +173,7 @@ public class TradeController {
 
     ) {
         LikeTrade likeTrade = tradeCommandService.createLike(memberId, tradeId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, TradeConverter.toLikeTradeResultDTO(likeTrade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_LIKE_OK, TradeConverter.toLikeTradeResultDTO(likeTrade));
     }
 
     // 품앗이 찜하기 취소
@@ -184,23 +184,16 @@ public class TradeController {
             @PathVariable("trade_id") Long tradeId
     ){
         tradeCommandService.deleteLike(memberId, tradeId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_LIKE_DELETE_OK, null);
     }
 
     // 특정 품앗이의 찜하기 개수 조회
     @GetMapping("/like/{trade_id}/count")
     @Operation(summary = "특정 품앗이의 찜하기 개수 조회 API", description = "특정 품앗이의 찜하기 개수를 조회하는 API 입니다.")
     public ApiResponse<?> findLikeCount(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_LIKE_COUNT_OK, null);
     }
 
-    // 오늘 업로드된 품앗이 추천
-    @GetMapping("/recommend/today")
-    @Operation(summary = "오늘 업로드된 품앗이 추천 API", description = "오늘 업로드된 품앗이를 추천하여 목록을 조회하는 API 입니다.")
-    public ApiResponse<?> RecommendTodayTrade(){
-
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_OK, null);
-    }
 
     // 품앗이 키워드 알림
     @GetMapping("/keyword/alert")
