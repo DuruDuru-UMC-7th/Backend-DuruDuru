@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface TradeRepository extends JpaRepository<Trade, Long> {
@@ -81,6 +82,23 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
     List<Trade> findFarExpiryTrades(
             @Param("memberLat") double memberLat,
             @Param("memberLon") double memberLon
+    );
+    // 사용자의 동네 근처에서 최근 업로드된 다른 품앗이 리스트 반환
+    @Query(value = """
+    SELECT t.* FROM trade t
+    WHERE t.member_id != :memberId
+    AND t.trade_id != :tradeId
+    AND t.status IN ('ACTIVE', 'PROCEEDING')
+    AND (6371 * acos(cos(radians(:memberLat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:memberLon)) + sin(radians(:memberLat)) * sin(radians(latitude)))) <= 1
+    ORDER BY t.updated_at DESC
+    LIMIT :limit
+    """, nativeQuery = true)
+    List<Trade> findOtherTrades(
+            @Param("memberLat") double memberLat,
+            @Param("memberLon") double memberLon,
+            @Param("memberId") Long memberId,
+            @Param("tradeId") Long tradeId,
+            @Param("limit") int limit
     );
 
 }
