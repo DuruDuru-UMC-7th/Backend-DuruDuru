@@ -1,6 +1,11 @@
 package com.backend.DuruDuru.global.service.TradeService;
 
 import com.backend.DuruDuru.global.S3.AmazonS3Manager;
+import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.TownHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.TradeHandler;
 import com.backend.DuruDuru.global.converter.TradeConverter;
 import com.backend.DuruDuru.global.converter.TradeImageConverter;
 import com.backend.DuruDuru.global.domain.entity.*;
@@ -36,24 +41,24 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
         // Member에 Town 정보가 없을 경우
         if(member.getTown() == null) {
-            throw new IllegalArgumentException("Member가 Town 정보를 가지고 있지 않습니다.");
+            throw new TownHandler(ErrorStatus.TOWN_NOT_REGISTERED);
         }
         // 진행중인 품앗이 거래가 이미 최대 개수인 4개인 경우
         if(tradeRepository.findActiveTradesByMember(memberId).size() >= 4) {
-            throw new IllegalArgumentException("진행중인 품앗이 거래는 최대 4개까지 가능합니다.");
+            throw new TradeHandler(ErrorStatus.TRADE_MAX_LIMIT_REACHED);
         }
         // 접근 권한이 없는 식재료의 Id를 입력한 경우
         if(!member.getIngredients().contains(ingredient)) {
-            throw new IllegalArgumentException("접근 권한이 없는 식재료입니다.");
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
         }
         // 등록 가능한 이미지의 최대 개수를 넘은 경우
         if(tradeImgs != null && tradeImgs.size() > 5) {
-            throw new IllegalArgumentException("게시글에 등록할 수 있는 이미지의 수는 최대 5개입니다.");
+            throw new TradeHandler(ErrorStatus.TRADE_IMAGE_LIMIT_REACHED);
         }
 
         // 품앗이 등록 가능한 식재료 개수보다 요청한 개수가 많을 경우
         if (request.getIngredientCount() > getLeftCount(ingredient)) {
-            throw new IllegalArgumentException("요청한 식재료의 개수가 현재 품앗이 등록 가능한 재고보다 많습니다.");
+            throw new TradeHandler(ErrorStatus.TRADE_REGISTER_DENIED);
         }
 
         // Trade 엔티티 생성 및 저장
@@ -84,7 +89,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         Member member = findMemberById(memberId);
 
         if(!trade.getMember().getMemberId().equals(member.getMemberId())) {
-            throw new IllegalArgumentException("접근 권한이 없는 게시글입니다.");
+            throw new TradeHandler(ErrorStatus.TRADE_ACCESS_DENIED);
         }
 
         tradeRepository.delete(trade);
@@ -98,7 +103,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         Member member = findMemberById(memberId);
 
         if(!trade.getMember().getMemberId().equals(member.getMemberId())) {
-            throw new IllegalArgumentException("접근 권한이 없는 게시글입니다.");
+            throw new TradeHandler(ErrorStatus.TRADE_ACCESS_DENIED);
         }
 
         // 기존 이미지를 삭제한 경우
@@ -107,7 +112,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
                 TradeImg existingTradeImg = findTradeImgById(imgId);
 
                 if (!trade.getTradeImgs().contains(existingTradeImg)) {
-                    throw new IllegalArgumentException("해당 게시글에 포함된 이미지가 아닙니다. TradeImgId: " + imgId);
+                    throw new TradeHandler(ErrorStatus.TRADE_IMAGE_INVALID);
                 }
 
                 // DB, S3에서 삭제
@@ -120,7 +125,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         // 새로운 이미지를 추가한 경우
         if (request.getAddTradeImgs() != null) {
             if(request.getAddTradeImgs().size() + trade.getTradeImgs().size() > 5) {
-                throw new IllegalArgumentException("게시글에 등록할 수 있는 이미지의 수는 최대 5개입니다.");
+                throw new TradeHandler(ErrorStatus.TRADE_IMAGE_LIMIT_REACHED);
             }
 
             for (MultipartFile img : request.getAddTradeImgs()) {
@@ -138,7 +143,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
             if (request.getIngredientCount() > totalAvailable) {
                 // 품앗이 등록 가능한 식재료 개수보다 요청한 개수가 많을 경우
-                throw new IllegalArgumentException("요청한 식재료의 개수가 현재 품앗이 등록 가능한 재고보다 많습니다.");
+                throw new TradeHandler(ErrorStatus.TRADE_REGISTER_DENIED);
             } else {
                 trade.setIngredientCount(request.getIngredientCount());
             }
@@ -161,7 +166,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
             // 완료된 품앗이를 거래 전, 거래 중으로 바꾸는 경우
             if((requestStatus == Status.ACTIVE || requestStatus == Status.PROCEEDING)
                     && tradeRepository.findActiveTradesByMember(memberId).size() >= 4) {
-                throw new IllegalArgumentException("진행중인 품앗이 거래는 최대 4개까지 가능합니다.");
+                throw new TradeHandler(ErrorStatus.TRADE_MAX_LIMIT_REACHED);
             } else {
                 trade.setStatus(requestStatus);
             }
@@ -178,7 +183,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         Trade trade = findTradeById(tradeId);
 
         if(likeTradeRepository.findByMemberAndTrade(member, trade) != null) {
-            throw new IllegalArgumentException("이미 찜하기한 게시글입니다.");
+            throw new TradeHandler(ErrorStatus.TRADE_ALREADY_LIKE);
         }
 
         // LieTrade 엔티티 생성 및 저장
@@ -201,7 +206,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         LikeTrade likeTrade = likeTradeRepository.findByMemberAndTrade(member, trade);
 
         if(likeTrade == null) {
-            throw new IllegalArgumentException("찜하기한 게시글이 아닙니다");
+            throw new TradeHandler(ErrorStatus.TRADE_LIKE_NOT_EXIST);
         }
 
         trade.decreaseLikeCount();
@@ -211,22 +216,22 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
     private Ingredient findIngredientById(Long ingredientId) {
         return ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+                .orElseThrow(() -> new IngredientHandler(ErrorStatus.INGREDIENT_NOT_FOUND));
     }
 
     private Trade findTradeById(Long tradeId) {
         return tradeRepository.findById(tradeId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade not found. ID: " + tradeId));
+                .orElseThrow(() -> new TradeHandler(ErrorStatus.TRADE_NOT_FOUND));
     }
 
     private TradeImg findTradeImgById(Long tradeImgId) {
         return tradeImageRepository.findById(tradeImgId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade image not found. ID: " + tradeImgId));
+                .orElseThrow(() -> new TradeHandler(ErrorStatus.TRADE_IMAGE_NOT_FOUND));
     }
 
     private String getImgUrl(MultipartFile img) {

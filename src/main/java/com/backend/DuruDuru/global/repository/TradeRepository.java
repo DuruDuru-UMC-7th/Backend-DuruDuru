@@ -21,6 +21,14 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
         """, nativeQuery = true)
     List<Trade> findActiveTradesByMember(@Param("memberId") Long memberId);
 
+    // 사용자가 찜하기한 게시글 반환
+    @Query(value = """
+        SELECT t.* FROM trade t
+        JOIN like_trade l ON t.trade_id = l.trade_id
+        WHERE l.member_id = :memberId
+        """, nativeQuery = true)
+    List<Trade> findLikeTradesByMember(@Param("memberId") Long memberId);
+
     // 품앗이 타입별로 사용자와의 거리가 1km 이내 게시글 리스트 반환
     @Query(value = """
         SELECT * FROM trade

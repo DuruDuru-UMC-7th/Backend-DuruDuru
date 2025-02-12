@@ -75,4 +75,13 @@ public class TradeResponseDTO {
         Long tradeId;
         Long likeCount;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LikeCountResultDTO {
+        Long tradeId;
+        Long likeCount;
+    }
 }

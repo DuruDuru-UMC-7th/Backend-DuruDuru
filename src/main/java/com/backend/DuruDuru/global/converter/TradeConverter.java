@@ -96,4 +96,11 @@ public class TradeConverter {
                 .likeCount(likeTrade.getTrade().getLikeCount())
                 .build();
     }
+
+    public static TradeResponseDTO.LikeCountResultDTO toLikeCountResultDTO(Trade trade) {
+        return TradeResponseDTO.LikeCountResultDTO.builder()
+                .tradeId(trade.getTradeId())
+                .likeCount(trade.getLikeCount())
+                .build();
+    }
 }

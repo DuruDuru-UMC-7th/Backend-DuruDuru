@@ -1,6 +1,9 @@
 package com.backend.DuruDuru.global.service.TownService;
 
 
+import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.TownHandler;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.Town;
 import com.backend.DuruDuru.global.repository.MemberRepository;
@@ -20,10 +23,10 @@ public class TownQueryServiceImpl implements TownQueryService{
     @Transactional
     public Town findTownByMember(Long memberId) {
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
 
         if(member.getTown() == null) {
-            throw new IllegalArgumentException("Town not found. memberID: " + memberId);
+            throw new TownHandler(ErrorStatus.TOWN_NOT_REGISTERED);
         }
 
         return member.getTown();
