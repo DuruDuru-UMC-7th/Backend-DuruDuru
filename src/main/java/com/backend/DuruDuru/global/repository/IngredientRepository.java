@@ -27,4 +27,14 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     @Query("SELECT i FROM Ingredient i WHERE i.fridge.member.memberId = :memberId ORDER BY i.dDay DESC")
     List<Ingredient> findAllByFridge_Member_MemberIdOrderByDDayDesc(@Param("memberId") Long memberId);
 
+
+    List<Ingredient> findAllByFridge_Member_MemberIdAndMajorCategoryOrderByCreatedAtDesc(Long memberId, MajorCategory majorCategory);
+
+    @Query("SELECT i FROM Ingredient i WHERE i.fridge.member.memberId = :memberId AND i.majorCategory = :majorCategory ORDER BY i.dDay ASC")
+    List<Ingredient> findAllByFridge_Member_MemberIdAndMajorCategoryOrderByDDayAsc(Long memberId, MajorCategory majorCategory);
+
+    @Query("SELECT i FROM Ingredient i WHERE i.fridge.member.memberId = :memberId AND i.majorCategory = :majorCategory ORDER BY i.dDay DESC")
+    List<Ingredient> findAllByFridge_Member_MemberIdAndMajorCategoryOrderByDDayDesc(Long memberId, MajorCategory majorCategory);
+
+
 }
