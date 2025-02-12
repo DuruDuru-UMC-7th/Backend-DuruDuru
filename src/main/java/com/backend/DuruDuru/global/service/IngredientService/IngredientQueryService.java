@@ -12,5 +12,5 @@ public interface IngredientQueryService {
     Map<String, Object> getMinorCategoriesByMajor(MajorCategory majorCategory);
     List<Ingredient> getIngredientsByMinorCategory(Long memberId, MinorCategory minorCategory);
     List<Ingredient> getIngredientsByMajorCategory(Long memberId, MajorCategory majorCategory);
-    List<Ingredient> getIngredientsByName(Optional<String> optSearch);
+    List<Ingredient> getIngredientsByName(Long memberId, Optional<String> optSearch);
 }

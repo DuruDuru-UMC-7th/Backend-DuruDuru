@@ -47,8 +47,9 @@ public class SecurityConfig {
                                 .requestMatchers("/ingredient/search/name", "/ingredient/category/major-to-minor").permitAll()
                                 .requestMatchers("/ingredient/majorCategory/list", "/ingredient/minorCategory/list", "/ingredient/minorCategory/").permitAll()
                                 // Fridge 관련 접근
-                                .requestMatchers("/fridge/all/recent", "/fridge/near-expiry", "/fridge/far-expiry").permitAll()
-                                .requestMatchers("/fridge/majorCategory/all/recent", "/fridge/majorCategory/near-expiry", "/fridge/majorCategory/far-expiry").permitAll()
+                                .requestMatchers("/fridge/recent", "/fridge/near-expiry", "/fridge/far-expiry").permitAll()
+                                .requestMatchers("/fridge/majorCategory/recent", "/fridge/majorCategory/near-expiry", "/fridge/majorCategory/far-expiry").permitAll()
+                                .requestMatchers("/fridge/name/recent", "/fridge/name/near-expiry", "/fridge/name/far-expiry").permitAll()
                                 // OCR 관련 접근
                                 .requestMatchers("/OCR/receipt", "/OCR/ingredient/{ingredient_id}", "/OCR/{receipt_id}/purchase-date").permitAll()
                                 // Town 관련 접근

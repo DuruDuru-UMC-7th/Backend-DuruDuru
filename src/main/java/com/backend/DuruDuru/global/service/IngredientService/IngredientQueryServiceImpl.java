@@ -4,9 +4,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import com.backend.DuruDuru.global.repository.IngredientRepository;
+import com.backend.DuruDuru.global.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -18,6 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 @Slf4j
 public class IngredientQueryServiceImpl implements IngredientQueryService {
     private final IngredientRepository ingredientRepository;
+    private final MemberRepository memberRepository;
+
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+    }
 
     @Override
     public Map<String, Object> getMinorCategoriesByMajor(MajorCategory majorCategory) {
@@ -52,13 +61,14 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
 
     // 식재료 이름으로 검색
     @Override
-    public List<Ingredient> getIngredientsByName(Optional<String> optSearch) {
+    public List<Ingredient> getIngredientsByName(Long memberId, Optional<String> optSearch) {
+        findMemberById(memberId);
         List<Ingredient> ingredients;
-        if (optSearch.isPresent()) {
+        if (optSearch.isPresent() && !optSearch.get().trim().isEmpty()) {
             String search = optSearch.get();
-            ingredients = ingredientRepository.findAllByIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(search);
+            ingredients = ingredientRepository.findAllByMember_MemberIdAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(memberId, search);
         } else {
-            ingredients = ingredientRepository.findAllByOrderByCreatedAtDesc();
+            ingredients = ingredientRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(memberId);
         }
         validateIngredientProperties(ingredients);
         return ingredients;
