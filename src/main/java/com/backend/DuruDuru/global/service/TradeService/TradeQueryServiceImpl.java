@@ -1,5 +1,7 @@
 package com.backend.DuruDuru.global.service.TradeService;
 
+import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.Trade;
 import com.backend.DuruDuru.global.domain.enums.TradeType;
@@ -18,16 +20,6 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     private final TradeRepository tradeRepository;
     private final MemberRepository memberRepository;
 
-    private Trade findTradeById(Long tradeId) {
-        return tradeRepository.findById(tradeId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade not found. ID: " + tradeId));
-    }
-
-    private Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
-    }
-
     // 품앗이 게시글 상세 조회
     @Override
     @Transactional
@@ -35,7 +27,7 @@ public class TradeQueryServiceImpl implements TradeQueryService {
         return findTradeById(tradeId);
     }
 
-    // 가까운 거리의 게시글 중에서 TradeType별로 분류된 게시글 리스트 반환
+    // 근처 품앗이 TradeType별로 분류된 게시글 리스트 반환
     @Override
     @Transactional
     public List<Trade> getNearTradesByType(Long memberId, TradeType tradeType) {
@@ -83,5 +75,15 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     public List<Trade> getFarExpiryTrade(Long memberId) {
         Member member = findMemberById(memberId);
         return tradeRepository.findFarExpiryTrades(member.getTown().getLatitude(), member.getTown().getLongitude());
+    }
+
+    private Trade findTradeById(Long tradeId) {
+        return tradeRepository.findById(tradeId)
+                .orElseThrow(() -> new IllegalArgumentException("Trade not found. ID: " + tradeId));
+    }
+
+    private Member findMemberById(Long memberId) {
+        return memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
     }
 }

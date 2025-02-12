@@ -45,6 +45,11 @@ public enum ErrorStatus implements BaseErrorCode {
     RECIPE_NOT_FOUND(HttpStatus.NOT_FOUND, "RECIPE_2001", "해당 레시피를 찾을 수 없습니다."),
     RECIPE_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "RECIPE_2002", "잘못된 요청입니다."),
 
+    // Town 관련 에러
+    TOWN_NOT_FOUND(HttpStatus.NOT_FOUND, "TOWN_3001", "해당 Town을 찾을 수 없습니다."),
+    TOWN_ALREADY_EXISTS(HttpStatus.CONFLICT, "TOWN_3002", "이미 Town이 존재합니다."),
+    TOWN_NOT_REGISTERED(HttpStatus.BAD_REQUEST, "TOWN_3003", "Town이 등록되지 않았습니다."),
+
     ;
 
 

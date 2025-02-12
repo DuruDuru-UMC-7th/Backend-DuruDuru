@@ -1,6 +1,9 @@
 package com.backend.DuruDuru.global.service.TradeService;
 
 import com.backend.DuruDuru.global.S3.AmazonS3Manager;
+import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.TownHandler;
 import com.backend.DuruDuru.global.converter.TradeConverter;
 import com.backend.DuruDuru.global.converter.TradeImageConverter;
 import com.backend.DuruDuru.global.domain.entity.*;
@@ -36,7 +39,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
         // Member에 Town 정보가 없을 경우
         if(member.getTown() == null) {
-            throw new IllegalArgumentException("Member가 Town 정보를 가지고 있지 않습니다.");
+            throw new TownHandler(ErrorStatus.TOWN_NOT_REGISTERED);
         }
         // 진행중인 품앗이 거래가 이미 최대 개수인 4개인 경우
         if(tradeRepository.findActiveTradesByMember(memberId).size() >= 4) {
@@ -211,7 +214,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
     private Ingredient findIngredientById(Long ingredientId) {
