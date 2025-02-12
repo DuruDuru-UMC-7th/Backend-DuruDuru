@@ -87,13 +87,21 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         ingredientRepository.delete(ingredient);
     }
 
-
     @Override
     public Ingredient registerPurchaseDate(Long memberId, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.setPurchaseDate(request.getPurchaseDate());
+        return ingredient;
+    }
+
+    @Override
+    public Ingredient registerExpiryDate(Long memberId, Long ingredientId, IngredientRequestDTO.ExpiryDateRequestDTO request) {
+        Member member = findMemberById(memberId);
+        Ingredient ingredient = findIngredientById(ingredientId);
+
+        ingredient.setExpiryDate(request.getExpiryDate());
         return ingredient;
     }
 

@@ -77,6 +77,21 @@ public class IngredientResponseDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class ExpiryDateResultDTO {
+        Long memberId;
+        Long fridgeId;
+        Long ingredientId;
+        String ingredientName;
+        LocalDate purchaseDate;
+        LocalDate expiryDate;
+    }
+
+
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class StorageTypeResultDTO {
         Long memberId;
         Long fridgeId;
