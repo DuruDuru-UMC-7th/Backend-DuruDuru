@@ -28,6 +28,7 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     // 사용자 식재료 소비기한 여유순 조회
     @Query("SELECT i FROM Ingredient i WHERE i.fridge.member.memberId = :memberId ORDER BY i.dDay DESC")
     List<Ingredient> findAllByFridge_Member_MemberIdOrderByDDayDesc(@Param("memberId") Long memberId);
+
     // 사용자 식재료 대분류 기준 최신순 조회
     List<Ingredient> findAllByFridge_Member_MemberIdAndMajorCategoryOrderByCreatedAtDesc(Long memberId, MajorCategory majorCategory);
     // 사용자 식재료 대분류 기준 소비기한 임박순 조회
@@ -37,5 +38,7 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     @Query("SELECT i FROM Ingredient i WHERE i.fridge.member.memberId = :memberId AND i.majorCategory = :majorCategory ORDER BY i.dDay DESC")
     List<Ingredient> findAllByFridge_Member_MemberIdAndMajorCategoryOrderByDDayDesc(Long memberId, MajorCategory majorCategory);
 
+    // 사용자가 식재료 검색어가 포함된 식재료 조회 (대소문자 무시)
+    List<Ingredient> findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(Long memberId, String search);
 
 }

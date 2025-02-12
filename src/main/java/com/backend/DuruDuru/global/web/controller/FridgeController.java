@@ -17,6 +17,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequiredArgsConstructor
@@ -80,21 +81,26 @@ public class FridgeController {
     // 식재료 이름으로 검색 (최신 등록순)
     @GetMapping("/name/recent")
     @Operation(summary = "식재료 이름으로 검색 (최신 등록순) API", description = "식재료 이름으로 검색하여 최신 등록된 순으로 조회하는 API 입니다.")
-    public ApiResponse<?> findByNameRecent() {
-        return null;
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findByNameRecent(@RequestParam Long memberId, @RequestParam Optional<String> search) {
+        List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameRecent(memberId, search);
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 식재료 이름으로 검색 (소비기한 임박순)
     @GetMapping("/name/near-expiry")
     @Operation(summary = "식재료 이름으로 검색 (소비기한 임박순) API", description = "식재료 이름으로 검색하여 소비기한이 임박한 순으로 조회하는 API 입니다.")
-    public ApiResponse<?> findByNameNearExpiry() {
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findByNameNearExpiry(@RequestParam Long memberId, @RequestParam Optional<String> search) {
+        //List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameNearExpiry(memberId, search);
+        //return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
         return null;
     }
 
     // 식재료 이름으로 검색 (소비기한 여유순)
     @GetMapping("/name/far-expiry")
     @Operation(summary = "식재료 이름으로 검색 (소비기한 여유순) API", description = "식재료 이름으로 검색하여 소비기한이 여유로운 순으로 조회하는 API 입니다.")
-    public ApiResponse<?> findByNameFarExpiry() {
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findByNameFarExpiry(@RequestParam Long memberId, @RequestParam Optional<String> search) {
+        //List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameFarExpiry(memberId, search);
+        //return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
         return null;
     }
 

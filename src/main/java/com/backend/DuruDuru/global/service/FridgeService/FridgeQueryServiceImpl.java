@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -72,6 +73,20 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
     @Override
     public List<Ingredient> getMajorCategoryIngredientsFarExpiry(Long memberId, MajorCategory majorCategory) {
         List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndMajorCategoryOrderByDDayDesc(memberId, majorCategory);
+        validateIngredientProperties(ingredients);
+        return ingredients;
+    }
+
+    @Override
+    public List<Ingredient> getIngredientsByNameRecent(Long memberId, Optional<String> optSearch) {
+        findMemberById(memberId);
+        List<Ingredient> ingredients;
+        if (optSearch.isPresent() && !optSearch.get().trim().isEmpty()) {
+            String search = optSearch.get();
+            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(memberId, search);
+        } else {
+            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(memberId);
+        }
         validateIngredientProperties(ingredients);
         return ingredients;
     }

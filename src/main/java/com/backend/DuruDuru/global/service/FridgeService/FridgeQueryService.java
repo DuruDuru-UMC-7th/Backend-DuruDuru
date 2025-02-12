@@ -4,6 +4,7 @@ import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface FridgeQueryService {
 
@@ -15,4 +16,5 @@ public interface FridgeQueryService {
     List<Ingredient> getMajorCategoryIngredientsNearExpiry(Long memberId, MajorCategory majorCategory);
     List<Ingredient> getMajorCategoryIngredientsFarExpiry(Long memberId, MajorCategory majorCategory);
 
+    List<Ingredient> getIngredientsByNameRecent(Long memberId, Optional<String> optSearch);
 }
