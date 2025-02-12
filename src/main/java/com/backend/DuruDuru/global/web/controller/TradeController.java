@@ -190,10 +190,12 @@ public class TradeController {
     // 특정 품앗이의 찜하기 개수 조회
     @GetMapping("/like/{trade_id}/count")
     @Operation(summary = "특정 품앗이의 찜하기 개수 조회 API", description = "특정 품앗이의 찜하기 개수를 조회하는 API 입니다.")
-    public ApiResponse<?> findLikeCount(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_LIKE_COUNT_OK, null);
+    public ApiResponse<TradeResponseDTO.LikeCountResultDTO> findLikeCount(
+            @PathVariable("trade_id") Long tradeId
+    ){
+        Trade trade = tradeQueryService.getTrade(tradeId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_LIKE_COUNT_OK, TradeConverter.toLikeCountResultDTO(trade));
     }
-
 
     // 품앗이 키워드 알림
     @GetMapping("/keyword/alert")
