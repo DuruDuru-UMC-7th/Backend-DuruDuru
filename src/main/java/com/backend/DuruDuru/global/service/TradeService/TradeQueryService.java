@@ -20,4 +20,6 @@ public interface TradeQueryService {
     List<Trade> getNearExpiryTrade(Long memberId);
     // 근처 품앗이 소비기한 여유순 조회
     List<Trade> getFarExpiryTrade(Long memberId);
+    // 찜하기한 게시글 조회
+    List<Trade> getAllLikeTradesByMember(Long memberId);
 }

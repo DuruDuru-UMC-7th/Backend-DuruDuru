@@ -112,8 +112,11 @@ public class TradeController {
     // 내가 찜한 품앗이 리스트 조회
     @GetMapping("/my/like")
     @Operation(summary = "내가 찜한 품앗이 리스트 조회 API", description = "내가 찜한 품앗이 **프리뷰 리스트**를 조회하는 API 입니다.")
-    public ApiResponse<?> findLikeTrade(){
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, null);
+    public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findLikeTrade(
+            @RequestParam Long memberId
+    ){
+        List<Trade> tradeList = tradeQueryService.getAllLikeTradesByMember(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_LIST_OK, TradeConverter.toTradePreviewListDTO(tradeList));
     }
 
     // 내 근처 품앗이 나눔/교환별 리스트 조회

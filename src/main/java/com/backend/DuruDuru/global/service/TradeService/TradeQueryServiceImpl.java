@@ -75,6 +75,13 @@ public class TradeQueryServiceImpl implements TradeQueryService {
         return tradeRepository.findFarExpiryTrades(member.getTown().getLatitude(), member.getTown().getLongitude());
     }
 
+    @Override
+    @Transactional
+    public List<Trade> getAllLikeTradesByMember(Long memberId) {
+        Member member = findMemberById(memberId);
+        return tradeRepository.findLikeTradesByMember(memberId);
+    }
+
     private Trade findTradeById(Long tradeId) {
         return tradeRepository.findById(tradeId)
                 .orElseThrow(() -> new TradeHandler(ErrorStatus.TRADE_NOT_FOUND));
