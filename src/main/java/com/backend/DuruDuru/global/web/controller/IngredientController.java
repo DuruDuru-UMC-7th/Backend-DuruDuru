@@ -44,7 +44,6 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientImageDTO(ingredient));
     }
 
-
     // 식재료 카테고리 설정
     @PostMapping("/{ingredient_id}/category")
     @Operation(summary = "식재료 카테고리 설정 API", description = "식재료의 대분류와 소분류를 설정하는 API 입니다.")
@@ -56,7 +55,6 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toSetCategoryResultDTO(ingredient));
     }
 
-
     // 식재료 보관 방식 설정
     @PostMapping("/{ingredient_id}/storage-type")
     @Operation(summary = "식재료 보관 방식 설정 API", description = "식재료의 보관 방식을 설정하는 API 입니다.")
@@ -65,7 +63,6 @@ public class IngredientController {
         Ingredient ingredient = ingredientCommandService.setStorageType(memberId, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toStorageTypeResultDTO(ingredient));
     }
-
 
     // 식재료 구매 날짜 등록
     @PostMapping("/{ingredient_id}/purchase-date")
@@ -76,7 +73,12 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toPurchaseDateResultDTO(ingredient));
     }
 
-
+    // 식재료 소비기한 등록
+    @PostMapping("/{ingredient_id}/expiry-date")
+    @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
+    public ApiResponse<?> ingredientExpiryDate(){
+        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
+    }
 
     // 식재료 직접 등록
     @PostMapping("/")
@@ -87,7 +89,6 @@ public class IngredientController {
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toCreateResultDTO(newIngredient));
     }
 
-
     // 식재료 정보 수정
     @PatchMapping("/{ingredient_id}")
     @Operation(summary = "식재료 정보 수정 API", description = "식재료의 정보를 수정하는 API 입니다.")
@@ -97,7 +98,6 @@ public class IngredientController {
                 IngredientConverter.UpdateIngredientResultDTO(ingredientCommandService.updateIngredient(memberId, ingredientId, request)));
     }
 
-
     // 식재료 삭제
     @DeleteMapping("/{ingredient_id}")
     @Operation(summary = "식재료 삭제 API", description = "식재료를 삭제하는 API 입니다.")
@@ -105,7 +105,6 @@ public class IngredientController {
         ingredientCommandService.deleteIngredient(memberId, ingredientId);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
-
 
     // 식재료 이름으로 검색
     @GetMapping("/search/name")
@@ -197,14 +196,6 @@ public class IngredientController {
 //    @GetMapping("/purchased")
 //    @Operation(summary = "구매한 식재료 목록 조회 (식재료 목록 자동 인식) API", description = "OCR을 통해 자동 등록된 식재료들의 목록을 조회하는 API 입니다.")
 //    public ApiResponse<?> purchasedIngredientsList(){
-//        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
-//    }
-
-
-    //    // 식재료 소비기한 등록 (자동 계산 포함)
-//    @PostMapping("/{ingredient_id}/expiry-date")
-//    @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
-//    public ApiResponse<?> ingredientExpiryDate(){
 //        return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
 //    }
 
