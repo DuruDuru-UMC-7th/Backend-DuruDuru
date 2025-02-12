@@ -83,20 +83,22 @@ public interface TradeRepository extends JpaRepository<Trade, Long> {
             @Param("memberLat") double memberLat,
             @Param("memberLon") double memberLon
     );
-    // 사용자의 동네에서 현재 보고 있는 품앗이 이후로 최신 등록된 다른 품앗이 리스트 반환
+    // 사용자의 동네 근처에서 최근 업로드된 다른 품앗이 리스트 반환
     @Query(value = """
     SELECT t.* FROM trade t
     WHERE t.member_id != :memberId
+    AND t.trade_id != :tradeId
     AND t.status IN ('ACTIVE', 'PROCEEDING')
     AND (6371 * acos(cos(radians(:memberLat)) * cos(radians(latitude)) * cos(radians(longitude) - radians(:memberLon)) + sin(radians(:memberLat)) * sin(radians(latitude)))) <= 1
-    AND created_at > :tradeCreatedAt
-    ORDER BY created_at DESC
+    ORDER BY t.updated_at DESC
+    LIMIT :limit
     """, nativeQuery = true)
     List<Trade> findOtherTrades(
             @Param("memberLat") double memberLat,
             @Param("memberLon") double memberLon,
-            @Param("tradeCreatedAt") LocalDateTime tradeCreatedAt,
-            @Param("memberId") Long memberId
+            @Param("memberId") Long memberId,
+            @Param("tradeId") Long tradeId,
+            @Param("limit") int limit
     );
 
 }

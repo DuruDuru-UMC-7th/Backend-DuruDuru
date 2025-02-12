@@ -158,7 +158,7 @@ public class TradeController {
 
     // 다른 품앗이 둘러보기
     @GetMapping("/other-trade")
-    @Operation(summary = "다른 품앗이 둘러보기 API", description = "사용자의 동네에서 최근 업로드된 다른 품앗이를 추천하는 API 입니다.")
+    @Operation(summary = "다른 품앗이 둘러보기 API", description = "사용자의 동네 근처에서 최근 업로드된 다른 품앗이를 추천하는 API 입니다.")
     public ApiResponse<TradeResponseDTO.TradePreviewListDTO> findOtherTrade(
             @RequestParam Long memberId,
             @RequestParam Long tradeId

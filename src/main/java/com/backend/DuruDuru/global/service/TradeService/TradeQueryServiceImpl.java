@@ -82,8 +82,7 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     public List<Trade> getOtherTrade(Long memberId, Long tradeId) {
         Member member = findMemberById(memberId);
         Trade trade = findTradeById(tradeId);
-        LocalDateTime createdAt = trade.getCreatedAt();
-        return tradeRepository.findOtherTrades(member.getTown().getLatitude(), member.getTown().getLongitude(), createdAt, memberId);
+        return tradeRepository.findOtherTrades(member.getTown().getLatitude(), member.getTown().getLongitude(), memberId, tradeId, 4);
     }
 
     @Override
