@@ -163,7 +163,6 @@ public class IngredientController {
     }
 
 
-
 //    // 소분류 카테고리에 속하는 식재료 개수 조회
 //    @GetMapping("/category/count")
 //    @Operation(summary = "식재료 카테고리 개수 조회 API", description = "식재료 카테고리의 개수를 조회하는 API 입니다. 소분류 카테고리별 식재료 개수를 반환합니다.")
