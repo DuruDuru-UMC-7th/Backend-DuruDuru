@@ -110,9 +110,9 @@ public class IngredientController {
 
     // 식재료 이름으로 검색
     @GetMapping("/search/name")
-    @Operation(summary = "식재료 이름으로 검색 API", description = "식재료를 이름으로 검색하는 API 입니다. 입력된 키워드가 포함된 식재료를 모두 반환합니다.")
-    public ApiResponse<IngredientResponseDTO.IngredientDetailListDTO> searchIngredientByName(@RequestParam Optional<String> search){
-        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByName(Optional.of(search.orElse("")));
+    @Operation(summary = "식재료 이름으로 검색 API", description = "식재료를 이름으로 검색하는 API 입니다. 입력된 키워드가 포함된 식재료를 모두 반환하며, 검색어가 없을 경우 전체 식재료 등록순으로 반환합니다.")
+    public ApiResponse<IngredientResponseDTO.IngredientDetailListDTO> searchIngredientByName(@RequestParam Long memberId, @RequestParam Optional<String> search){
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByName(memberId, Optional.of(search.orElse("")));
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientDetailListDTO(ingredients));
     }
 
