@@ -50,6 +50,21 @@ public enum ErrorStatus implements BaseErrorCode {
     TOWN_ALREADY_EXISTS(HttpStatus.CONFLICT, "TOWN_3002", "이미 Town이 존재합니다."),
     TOWN_NOT_REGISTERED(HttpStatus.BAD_REQUEST, "TOWN_3003", "Town이 등록되지 않았습니다."),
 
+    // 품앗이 관련 에러
+    TRADE_NOT_FOUND(HttpStatus.NOT_FOUND, "TRADE_4001", "해당 게시글을 찾을 수 없습니다."),
+    TRADE_IMAGE_NOT_FOUND(HttpStatus.NOT_FOUND, "TRADE_4002", "해당 이미지를 찾을 수 없습니다."),
+    TRADE_ACCESS_DENIED(HttpStatus.FORBIDDEN, "TRADE_4003", "해당 게시글에 대한 접근 권한이 없습니다."),
+    TRADE_MAX_LIMIT_REACHED(HttpStatus.BAD_REQUEST, "TRADE_4004", "진행 중인 거래 개수가 최대치에 도달했습니다."),
+    TRADE_IMAGE_LIMIT_REACHED(HttpStatus.BAD_REQUEST, "TRADE_4005", "등록 가능한 이미지가 최대치에 도달했습니다."),
+    TRADE_REGISTER_DENIED(HttpStatus.BAD_REQUEST, "TRADE_4006", "요청한 식재료의 개수가 현재 품앗이 등록 가능한 재고보다 많습니다."),
+    TRADE_IMAGE_INVALID(HttpStatus.BAD_REQUEST, "TRADE_4007", "해당 게시글에 포함된 이미지가 아닙니다."),
+    TRADE_ALREADY_LIKE(HttpStatus.CONFLICT, "TRADE_4008", "이미 찜하기한 게시글입니다."),
+    TRADE_LIKE_NOT_EXIST(HttpStatus.BAD_REQUEST, "TRADE_4009", "찜하기한 게시글이 아닙니다."),
+
+    // 식재료 관련 에러
+    INGREDIENT_NOT_FOUND(HttpStatus.NOT_FOUND, "INGREDIENT_5001", "해당 식재료를 찾을 수 없습니다."),
+    INGREDIENT_ACCESS_DENIED(HttpStatus.NOT_FOUND, "INGREDIENT_5002", "해당 식재료에 대한 접근 권한이 없습니다.")
+
     ;
 
 

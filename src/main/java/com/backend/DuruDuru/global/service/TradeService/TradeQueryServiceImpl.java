@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.service.TradeService;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.TradeHandler;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.Trade;
 import com.backend.DuruDuru.global.domain.enums.TradeType;
@@ -32,10 +33,7 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     @Transactional
     public List<Trade> getNearTradesByType(Long memberId, TradeType tradeType) {
         Member member = findMemberById(memberId);
-        double memberLat = member.getTown().getLatitude();
-        double memberLon = member.getTown().getLongitude();
-
-        return tradeRepository.findNearbyTrades(memberLat, memberLon, tradeType.name());
+        return tradeRepository.findNearbyTrades(member.getTown().getLatitude(), member.getTown().getLongitude(), tradeType.name());
     }
 
     // 멤버별 전체 품앗이 게시글 리스트 조회
@@ -79,7 +77,7 @@ public class TradeQueryServiceImpl implements TradeQueryService {
 
     private Trade findTradeById(Long tradeId) {
         return tradeRepository.findById(tradeId)
-                .orElseThrow(() -> new IllegalArgumentException("Trade not found. ID: " + tradeId));
+                .orElseThrow(() -> new TradeHandler(ErrorStatus.TRADE_NOT_FOUND));
     }
 
     private Member findMemberById(Long memberId) {
