@@ -40,13 +40,9 @@ public class TradeController {
     public ApiResponse<TradeResponseDTO.TradeDetailResultDTO> createTrade(
             @RequestParam Long memberId,
             @RequestParam Long ingredientId,
-            @RequestParam(value = "image", required = false) List<MultipartFile> tradeImgs, // 이미지 리스트 처리
-            @RequestParam TradeType tradeType,
-            @RequestParam String body,
-            @RequestParam Long ingredientCount
+            @ModelAttribute TradeRequestDTO.CreateTradeRequestDTO request
     ){
-        TradeRequestDTO.CreateTradeRequestDTO request = new TradeRequestDTO.CreateTradeRequestDTO(ingredientCount, body, tradeType, tradeImgs);
-        Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request, tradeImgs);
+        Trade trade = tradeCommandService.createTrade(memberId, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_CREATE_OK, TradeConverter.toTradeDetailDTO(trade));
     }
 

@@ -35,7 +35,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     // Trade 엔티티를 저장하는 메서드
     @Override
     @Transactional
-    public Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request, List<MultipartFile> tradeImgs) {
+    public Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request) {
         Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
@@ -52,7 +52,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
             throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
         }
         // 등록 가능한 이미지의 최대 개수를 넘은 경우
-        if(tradeImgs != null && tradeImgs.size() > 5) {
+        if(request.getTradeImgs() != null && request.getTradeImgs().size() > 5) {
             throw new TradeHandler(ErrorStatus.TRADE_IMAGE_LIMIT_REACHED);
         }
 
@@ -67,8 +67,8 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         tradeRepository.save(newTrade);
 
         // 이미지 업로드 처리
-        if (tradeImgs != null) {
-            for (MultipartFile img : tradeImgs) {
+        if (request.getTradeImgs() != null) {
+            for (MultipartFile img : request.getTradeImgs()) {
                 if (img.isEmpty()) continue;
                 String tradeImgUrl = getImgUrl(img);
 
