@@ -22,4 +22,6 @@ public interface TradeQueryService {
     List<Trade> getFarExpiryTrade(Long memberId);
     // 찜하기한 게시글 조회
     List<Trade> getAllLikeTradesByMember(Long memberId);
+    // 다른 품앗이 조회
+    List<Trade> getOtherTrade(Long memberId, Long tradeId);
 }

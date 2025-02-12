@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -73,6 +74,16 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     public List<Trade> getFarExpiryTrade(Long memberId) {
         Member member = findMemberById(memberId);
         return tradeRepository.findFarExpiryTrades(member.getTown().getLatitude(), member.getTown().getLongitude());
+    }
+
+    // 다른 품앗이 조회
+    @Override
+    @Transactional
+    public List<Trade> getOtherTrade(Long memberId, Long tradeId) {
+        Member member = findMemberById(memberId);
+        Trade trade = findTradeById(tradeId);
+        LocalDateTime createdAt = trade.getCreatedAt();
+        return tradeRepository.findOtherTrades(member.getTown().getLatitude(), member.getTown().getLongitude(), createdAt, memberId);
     }
 
     @Override
