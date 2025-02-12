@@ -3,6 +3,7 @@ package com.backend.DuruDuru.global.web.controller;
 import com.backend.DuruDuru.global.converter.FridgeConverter;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.service.FridgeService.FridgeQueryService;
 import com.backend.DuruDuru.global.web.dto.Fridge.FridgeResponseDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
@@ -29,26 +30,50 @@ public class FridgeController {
     private final FridgeQueryService fridgeQueryService;
 
     // 전체 식재료 리스트 조회 (최신 등록순)
-    @GetMapping("/{member_id}/all/recent")
+    @GetMapping("/all/recent")
     @Operation(summary = "최신 등록된 순으로 전체 식재료 리스트 조회 API", description = "사용자의 냉장고에 최신 등록된 순으로 전체 식재료 리스트를 조회하는 API 입니다.")
-    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findAllRecentIngredients(@PathVariable("member_id") Long memberId) {
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findAllRecentIngredients(@RequestParam Long memberId) {
         List<Ingredient> ingredients = fridgeQueryService.getAllIngredients(memberId);
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 소비기한 임박순 식재료 리스트 조회
-    @GetMapping("/{member_id}/near-expiry")
+    @GetMapping("/near-expiry")
     @Operation(summary = "식재료 소비기한 임박순 리스트 조회 API", description = "식재료 리스트를 소비기한이 임박한 순서대로 조회하는 API 입니다.")
-    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> ingredientNearExpiry(@PathVariable("member_id") Long memberId) {
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> ingredientsNearExpiry(@RequestParam Long memberId) {
         List<Ingredient> ingredients = fridgeQueryService.getIngredientsNearExpiry(memberId);
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 소비기한 여유순 식재료 리스트 조회
-    @GetMapping("/{member_id}/far-expiry")
+    @GetMapping("/far-expiry")
     @Operation(summary = "식재료 소비기한 여유순 리스트 조회 API", description = "식재료 리스트를 소비기한이 여유로운 순서대로 조회하는 API 입니다.")
-    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> ingredientFarExpiry(@PathVariable("member_id") Long memberId) {
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> ingredientsFarExpiry(@RequestParam Long memberId) {
         List<Ingredient> ingredients = fridgeQueryService.getIngredientsFarExpiry(memberId);
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+    }
+
+    // 대분류 기준 식재료 최신 등록순 리스트 조회
+    @GetMapping("/majorCategory/all/recent")
+    @Operation(summary = "대분류 기준 식재료 최신 등록순 리스트 조회 API", description = "대분류 기준 사용자의 냉장고에 최신 등록된 순으로 전체 식재료 리스트를 조회하는 API 입니다.")
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findAllRecentMajorCategoryIngredients(@RequestParam Long memberId, @RequestParam MajorCategory majorCategory) {
+        List<Ingredient> ingredients = fridgeQueryService.getAllMajorCategoryIngredients(memberId, majorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+    }
+
+    // 대분류 기준 식재료 소비기한 임박순 리스트 조회
+    @GetMapping("/majorCategory/near-expiry")
+    @Operation(summary = "대분류 기준 식재료 소비기한 임박순 리스트 조회 API", description = "대분류 기준 식재료 리스트를 소비기한이 임박한 순서대로 조회하는 API 입니다.")
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> majorCategoryIngredientsNearExpiry(@RequestParam Long memberId, @RequestParam MajorCategory majorCategory) {
+        List<Ingredient> ingredients = fridgeQueryService.getMajorCategoryIngredientsNearExpiry(memberId, majorCategory);
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+    }
+
+    // 대분류 기준 식재료 소비기한 여유순 리스트 조회
+    @GetMapping("/majorCategory/far-expiry")
+    @Operation(summary = "대분류 기준 식재료 소비기한 여유순 리스트 조회 API", description = "대분류 기준 식재료 리스트를 소비기한이 여유로운 순서대로 조회하는 API 입니다.")
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> majorCategoryIngredientsFarExpiry(@RequestParam Long memberId, @RequestParam MajorCategory majorCategory) {
+        List<Ingredient> ingredients = fridgeQueryService.getMajorCategoryIngredientsFarExpiry(memberId, majorCategory);
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
