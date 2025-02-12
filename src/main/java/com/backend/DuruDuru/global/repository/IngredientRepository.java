@@ -43,4 +43,9 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     // 사용자가 식재료 검색어가 포함된 식재료 소비기한 임박순 조회
     @Query("SELECT i FROM Ingredient i WHERE i.fridge.member.memberId = :memberId AND i.ingredientName LIKE %:search% ORDER BY i.dDay ASC")
     List<Ingredient> findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByDDayAsc(Long memberId, String search);
+    // 사용자가 식재료 검색어가 포함된 식재료 소비기한 여유순 조회
+    @Query("SELECT i FROM Ingredient i WHERE i.fridge.member.memberId = :memberId AND i.ingredientName LIKE %:search% ORDER BY i.dDay DESC")
+    List<Ingredient> findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByDDayDesc(Long memberId, String search);
+
+
 }

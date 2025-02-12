@@ -18,4 +18,5 @@ public interface FridgeQueryService {
 
     List<Ingredient> getIngredientsByNameRecent(Long memberId, Optional<String> optSearch);
     List<Ingredient> getIngredientsByNameNearExpiry(Long memberId, Optional<String> optSearch);
+    List<Ingredient> getIngredientsByNameFarExpiry(Long memberId, Optional<String> optSearch);
 }

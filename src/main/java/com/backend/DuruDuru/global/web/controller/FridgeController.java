@@ -98,9 +98,8 @@ public class FridgeController {
     @GetMapping("/name/far-expiry")
     @Operation(summary = "식재료 이름으로 검색 (소비기한 여유순) API", description = "식재료 이름으로 검색하여 소비기한이 여유로운 순으로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findByNameFarExpiry(@RequestParam Long memberId, @RequestParam Optional<String> search) {
-        //List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameFarExpiry(memberId, search);
-        //return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
-        return null;
+        List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameFarExpiry(memberId, search);
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
 

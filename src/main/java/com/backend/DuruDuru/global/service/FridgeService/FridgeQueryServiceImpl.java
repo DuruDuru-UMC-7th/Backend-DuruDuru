@@ -105,6 +105,20 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
         return ingredients;
     }
 
+    @Override
+    public List<Ingredient> getIngredientsByNameFarExpiry(Long memberId, Optional<String> optSearch) {
+        findMemberById(memberId);
+        List<Ingredient> ingredients;
+        if (optSearch.isPresent() && !optSearch.get().trim().isEmpty()) {
+            String search = optSearch.get();
+            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByDDayDesc(memberId, search);
+        } else {
+            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayDesc(memberId);
+        }
+        validateIngredientProperties(ingredients);
+        return ingredients;
+    }
+
 
     // 식재료 필수 속성 미설정 예외처리 (카테고리, 보관방식, 구매날짜, 소비기한)
     private void validateIngredientProperties(List<Ingredient> ingredients) {
