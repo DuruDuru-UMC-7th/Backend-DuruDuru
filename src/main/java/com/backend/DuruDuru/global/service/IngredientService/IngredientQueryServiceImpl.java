@@ -34,25 +34,59 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
         return result;
     }
 
-    //소분류 카테고리에 속하는 식재료 조회
+    // 소분류 카테고리에 속하는 식재료 조회
     @Override
     public List<Ingredient> getIngredientsByMinorCategory(Long memberId, MinorCategory minorCategory) {
-        return ingredientRepository.findByMember_MemberIdAndMinorCategory(memberId, minorCategory);
+        List<Ingredient> ingredients = ingredientRepository.findByMember_MemberIdAndMinorCategory(memberId, minorCategory);
+        validateIngredientProperties(ingredients);
+        return ingredients;
     }
 
-    //소분류 카테고리에 속하는 식재료 조회
+    // 대분류 카테고리에 속하는 식재료 조회
     @Override
     public List<Ingredient> getIngredientsByMajorCategory(Long memberId, MajorCategory majorCategory) {
-        return ingredientRepository.findByMember_MemberIdAndMajorCategory(memberId, majorCategory);
+        List<Ingredient> ingredients = ingredientRepository.findByMember_MemberIdAndMajorCategory(memberId, majorCategory);
+        validateIngredientProperties(ingredients);
+        return ingredients;
     }
 
-
+    // 식재료 이름으로 검색
     @Override
     public List<Ingredient> getIngredientsByName(Optional<String> optSearch) {
+        List<Ingredient> ingredients;
         if (optSearch.isPresent()) {
             String search = optSearch.get();
-            return ingredientRepository.findAllByIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(search);
+            ingredients = ingredientRepository.findAllByIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(search);
+        } else {
+            ingredients = ingredientRepository.findAllByOrderByCreatedAtDesc();
         }
-        return ingredientRepository.findAllByOrderByCreatedAtDesc();
+        validateIngredientProperties(ingredients);
+        return ingredients;
     }
+
+    // 식재료 필수 속성 미설정 예외처리 (카테고리, 보관방식, 구매날짜, 소비기한)
+    private void validateIngredientProperties(List<Ingredient> ingredients) {
+        List<String> errorMessages = new ArrayList<>();
+
+        for (Ingredient ingredient : ingredients) {
+            String ingredientInfo = "식재료 ID: " + ingredient.getIngredientId() + " (" + ingredient.getIngredientName() + ")";
+
+            if (ingredient.getMajorCategory() == null || ingredient.getMinorCategory() == null) {
+                errorMessages.add(ingredientInfo + " → 카테고리 설정이 미완료 상태입니다.");
+            }
+            if (ingredient.getStorageType() == null) {
+                errorMessages.add(ingredientInfo + " → 보관방식 설정이 미완료 상태입니다.");
+            }
+            if (ingredient.getPurchaseDate() == null) {
+                errorMessages.add(ingredientInfo + " → 구매날짜 설정이 미완료 상태입니다.");
+            }
+            if (ingredient.getExpiryDate() == null) {
+                errorMessages.add(ingredientInfo + " → 소비기한 설정이 미완료 상태입니다.");
+            }
+        }
+        if (!errorMessages.isEmpty()) {
+            throw new IllegalStateException("식재료 필수 속성이 누락되어있습니다: " + String.join(" | ", errorMessages));
+        }
+    }
+
 }

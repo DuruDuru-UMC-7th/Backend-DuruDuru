@@ -13,7 +13,6 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
@@ -24,33 +23,45 @@ public class RecipeController {
     private final RecipeCommandService recipeService;
 
     // 특정 레시피 조회
-    @GetMapping("/{recipeId}")
+    @GetMapping("/{recipeName}")
     @Parameters({
-            @Parameter(name = "recipeId", description = "조회하려는 특정 레시피 id")
+            @Parameter(name = "recipeName", description = "조회하려는 특정 레시피 이름")
     })
     @Operation(summary = "특정 레시피 조회 API", description = "특정 레시피를 조회하는 API입니다")
-    public ApiResponse<?> getRecipeById(@PathVariable Long recipeId){
-        RecipeResponseDTO.RecipeResponse response = recipeService.getRecipeById(recipeId);
+    public ApiResponse<RecipeResponseDTO.RecipeDetailResponse> getRecipeByName(
+            @PathVariable String recipeName
+    ){
+        RecipeResponseDTO.RecipeDetailResponse response = recipeService.getRecipeDetailByName(recipeName);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FETCH_OK, response);
     }
 
     // 레시피 즐겨찾기 설정
     @PostMapping("/{recipeId}/favorite")
     @Parameters({
-            @Parameter(name = "recipeId", description = "즐겨찾기를 설정하려는 레시피 id")
+            @Parameter(name = "recipeName", description = "즐겨찾기를 설정하려는 레시피 이름")
     })
     @Operation(summary = "레시피 즐겨찾기 추가/삭제 API", description = "레시피 즐겨찾기를 추가하거나 삭제하는 API입니다")
-    public ApiResponse<?> setRecipeFavorite(@Parameter(name = "user", hidden = true) @AuthUser Member member, @RequestParam Long recipeId){
-        recipeService.setRecipeFavorite(member, recipeId);
+    public ApiResponse<?> setRecipeFavorite(
+            @Parameter(name = "user", hidden = true) @AuthUser Member member,
+            @RequestParam String recipeName){
+        recipeService.setRecipeFavorite(member, recipeName);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FAVORITE_SET_OK, null);
     }
 
 
     // 내가 즐겨찾기 설정한 레시피 목록 확인
     @GetMapping("/favorite")
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호, 기본값은 1입니다"),
+            @Parameter(name = "size", description = "페이지 당 항목 수, 기본값은 10입니다.")
+    })
     @Operation(summary = "내가 즐겨찾기 설정한 레시피 목록 확인 API", description = "로그인한 사용자가 즐겨찾기 설정한 레시피 목록을 확인하는 API입니다")
-    public ApiResponse<List<RecipeResponseDTO.RecipeResponse>> getFavoriteRecipes(@Parameter(name = "user", hidden = true) @AuthUser Member member){
-        List<RecipeResponseDTO.RecipeResponse> favorites = recipeService.getFavoriteRecipes(member);
+    public ApiResponse<RecipeResponseDTO.RecipePageResponse> getFavoriteRecipes(
+            @Parameter(name = "user", hidden = true) @AuthUser Member member,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        RecipeResponseDTO.RecipePageResponse favorites = recipeService.getFavoriteRecipes(member, page, size);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FAVORITE_FETCH_OK, favorites);
     }
 
@@ -61,7 +72,7 @@ public class RecipeController {
             @Parameter(name = "page", description = "페이지 번호, 기본값은 1입니다"),
             @Parameter(name = "size", description = "페이지 당 항목 수, 기본값은 10입니다.")
     })
-    @Operation(summary = "즐겨찾기 수가 많은 레시피 추천 API", description = "즐겨찾기 수가 많은 레시피를 추천하는 API입니다")
+    @Operation(summary = "즐겨찾기 수가 많은 레시피 추천 API", description = "즐겨찾기 수가 많은 레시피를 반환하는 API입니다")
     public ApiResponse<RecipeResponseDTO.RecipePageResponse> getPopularRecipes(
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
@@ -73,24 +84,19 @@ public class RecipeController {
 
     // 식재료 목록 기반 레시피 추천
     @GetMapping("/recommend")
-    @Operation(summary = "식재료 목록 기반 레시피 추천 API", description = "보유하고 있는 식재료 목록을 기반으로 레시피를 추천하는 API입니다")
-    public ApiResponse<?> recommendRecipesByIngredients(){
-        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
-    }
-
-
-
-
-    // 레시피 공유 (링크, Kakao)
-    @PostMapping("/{recipeId}/share")
     @Parameters({
-            @Parameter(name = "recipeId", description = "공유하려는 레시피 id")
+            @Parameter(name = "ingredients", description = "레시피 추천을 위한 식재료 입니다."),
+            @Parameter(name = "page", description = "페이지 번호, 기본값은 1입니다"),
+            @Parameter(name = "size", description = "페이지 당 항목 수, 기본값은 10입니다.")
     })
-    @Operation(summary = "레시피 공유 API", description = "레시피 공유(링크, Kakao)를 하는 API입니다")
-    public ApiResponse<?> shareRecipes(){
-        return ApiResponse.onSuccess(SuccessStatus.EXAMPLE_OK, null);
+    @Operation(summary = "식재료 목록 기반 레시피 추천 API", description = "보유하고 있는 식재료 목록을 기반으로 레시피를 추천하는 API입니다")
+    public ApiResponse<RecipeResponseDTO.RecipePageResponse> recommendRecipesByIngredients(
+            @RequestParam String ingredients,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size
+    ){
+        RecipeResponseDTO.RecipePageResponse recipes = recipeService.searchRecipes(ingredients, page, size);
+        return ApiResponse.onSuccess(SuccessStatus.RECIPE_RECOMMEND_OK, recipes);
     }
-
-
 
 }

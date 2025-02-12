@@ -6,8 +6,9 @@ import com.backend.DuruDuru.global.web.dto.Recipe.RecipeResponseDTO;
 import java.util.List;
 
 public interface RecipeCommandService {
-    RecipeResponseDTO.RecipeResponse getRecipeById(Long recipeId);
-    void setRecipeFavorite(Member member, Long recipeId);
-    List<RecipeResponseDTO.RecipeResponse> getFavoriteRecipes(Member member);
+    RecipeResponseDTO.RecipeDetailResponse getRecipeDetailByName(String recipeName);
+    public void setRecipeFavorite(Member member, String recipeSeq);
+    RecipeResponseDTO.RecipePageResponse searchRecipes(String ingredients, int page, int size);
+    RecipeResponseDTO.RecipePageResponse getFavoriteRecipes(Member member, int page, int size);
     RecipeResponseDTO.RecipePageResponse getPopularRecipes(int page, int size);
 }
