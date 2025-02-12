@@ -90,9 +90,8 @@ public class FridgeController {
     @GetMapping("/name/near-expiry")
     @Operation(summary = "식재료 이름으로 검색 (소비기한 임박순) API", description = "식재료 이름으로 검색하여 소비기한이 임박한 순으로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findByNameNearExpiry(@RequestParam Long memberId, @RequestParam Optional<String> search) {
-        //List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameNearExpiry(memberId, search);
-        //return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
-        return null;
+        List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameNearExpiry(memberId, search);
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 식재료 이름으로 검색 (소비기한 여유순)
