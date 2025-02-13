@@ -4,13 +4,16 @@ import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
+import com.backend.DuruDuru.global.security.handler.annotation.AuthUser;
 import com.backend.DuruDuru.global.service.IngredientService.IngredientCommandService;
 import com.backend.DuruDuru.global.service.IngredientService.IngredientQueryService;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -39,79 +42,86 @@ public class IngredientController {
     @PostMapping(path = "/{ingredient_id}/photo", consumes = "multipart/form-data")
     @Operation(summary = "추가할 식재료 사진 등록 API", description = "추가할 식재료의 사진을 등록하는 API 입니다.")
     public ApiResponse<IngredientResponseDTO.IngredientImageDTO> updateIngredientPhoto(@ModelAttribute IngredientRequestDTO.IngredientImageRequestDTO request,
-                                                                                       @RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId) {
-                Ingredient ingredient = ingredientCommandService.registerIngredientImage(memberId, ingredientId, request);
+                                                                                       @Parameter(name = "user", hidden = true) @AuthUser Member member,
+                                                                                       @PathVariable("ingredient_id") Long ingredientId) {
+                Ingredient ingredient = ingredientCommandService.registerIngredientImage(member, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientImageDTO(ingredient));
     }
 
     // 식재료 카테고리 설정
     @PostMapping("/{ingredient_id}/category")
     @Operation(summary = "식재료 카테고리 설정 API", description = "식재료의 대분류와 소분류를 설정하는 API 입니다.")
-    public ApiResponse<?> setIngredientCategory(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
+    public ApiResponse<?> setIngredientCategory(@Parameter(name = "user", hidden = true) @AuthUser Member member,
+                                                @PathVariable("ingredient_id") Long ingredientId,
                                                 @RequestBody @Valid IngredientRequestDTO.SetCategoryRequestDTO request) {
         log.info("SetCategoryRequestDTO: {}", request);
-        Ingredient ingredient = ingredientCommandService.setCategory(memberId, ingredientId, request);
+        Ingredient ingredient = ingredientCommandService.setCategory(member, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toSetCategoryResultDTO(ingredient));
     }
 
     // 식재료 보관 방식 설정
     @PostMapping("/{ingredient_id}/storage-type")
     @Operation(summary = "식재료 보관 방식 설정 API", description = "식재료의 보관 방식을 설정하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.StorageTypeResultDTO> ingredientStorageType(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
+    public ApiResponse<IngredientResponseDTO.StorageTypeResultDTO> ingredientStorageType(@Parameter(name = "user", hidden = true) @AuthUser Member member,
+                                                                                         @PathVariable("ingredient_id") Long ingredientId,
                                                                                          @RequestBody IngredientRequestDTO.StorageTypeRequestDTO request) {
-        Ingredient ingredient = ingredientCommandService.setStorageType(memberId, ingredientId, request);
+        Ingredient ingredient = ingredientCommandService.setStorageType(member, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toStorageTypeResultDTO(ingredient));
     }
 
     // 식재료 구매 날짜 등록
     @PostMapping("/{ingredient_id}/purchase-date")
     @Operation(summary = "식재료 구매 날짜 등록 API", description = "식재료의 구매 날짜를 등록하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.PurchaseDateResultDTO> registerPurchaseDate(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
+    public ApiResponse<IngredientResponseDTO.PurchaseDateResultDTO> registerPurchaseDate(@Parameter(name = "user", hidden = true) @AuthUser Member member,
+                                                                                         @PathVariable("ingredient_id") Long ingredientId,
                                                                                          @RequestBody IngredientRequestDTO.PurchaseDateRequestDTO request){
-        Ingredient ingredient = ingredientCommandService.registerPurchaseDate(memberId, ingredientId, request);
+        Ingredient ingredient = ingredientCommandService.registerPurchaseDate(member, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toPurchaseDateResultDTO(ingredient));
     }
 
     // 식재료 소비기한 등록
     @PostMapping("/{ingredient_id}/expiry-date")
     @Operation(summary = "식재료 소비기한 등록 API", description = "식재료의 소비기한을 등록하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.ExpiryDateResultDTO> registerExpiryDate(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
+    public ApiResponse<IngredientResponseDTO.ExpiryDateResultDTO> registerExpiryDate(@Parameter(name = "user", hidden = true) @AuthUser Member member,
+                                                                                     @PathVariable("ingredient_id") Long ingredientId,
                                                                                      @RequestBody IngredientRequestDTO.ExpiryDateRequestDTO request){
-        Ingredient ingredient = ingredientCommandService.registerExpiryDate(memberId, ingredientId, request);
+        Ingredient ingredient = ingredientCommandService.registerExpiryDate(member, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toExpiryDateResultDTO(ingredient));
     }
 
     // 식재료 직접 등록
     @PostMapping("/")
     @Operation(summary = "식재료 직접 등록 API", description = "식재료를 OCR 자동 인식 없이 직접 등록하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.CreateRawIngredientResultDTO> ingredientRawAdd(@RequestParam Long memberId,
+    public ApiResponse<IngredientResponseDTO.CreateRawIngredientResultDTO> ingredientRawAdd(@Parameter(name = "user", hidden = true) @AuthUser Member member,
                                                                                             @RequestBody IngredientRequestDTO.CreateRawIngredientDTO request) {
-        Ingredient newIngredient = ingredientCommandService.createRawIngredient(memberId, request);
+        Ingredient newIngredient = ingredientCommandService.createRawIngredient(member, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toCreateResultDTO(newIngredient));
     }
 
     // 식재료 정보 수정
     @PatchMapping("/{ingredient_id}")
     @Operation(summary = "식재료 정보 수정 API", description = "식재료의 정보를 수정하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.UpdateIngredientResultDTO> updateIngredient(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
+    public ApiResponse<IngredientResponseDTO.UpdateIngredientResultDTO> updateIngredient(@Parameter(name = "user", hidden = true) @AuthUser Member member,
+                                                                                         @PathVariable("ingredient_id") Long ingredientId,
                                                                                          @RequestBody IngredientRequestDTO.UpdateIngredientDTO request){
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK,
-                IngredientConverter.UpdateIngredientResultDTO(ingredientCommandService.updateIngredient(memberId, ingredientId, request)));
+                IngredientConverter.UpdateIngredientResultDTO(ingredientCommandService.updateIngredient(member, ingredientId, request)));
     }
 
     // 식재료 삭제
     @DeleteMapping("/{ingredient_id}")
     @Operation(summary = "식재료 삭제 API", description = "식재료를 삭제하는 API 입니다.")
-    public ApiResponse<?> deleteIngredient(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId){
-        ingredientCommandService.deleteIngredient(memberId, ingredientId);
+    public ApiResponse<?> deleteIngredient(@Parameter(name = "user", hidden = true) @AuthUser Member member, @PathVariable("ingredient_id") Long ingredientId){
+        ingredientCommandService.deleteIngredient(member, ingredientId);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, null);
     }
 
     // 식재료 이름으로 검색
     @GetMapping("/search/name")
     @Operation(summary = "식재료 이름으로 검색 API", description = "식재료를 이름으로 검색하는 API 입니다. 입력된 키워드가 포함된 식재료를 모두 반환하며, 검색어가 없을 경우 전체 식재료 등록순으로 반환합니다.")
-    public ApiResponse<IngredientResponseDTO.IngredientDetailListDTO> searchIngredientByName(@RequestParam Long memberId, @RequestParam Optional<String> search){
-        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByName(memberId, Optional.of(search.orElse("")));
+    public ApiResponse<IngredientResponseDTO.IngredientDetailListDTO> searchIngredientByName(@Parameter(name = "user", hidden = true) @AuthUser Member member,
+                                                                                             @RequestParam Optional<String> search){
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByName(member, Optional.of(search.orElse("")));
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toIngredientDetailListDTO(ingredients));
     }
 
@@ -146,18 +156,18 @@ public class IngredientController {
     // 소분류 카테고리에 속하는 식재료 리스트 조회
     @GetMapping("/minorCategory/list")
     @Operation(summary = "소분류 카테고리에 속하는 식재료 리스트 조회 API", description = "소분류 카테고리에 속하는 식재료 리스트 조회하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO> searchIngredientByMinorCategory(@RequestParam Long memberId,
+    public ApiResponse<IngredientResponseDTO.MinorCategoryIngredientPreviewListDTO> searchIngredientByMinorCategory(@Parameter(name = "user", hidden = true) @AuthUser Member member,
                                                                                                                     @RequestParam MinorCategory minorCategory) {
-        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMinorCategory(memberId, minorCategory);
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMinorCategory(member, minorCategory);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toMinorCategoryIngredientPreviewListDTO(minorCategory, ingredients));
     }
 
     // 대분류 카테고리에 속하는 식재료 리스트 조회
     @GetMapping("/majorCategory/list")
     @Operation(summary = "대분류 카테고리에 속하는 식재료 리스트 조회 API", description = "대분류 카테고리에 속하는 식재료 리스트 조회하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.MajorCategoryIngredientPreviewListDTO> searchIngredientByMajorCategory(@RequestParam Long memberId,
+    public ApiResponse<IngredientResponseDTO.MajorCategoryIngredientPreviewListDTO> searchIngredientByMajorCategory(@Parameter(name = "user", hidden = true) @AuthUser Member member,
                                                                                                                     @RequestParam MajorCategory majorCategory){
-        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMajorCategory(memberId, majorCategory);
+        List<Ingredient> ingredients = ingredientQueryService.getIngredientsByMajorCategory(member, majorCategory);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toMajorCategoryIngredientPreviewListDTO(majorCategory, ingredients));
     }
 

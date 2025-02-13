@@ -3,6 +3,8 @@ package com.backend.DuruDuru.global.service.IngredientService;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
@@ -45,33 +47,43 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
 
     // 소분류 카테고리에 속하는 식재료 조회
     @Override
-    public List<Ingredient> getIngredientsByMinorCategory(Long memberId, MinorCategory minorCategory) {
-        List<Ingredient> ingredients = ingredientRepository.findByMember_MemberIdAndMinorCategory(memberId, minorCategory);
+    public List<Ingredient> getIngredientsByMinorCategory(Member member, MinorCategory minorCategory) {
+        validateLoggedInMember(member);
+        List<Ingredient> ingredients = ingredientRepository.findByMemberAndMinorCategory(member, minorCategory);
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     // 대분류 카테고리에 속하는 식재료 조회
     @Override
-    public List<Ingredient> getIngredientsByMajorCategory(Long memberId, MajorCategory majorCategory) {
-        List<Ingredient> ingredients = ingredientRepository.findByMember_MemberIdAndMajorCategory(memberId, majorCategory);
+    public List<Ingredient> getIngredientsByMajorCategory(Member member, MajorCategory majorCategory) {
+        validateLoggedInMember(member);
+        List<Ingredient> ingredients = ingredientRepository.findByMemberAndMajorCategory(member, majorCategory);
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     // 식재료 이름으로 검색
     @Override
-    public List<Ingredient> getIngredientsByName(Long memberId, Optional<String> optSearch) {
-        findMemberById(memberId);
+    public List<Ingredient> getIngredientsByName(Member member, Optional<String> optSearch) {
+        validateLoggedInMember(member);
+        findMemberById(member.getMemberId());
         List<Ingredient> ingredients;
         if (optSearch.isPresent() && !optSearch.get().trim().isEmpty()) {
             String search = optSearch.get();
-            ingredients = ingredientRepository.findAllByMember_MemberIdAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(memberId, search);
+            ingredients = ingredientRepository.findAllByMemberAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(member, search);
         } else {
-            ingredients = ingredientRepository.findAllByMember_MemberIdOrderByCreatedAtDesc(memberId);
+            ingredients = ingredientRepository.findAllByMemberOrderByCreatedAtDesc(member);
         }
         validateIngredientProperties(ingredients);
         return ingredients;
+    }
+
+    // 로그인 여부 확인
+    private void validateLoggedInMember(Member member) {
+        if (member == null) {
+            throw new AuthException(ErrorStatus.LOGIN_REQUIRED);
+        }
     }
 
     // 식재료 필수 속성 미설정 예외처리 (카테고리, 보관방식, 구매날짜, 소비기한)
