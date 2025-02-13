@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.messaging.handler.annotation.DestinationVariable;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,7 +38,7 @@ public class ChatController {
 
     // 채팅방 목록 조회
     @GetMapping("/rooms")
-    @Operation(summary = "채팅방 목록 조회 API", description = "사용자의 채팅방 목록 조회API")
+    @Operation(summary = "채팅방 목록 조회 API", description = "사용자의 채팅방 목록 조회 API")
     public ApiResponse<ChattingResponseDTO.ChattingRoomListDTO> getChattingRoomList(@RequestParam Long memberId) {
         ChattingResponseDTO.ChattingRoomListDTO resultDTO = chattingQueryServiceImpl.getChattingRoomList(memberId);
         return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, resultDTO);
@@ -43,7 +46,7 @@ public class ChatController {
 
     // 채팅 내역 조회
     @GetMapping("/rooms/{chatRoomId}/messages")
-    @Operation(summary = "채팅방 상세 조회 API", description = "특정 채팅방의 정보와 채팅 메시지 내역을 조회합니다.")
+    @Operation(summary = "채팅방 상세 조회 API", description = "특정 채팅방의 정보와 채팅 메시지 내역을 조회")
     public ApiResponse<ChattingResponseDTO.ChattingRoomFullResponseDTO> getChattingRoomDetails(
             @PathVariable Long chatRoomId,
             @RequestParam Long memberId) {
@@ -58,15 +61,14 @@ public class ChatController {
         return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, null);
     }
 
-//    @MessageMapping("/chat.{chatRoomId}")
-//    @SendTo("/subscribe/chat.{chatRoomId}")
-//    @Operation(summary = "WebSocket 채팅 메시지 전송", description = "채팅방에 메시지를 전송하고 구독자에게 브로드캐스트합니다.")
-//    public ChatMessageResponse sendMessage(ChatMessageRequest request, @DestinationVariable Long chatRoomId) {
-//        log.info("WebSocket 메시지 수신: chatRoomId={}, username={}, content={}",
-//                chatRoomId, request.getUsername(), request.getContent());
-//        return chatMessageService.saveMessage(chatRoomId, request);
-//    }
-
-
+    //웹소켓 연결 후 채팅 전송 방법
+    @MessageMapping("/chat.{chatRoomId}")
+    @SendTo("/subscribe/chat.{chatRoomId}")
+    @Operation(summary = "WebSocket 채팅 메시지 전송", description = "채팅방에 메시지를 전송하고 채팅방을 구독한 구독자에게 브로드캐스트 함")
+    public ChattingRequestDTO.ChatMessageDTO sendMessage(ChattingRequestDTO.ChatMessageDTO request, @DestinationVariable Long chatRoomId) {
+        log.info("WebSocket 메시지 수신: chatRoomId={}, username={}, content={}",
+                chatRoomId, request.getUsername(), request.getContent());
+        return chattingQueryServiceImpl.saveMessage(chatRoomId, request);
+    }
 
 }

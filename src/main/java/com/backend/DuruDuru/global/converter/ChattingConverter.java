@@ -143,5 +143,13 @@ public class ChattingConverter {
                 .chatMessages(chatMessages)
                 .build();
     }
+
+    public ChattingRequestDTO.ChatMessageDTO toResponse(Message message) {
+        return ChattingRequestDTO.ChatMessageDTO.builder()
+                .username(message.getMember().getNickName())
+                .content(message.getContent())
+                .sentTime(message.getSentTime())
+                .build();
+    }
 }
 
