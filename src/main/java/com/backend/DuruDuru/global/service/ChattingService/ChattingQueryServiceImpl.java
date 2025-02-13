@@ -101,5 +101,11 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
         return chattingConverter.toResponse(savedMessage);
     }
 
+    @Override
+    public void deleteChattingRoom(Long chattingRoomId) {
+        ChattingRoom chattingRoom = chattingRoomRepository.findById(chattingRoomId)
+                .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
+        chattingRoomRepository.delete(chattingRoom);
+    }
 
 }
