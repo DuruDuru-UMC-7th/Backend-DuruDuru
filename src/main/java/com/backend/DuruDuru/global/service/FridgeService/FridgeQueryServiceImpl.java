@@ -2,6 +2,10 @@ package com.backend.DuruDuru.global.service.FridgeService;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.FridgeHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberHandler;
+import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
@@ -31,7 +35,7 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ID_NULL));
     }
 
     @Override

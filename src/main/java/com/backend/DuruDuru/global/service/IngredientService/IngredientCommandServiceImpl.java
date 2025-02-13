@@ -5,6 +5,9 @@ import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.FridgeHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberHandler;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.*;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
@@ -42,17 +45,17 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ID_NULL));
     }
 
     private Fridge findFridgeById(Long fridgeId) {
         return fridgeRepository.findById(fridgeId)
-                .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
+                .orElseThrow(() -> new FridgeHandler(ErrorStatus.FRIDGE_NOT_FOUND));
     }
 
     private Ingredient findIngredientById(Long ingredientId) {
         return ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+                .orElseThrow(() -> new IngredientHandler(ErrorStatus.INGREDIENT_NOT_FOUND));
     }
 
     @Override
@@ -156,18 +159,18 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         try {
             majorCategory = MajorCategory.valueOf(request.getMajorCategory());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("존재하지 않는 대분류 카테고리입니다.");
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_NO_MAJOR_CATEGORY);
         }
         // 소분류 검증
         MinorCategory minorCategory;
         try {
             minorCategory = MinorCategory.valueOf(request.getMinorCategory());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("존재하지 않는 소분류 카테고리입니다.");
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_NO_MINOR_CATEGORY);
         }
         // 대분류와 소분류 매칭 검증
         if (!MinorCategory.isValidCategory(majorCategory, minorCategory)) {
-            throw new IllegalArgumentException("대분류와 소분류가 일치하지 않습니다.");
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_MAJOR_MINOR_NOT_MATCH);
         }
 
         Ingredient ingredient = findIngredientById(ingredientId);
