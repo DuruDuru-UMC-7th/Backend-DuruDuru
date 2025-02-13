@@ -32,4 +32,24 @@ public class ChattingResponseDTO {
         private int count;
         private List<ChattingRoomDetailDTO> chatRooms;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ChattingRoomMakeResponseDTO {
+        private Long chattingRoomId;
+        private String otherNickname;
+        private String tradeImgUrl;
+        private String tradeType;
+        private LocalDateTime createdAt;
+        private String otherMemberImgUrl;
+        private String otherLocation;
+        private String tradeStatus;
+        private String tradeTitle;
+        private Long ingredientCount;
+        private LocalDateTime expirationDate;
+        private List<ChattingRequestDTO.ChatMessageDTO> chatMessages;
+    }
 }
