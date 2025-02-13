@@ -3,13 +3,16 @@ package com.backend.DuruDuru.global.web.controller;
 import com.backend.DuruDuru.global.converter.FridgeConverter;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
+import com.backend.DuruDuru.global.security.handler.annotation.AuthUser;
 import com.backend.DuruDuru.global.service.FridgeService.FridgeQueryService;
 import com.backend.DuruDuru.global.web.dto.Fridge.FridgeResponseDTO;
 import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,8 +36,8 @@ public class FridgeController {
     // 전체 식재료 리스트 조회 (최신 등록순)
     @GetMapping("/recent")
     @Operation(summary = "최신 등록된 순으로 전체 식재료 리스트 조회 API", description = "사용자의 냉장고에 최신 등록된 순으로 전체 식재료 리스트를 조회하는 API 입니다.")
-    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findAllRecentIngredients(@RequestParam Long memberId) {
-        List<Ingredient> ingredients = fridgeQueryService.getAllIngredients(memberId);
+    public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findAllRecentIngredients(@Parameter(name = "user", hidden = true) @AuthUser Member member) {
+        List<Ingredient> ingredients = fridgeQueryService.getAllIngredients(member);
         return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 

@@ -1,6 +1,7 @@
 package com.backend.DuruDuru.global.repository;
 
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -21,7 +22,7 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
     // -- 냉장고 관련 -- //
     // 사용자 식재료 최신순 조회
-    List<Ingredient> findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(Long memberId);
+    List<Ingredient> findAllByFridge_MemberOrderByCreatedAtDesc(Member member);
     // 사용자 식재료 소비기한 임박순 조회
     @Query("SELECT i FROM Ingredient i WHERE i.fridge.member.memberId = :memberId ORDER BY i.dDay ASC")
     List<Ingredient> findAllByFridge_Member_MemberIdOrderByDDayAsc(@Param("memberId") Long memberId);

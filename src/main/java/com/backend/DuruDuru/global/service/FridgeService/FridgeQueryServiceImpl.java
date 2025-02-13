@@ -1,5 +1,7 @@
 package com.backend.DuruDuru.global.service.FridgeService;
 
+import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
@@ -33,9 +35,10 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
     }
 
     @Override
-    public List<Ingredient> getAllIngredients(Long memberId) {
-        findMemberById(memberId);
-        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(memberId);
+    public List<Ingredient> getAllIngredients(Member member) {
+        validateLoggedInMember(member);
+        findMemberById(member.getMemberId());
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_MemberOrderByCreatedAtDesc(member);
         validateIngredientProperties(ingredients);
         return ingredients;
     }
@@ -85,7 +88,7 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
             String search = optSearch.get();
             ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(memberId, search);
         } else {
-            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByCreatedAtDesc(memberId);
+            ingredients = ingredientRepository.findAllByFridge_MemberOrderByCreatedAtDesc(findMemberById(memberId));
         }
         validateIngredientProperties(ingredients);
         return ingredients;
@@ -119,6 +122,12 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
         return ingredients;
     }
 
+    // 로그인 여부 확인
+    private void validateLoggedInMember(Member member) {
+        if (member == null) {
+            throw new AuthException(ErrorStatus.LOGIN_REQUIRED);
+        }
+    }
 
     // 식재료 필수 속성 미설정 예외처리 (카테고리, 보관방식, 구매날짜, 소비기한)
     private void validateIngredientProperties(List<Ingredient> ingredients) {

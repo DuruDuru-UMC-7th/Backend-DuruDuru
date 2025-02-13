@@ -47,8 +47,7 @@ public class IngredientController {
     // 식재료 카테고리 설정
     @PostMapping("/{ingredient_id}/category")
     @Operation(summary = "식재료 카테고리 설정 API", description = "식재료의 대분류와 소분류를 설정하는 API 입니다.")
-    public ApiResponse<?> setIngredientCategory(@RequestParam Long memberId,
-                                                @PathVariable("ingredient_id") Long ingredientId,
+    public ApiResponse<?> setIngredientCategory(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
                                                 @RequestBody @Valid IngredientRequestDTO.SetCategoryRequestDTO request) {
         log.info("SetCategoryRequestDTO: {}", request);
         Ingredient ingredient = ingredientCommandService.setCategory(memberId, ingredientId, request);
@@ -59,7 +58,7 @@ public class IngredientController {
     @PostMapping("/{ingredient_id}/storage-type")
     @Operation(summary = "식재료 보관 방식 설정 API", description = "식재료의 보관 방식을 설정하는 API 입니다.")
     public ApiResponse<IngredientResponseDTO.StorageTypeResultDTO> ingredientStorageType(@RequestParam Long memberId, @PathVariable("ingredient_id") Long ingredientId,
-                                                @RequestBody IngredientRequestDTO.StorageTypeRequestDTO request) {
+                                                                                         @RequestBody IngredientRequestDTO.StorageTypeRequestDTO request) {
         Ingredient ingredient = ingredientCommandService.setStorageType(memberId, ingredientId, request);
         return ApiResponse.onSuccess(SuccessStatus.INGREDIENT_OK, IngredientConverter.toStorageTypeResultDTO(ingredient));
     }

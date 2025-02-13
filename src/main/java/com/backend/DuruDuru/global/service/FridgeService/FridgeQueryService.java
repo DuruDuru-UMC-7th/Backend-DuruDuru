@@ -1,6 +1,7 @@
 package com.backend.DuruDuru.global.service.FridgeService;
 
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
+import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 
 import java.util.List;
@@ -8,7 +9,7 @@ import java.util.Optional;
 
 public interface FridgeQueryService {
 
-    List<Ingredient> getAllIngredients(Long memberId);
+    List<Ingredient> getAllIngredients(Member member);
     List<Ingredient> getIngredientsNearExpiry(Long memberId);
     List<Ingredient> getIngredientsFarExpiry(Long memberId);
 
