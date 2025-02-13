@@ -39,7 +39,7 @@ public class OCRController {
                                                                                           @RequestParam("file") MultipartFile file) throws IOException {
         List<Ingredient> savedIngredients = clovaOCRReceiptService.extractAndCategorizeProductNames(file, member);
 
-        return ApiResponse.onSuccess(SuccessStatus.OCR_OK, IngredientConverter.toIngredientOCRDetailListDTO(savedIngredients));
+        return ApiResponse.onSuccess(SuccessStatus.OCR_CREATE_INGREDIENTS_OK, IngredientConverter.toIngredientOCRDetailListDTO(savedIngredients));
     }
 
     @PatchMapping(value = "/ingredient/{ingredient_id}")
@@ -48,7 +48,7 @@ public class OCRController {
                                                                                                @Parameter(name = "user", hidden = true) @AuthUser Member member,
                                                                                                @RequestBody IngredientRequestDTO.UpdateOCRIngredientDTO request) {
         Ingredient updateOCRIngredient = clovaOCRReceiptService.updateOCRIngredient(member, ingredientId, receiptId, request);
-        return ApiResponse.onSuccess(SuccessStatus.OCR_OK, IngredientConverter.UpdateOCRIngredientResultDTO(updateOCRIngredient));
+        return ApiResponse.onSuccess(SuccessStatus.OCR_UPDATE_INGREDIENT_OK, IngredientConverter.UpdateOCRIngredientResultDTO(updateOCRIngredient));
     }
 
     @PatchMapping(value = "/{receipt_id}/purchase-date")
@@ -57,7 +57,7 @@ public class OCRController {
                                                                                                    @Parameter(name = "user", hidden = true) @AuthUser Member member,
                                                                                                    @RequestBody IngredientRequestDTO.PurchaseDateRequestDTO request) {
         Receipt updatePurchaseDate = clovaOCRReceiptService.updateOCRPurchaseDate(member, receiptId, request);
-        return ApiResponse.onSuccess(SuccessStatus.OCR_OK, IngredientConverter.toOCRPurchaseDateResultDTO(updatePurchaseDate));
+        return ApiResponse.onSuccess(SuccessStatus.OCR_UPDATE_PURCHASE_DATE_OK, IngredientConverter.toOCRPurchaseDateResultDTO(updatePurchaseDate));
     }
 
 }

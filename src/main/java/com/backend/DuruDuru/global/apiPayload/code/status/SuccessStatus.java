@@ -23,6 +23,9 @@ public enum SuccessStatus implements BaseCode {
     MEMBER_OK(HttpStatus.OK, "MEMBER_1000", "성공입니다."),
     // OCR 관련 응답
     OCR_OK(HttpStatus.OK, "OCR_2000", "성공입니다."),
+    OCR_CREATE_INGREDIENTS_OK(HttpStatus.OK, "OCR_2001", "영수증 OCR 처리 및 식재료 저장을 성공적으로 완료하였습니다."),
+    OCR_UPDATE_INGREDIENT_OK(HttpStatus.OK, "OCR_2002", "OCR 인식된 식재료 이름 및 수량 수정을 성공적으로 완료하였습니다."),
+    OCR_UPDATE_PURCHASE_DATE_OK(HttpStatus.OK, "OCR_2003", "OCR 인식된 식재료 구매 날짜 수정을 성공적으로 완료하였습니다."),
     // 품앗이 관련 응답
     TRADE_OK(HttpStatus.OK, "TRADE_3000", "성공입니다."),
     TRADE_CREATE_OK(HttpStatus.OK, "TRADE_3001", "품앗이 게시글을 성공적으로 작성하였습니다."),
