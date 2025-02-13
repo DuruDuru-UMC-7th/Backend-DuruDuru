@@ -55,7 +55,7 @@ public class FridgeController {
     }
 
     // 대분류 기준 식재료 최신 등록순 리스트 조회
-    @GetMapping("/majorCategor/recent")
+    @GetMapping("/majorCategory/recent")
     @Operation(summary = "대분류 기준 식재료 최신 등록순 리스트 조회 API", description = "대분류 기준 사용자의 냉장고에 최신 등록된 순으로 전체 식재료 리스트를 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findAllRecentMajorCategoryIngredients(@RequestParam Long memberId, @RequestParam MajorCategory majorCategory) {
         List<Ingredient> ingredients = fridgeQueryService.getAllMajorCategoryIngredients(memberId, majorCategory);
