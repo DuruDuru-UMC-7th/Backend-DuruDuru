@@ -43,11 +43,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     private final UuidRepository uuidRepository;
 
 
-    private Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ID_NULL));
-    }
-
     private Fridge findFridgeById(Long fridgeId) {
         return fridgeRepository.findById(fridgeId)
                 .orElseThrow(() -> new FridgeHandler(ErrorStatus.FRIDGE_NOT_FOUND));
@@ -96,8 +91,15 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     public Ingredient registerPurchaseDate(Member member, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
+        LocalDate purchaseDate = request.getPurchaseDate();
+        ingredient.setPurchaseDate(purchaseDate);
 
-        ingredient.setPurchaseDate(request.getPurchaseDate());
+        // 소분류 카테고리에 따라 소비기한 자동 설정
+        if (ingredient.getMinorCategory() != null) {
+            int shelfLifeDays = ingredient.getMinorCategory().getShelfLifeDays();
+            LocalDate updatedExpiryDate = purchaseDate.plusDays(shelfLifeDays);
+            ingredient.setExpiryDate(updatedExpiryDate);
+        }
         return ingredient;
     }
 
