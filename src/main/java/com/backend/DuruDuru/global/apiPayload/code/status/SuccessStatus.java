@@ -51,6 +51,15 @@ public enum SuccessStatus implements BaseCode {
     INGREDIENT_GET_ALL_MINOR_CATEGORIES_OK(HttpStatus.OK, "INGREDIENT_4014", "모든 소분류 카테고리를 성공적으로 조회하였습니다."),
     // 냉장고 관련 응답
     FRIDGE_OK(HttpStatus.OK, "FRIDGE_5000", "성공입니다."),
+    FRIDGE_GET_RECENT_INGREDIENTS_OK(HttpStatus.OK, "FRIDGE_5001", "최신 등록된 순으로 전체 식재료 리스트 조회 성공"),
+    FRIDGE_GET_NEAR_EXPIRY_INGREDIENTS_OK(HttpStatus.OK, "FRIDGE_5002", "소비기한 임박순 식재료 리스트 조회 성공"),
+    FRIDGE_GET_FAR_EXPIRY_INGREDIENTS_OK(HttpStatus.OK, "FRIDGE_5003", "소비기한 여유순 식재료 리스트 조회 성공"),
+    FRIDGE_GET_RECENT_INGREDIENTS_BY_MAJOR_OK(HttpStatus.OK, "FRIDGE_5004", "대분류 기준 식재료 최신 등록순 리스트 조회 성공"),
+    FRIDGE_GET_NEAR_EXPIRY_INGREDIENTS_BY_MAJOR_OK(HttpStatus.OK, "FRIDGE_5005", "대분류 기준 소비기한 임박순 리스트 조회 성공"),
+    FRIDGE_GET_FAR_EXPIRY_INGREDIENTS_BY_MAJOR_OK(HttpStatus.OK, "FRIDGE_5006", "대분류 기준 소비기한 여유순 리스트 조회 성공"),
+    FRIDGE_GET_RECENT_BY_NAME_OK(HttpStatus.OK, "FRIDGE_5007", "식재료 이름으로 검색한 최신 등록순 리스트 조회 성공"),
+    FRIDGE_GET_NEAR_EXPIRY_BY_NAME_OK(HttpStatus.OK, "FRIDGE_5008", "식재료 이름으로 검색한 소비기한 임박순 리스트 조회 성공"),
+    FRIDGE_GET_FAR_EXPIRY_BY_NAME_OK(HttpStatus.OK, "FRIDGE_5009", "식재료 이름으로 검색한 소비기한 여유순 리스트 조회 성공"),
     // 레시피 관련 응답
     RECIPE_FETCH_OK(HttpStatus.OK, "RECIPE_6000", "해당 레시피 조회 성공"),
     RECIPE_FAVORITE_SET_OK(HttpStatus.OK, "RECIPE_6001", "레시피 즐겨찾기 설정 성공"),
