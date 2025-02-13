@@ -14,4 +14,5 @@ public interface ChattingRepository extends JpaRepository<ChattingRoom, Long> {
 
     @Query("select m from Message m where m.chatting.chattingRoom.chattingRoomId = :chatRoomId order by m.sentTime asc")
     List<ChattingRequestDTO.ChatMessageDTO> findByChatRoomIdOrderBySentTimeAsc(@Param("chatRoomId") Long chatRoomId);
+
 }
