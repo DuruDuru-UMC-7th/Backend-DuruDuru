@@ -1,6 +1,7 @@
 package com.backend.DuruDuru.global.converter;
 
 import com.backend.DuruDuru.global.domain.entity.*;
+import com.backend.DuruDuru.global.web.dto.Chatting.ChattingRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Chatting.ChattingResponseDTO;
 import org.springframework.stereotype.Component;
 
@@ -72,7 +73,7 @@ public class ChattingConverter {
                 .build();
     }
 
-    public ChattingResponseDTO.ChattingRoomMakeResponseDTO toResponseDTO(ChattingRoom chattingRoom) {
+    public static ChattingResponseDTO.ChattingRoomMakeResponseDTO toResponseDTO(ChattingRoom chattingRoom) {
         Trade trade = chattingRoom.getTrade();
         Member other = trade.getMember();
 
@@ -99,4 +100,48 @@ public class ChattingConverter {
                 .otherLocation(otherLocation)
                 .build();
     }
+
+
+    //채팅 메시지 전체 조회
+    public static ChattingResponseDTO.ChattingRoomFullResponseDTO toFullResponseDTO(ChattingRoom chattingRoom, List<ChattingRequestDTO.ChatMessageDTO> messages) {
+        Trade trade = chattingRoom.getTrade();
+        Member other = trade.getMember(); // Trade에 저장된 상대방
+
+        String tradeImgUrl = (trade.getTradeImgs() != null && !trade.getTradeImgs().isEmpty())
+                ? trade.getTradeImgs().get(0).getTradeImgUrl() : null;
+        String tradeTitle = trade.getTitle();
+        String otherMemberImgUrl = (other.getMemberImg() != null) ? other.getMemberImg().getUrl() : null;
+        String otherLocation = "";
+        if (other.getTown() != null) {
+            otherLocation = other.getTown().getEupmyeondong();
+        }
+        String tradeStatus = trade.getStatus().toString();
+        Long ingredientCount = trade.getIngredientCount();
+        LocalDateTime expirationDate = null;
+
+        // 채팅 메시지 목록 변환
+        List<ChattingRequestDTO.ChatMessageDTO> chatMessages = messages.stream()
+                .map(message -> ChattingRequestDTO.ChatMessageDTO.builder()
+                        .username(message.getUsername()) // 수정된 부분
+                        .content(message.getContent())
+                        .sentTime(message.getSentTime())
+                        .build())
+                .collect(Collectors.toList());
+
+        return ChattingResponseDTO.ChattingRoomFullResponseDTO.builder()
+                .chattingRoomId(chattingRoom.getChattingRoomId())
+                .otherNickname(other.getNickName())
+                .tradeImgUrl(tradeImgUrl)
+                .tradeType(trade.getTradeType().toString())
+                .tradeTitle(tradeTitle)
+                .createdAt(chattingRoom.getCreatedAt())
+                .otherMemberImgUrl(otherMemberImgUrl)
+                .otherLocation(otherLocation)
+                .tradeStatus(tradeStatus)
+                .ingredientCount(ingredientCount)
+                .expirationDate(expirationDate)
+                .chatMessages(chatMessages)
+                .build();
+    }
 }
+
