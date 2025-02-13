@@ -38,7 +38,7 @@ public class FridgeController {
     @Operation(summary = "최신 등록된 순으로 전체 식재료 리스트 조회 API", description = "사용자의 냉장고에 최신 등록된 순으로 전체 식재료 리스트를 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findAllRecentIngredients(@Parameter(name = "user", hidden = true) @AuthUser Member member) {
         List<Ingredient> ingredients = fridgeQueryService.getAllIngredients(member);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_RECENT_INGREDIENTS_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 소비기한 임박순 식재료 리스트 조회
@@ -46,7 +46,7 @@ public class FridgeController {
     @Operation(summary = "식재료 소비기한 임박순 리스트 조회 API", description = "식재료 리스트를 소비기한이 임박한 순서대로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> ingredientsNearExpiry(@Parameter(name = "user", hidden = true) @AuthUser Member member) {
         List<Ingredient> ingredients = fridgeQueryService.getIngredientsNearExpiry(member);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_NEAR_EXPIRY_INGREDIENTS_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 소비기한 여유순 식재료 리스트 조회
@@ -54,7 +54,7 @@ public class FridgeController {
     @Operation(summary = "식재료 소비기한 여유순 리스트 조회 API", description = "식재료 리스트를 소비기한이 여유로운 순서대로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> ingredientsFarExpiry(@Parameter(name = "user", hidden = true) @AuthUser Member member) {
         List<Ingredient> ingredients = fridgeQueryService.getIngredientsFarExpiry(member);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_FAR_EXPIRY_INGREDIENTS_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 대분류 기준 식재료 최신 등록순 리스트 조회
@@ -62,7 +62,7 @@ public class FridgeController {
     @Operation(summary = "대분류 기준 식재료 최신 등록순 리스트 조회 API", description = "대분류 기준 사용자의 냉장고에 최신 등록된 순으로 전체 식재료 리스트를 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findAllRecentMajorCategoryIngredients(@Parameter(name = "user", hidden = true) @AuthUser Member member, @RequestParam MajorCategory majorCategory) {
         List<Ingredient> ingredients = fridgeQueryService.getAllMajorCategoryIngredients(member, majorCategory);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_RECENT_INGREDIENTS_BY_MAJOR_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 대분류 기준 식재료 소비기한 임박순 리스트 조회
@@ -70,7 +70,7 @@ public class FridgeController {
     @Operation(summary = "대분류 기준 식재료 소비기한 임박순 리스트 조회 API", description = "대분류 기준 식재료 리스트를 소비기한이 임박한 순서대로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> majorCategoryIngredientsNearExpiry(@Parameter(name = "user", hidden = true) @AuthUser Member member, @RequestParam MajorCategory majorCategory) {
         List<Ingredient> ingredients = fridgeQueryService.getMajorCategoryIngredientsNearExpiry(member, majorCategory);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_NEAR_EXPIRY_INGREDIENTS_BY_MAJOR_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 대분류 기준 식재료 소비기한 여유순 리스트 조회
@@ -78,7 +78,7 @@ public class FridgeController {
     @Operation(summary = "대분류 기준 식재료 소비기한 여유순 리스트 조회 API", description = "대분류 기준 식재료 리스트를 소비기한이 여유로운 순서대로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> majorCategoryIngredientsFarExpiry(@Parameter(name = "user", hidden = true) @AuthUser Member member, @RequestParam MajorCategory majorCategory) {
         List<Ingredient> ingredients = fridgeQueryService.getMajorCategoryIngredientsFarExpiry(member, majorCategory);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_FAR_EXPIRY_INGREDIENTS_BY_MAJOR_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 식재료 이름으로 검색 (최신 등록순)
@@ -86,7 +86,7 @@ public class FridgeController {
     @Operation(summary = "식재료 이름으로 검색 (최신 등록순) API", description = "식재료 이름으로 검색하여 최신 등록된 순으로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findByNameRecent(@Parameter(name = "user", hidden = true) @AuthUser Member member, @RequestParam Optional<String> search) {
         List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameRecent(member, search);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_RECENT_BY_NAME_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 식재료 이름으로 검색 (소비기한 임박순)
@@ -94,7 +94,7 @@ public class FridgeController {
     @Operation(summary = "식재료 이름으로 검색 (소비기한 임박순) API", description = "식재료 이름으로 검색하여 소비기한이 임박한 순으로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findByNameNearExpiry(@Parameter(name = "user", hidden = true) @AuthUser Member member, @RequestParam Optional<String> search) {
         List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameNearExpiry(member, search);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_NEAR_EXPIRY_BY_NAME_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
     // 식재료 이름으로 검색 (소비기한 여유순)
@@ -102,7 +102,7 @@ public class FridgeController {
     @Operation(summary = "식재료 이름으로 검색 (소비기한 여유순) API", description = "식재료 이름으로 검색하여 소비기한이 여유로운 순으로 조회하는 API 입니다.")
     public ApiResponse<FridgeResponseDTO.IngredientDetailListDTO> findByNameFarExpiry(@Parameter(name = "user", hidden = true) @AuthUser Member member, @RequestParam Optional<String> search) {
         List<Ingredient> ingredients = fridgeQueryService.getIngredientsByNameFarExpiry(member, search);
-        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
+        return ApiResponse.onSuccess(SuccessStatus.FRIDGE_GET_FAR_EXPIRY_BY_NAME_OK, FridgeConverter.toIngredientDetailListDTO(ingredients));
     }
 
 

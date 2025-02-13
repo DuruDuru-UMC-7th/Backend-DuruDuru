@@ -5,10 +5,15 @@ import java.util.stream.Collectors;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.FridgeHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberHandler;
+import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
 import com.backend.DuruDuru.global.domain.enums.MinorCategory;
+import com.backend.DuruDuru.global.repository.FridgeRepository;
 import com.backend.DuruDuru.global.repository.IngredientRepository;
 import com.backend.DuruDuru.global.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;
@@ -27,7 +32,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
 
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ID_NULL));
     }
 
     @Override

@@ -2,6 +2,10 @@ package com.backend.DuruDuru.global.service.OCRService;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.FridgeHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.OCRHandler;
 import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
@@ -52,7 +56,6 @@ public class ClovaOCRReceiptService {
     private final CategoryMapper categoryMapper;
     private final MemberRepository memberRepository;
     private final IngredientRepository ingredientRepository;
-    private final FridgeRepository fridgeRepository;
     private final ReceiptRepository receiptRepository;
 
     public List<String> extractProductNames(MultipartFile file) {
@@ -263,7 +266,7 @@ public class ClovaOCRReceiptService {
         validateLoggedInMember(member);
         Fridge fridge = member.getFridge();
         if (fridge == null) {
-            throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
+            throw new FridgeHandler(ErrorStatus.FRIDGE_NOT_FOUND);
         }
 
         Receipt receipt = createReceipt(member.getMemberId());
@@ -315,11 +318,8 @@ public class ClovaOCRReceiptService {
 
     public Ingredient updateOCRIngredient(Member member, Long ingredientId, Long receiptId, IngredientRequestDTO.UpdateOCRIngredientDTO request) {
         validateLoggedInMember(member);
-        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
-        Receipt receipt = receiptRepository.findById(receiptId)
-                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
-
+        Ingredient ingredient = findIngredientById(ingredientId);
+        Receipt receipt = findReceiptById(receiptId);
         ingredient.updateOCR(request);
         return ingredient;
     }
@@ -327,9 +327,7 @@ public class ClovaOCRReceiptService {
 
     public Receipt updateOCRPurchaseDate(Member member, Long receiptId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         validateLoggedInMember(member);
-        Receipt receipt = receiptRepository.findById(receiptId)
-                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
-
+        Receipt receipt = findReceiptById(receiptId);
         receipt.setPurchaseDate(request.getPurchaseDate());
         for (Ingredient ingredient : receipt.getIngredients()) {
             ingredient.setPurchaseDate(request.getPurchaseDate());
@@ -347,15 +345,19 @@ public class ClovaOCRReceiptService {
         return receiptRepository.save(receipt);
     }
 
-
     private Member findMemberById(Long memberId) {
         return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
+                .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ID_NULL));
     }
 
-    private Fridge findFridgeById(Long fridgeId) {
-        return fridgeRepository.findById(fridgeId)
-                .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
+    private Ingredient findIngredientById(Long ingredientId) {
+        return ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IngredientHandler(ErrorStatus.INGREDIENT_NOT_FOUND));
+    }
+
+    private Receipt findReceiptById(Long receiptId) {
+        return receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new OCRHandler(ErrorStatus.OCR_RECEIPT_NOT_FOUND));
     }
 
     // 로그인 여부 확인
