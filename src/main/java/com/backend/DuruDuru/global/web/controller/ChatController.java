@@ -2,15 +2,13 @@ package com.backend.DuruDuru.global.web.controller;
 
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
-import com.backend.DuruDuru.global.service.ChattingService.ChattingQueryService;
 import com.backend.DuruDuru.global.service.ChattingService.ChattingQueryServiceImpl;
+import com.backend.DuruDuru.global.web.dto.Chatting.ChattingRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Chatting.ChattingResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.messaging.handler.annotation.MessageMapping;
-import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -24,6 +22,16 @@ import org.springframework.web.bind.annotation.*;
 public class ChatController {
 
     private final ChattingQueryServiceImpl chattingQueryServiceImpl;
+
+    @PostMapping
+    @Operation(summary = "채팅방 만들기 API", description = "채팅방을 만드는 API")
+    public ApiResponse<ChattingResponseDTO.ChattingRoomMakeResponseDTO> createChattingRoom(
+            // 실제 구현에서는 @AuthUser를 통해 로그인한 Member 객체를 주입받습니다.
+            @RequestParam Long myId,
+            @RequestBody ChattingRequestDTO.ChattingRoomMakeRequestDTO requestDTO) {
+        ChattingResponseDTO.ChattingRoomMakeResponseDTO responseDTO = chattingQueryServiceImpl.createChattingRoom(myId, requestDTO);
+        return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, responseDTO);
+    }
 
     // 채팅방 목록 조회
     @GetMapping("/rooms")

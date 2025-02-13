@@ -2,25 +2,66 @@ package com.backend.DuruDuru.global.service.ChattingService;
 
 import com.backend.DuruDuru.global.converter.ChattingConverter;
 import com.backend.DuruDuru.global.domain.entity.ChattingRoom;
+import com.backend.DuruDuru.global.domain.entity.Trade;
+import com.backend.DuruDuru.global.domain.enums.TradeType;
 import com.backend.DuruDuru.global.repository.ChattingRepository;
+import com.backend.DuruDuru.global.repository.TradeRepository;
+import com.backend.DuruDuru.global.web.dto.Chatting.ChattingRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Chatting.ChattingResponseDTO;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
+@Transactional
 public class ChattingQueryServiceImpl implements ChattingQueryService {
 
     private final ChattingRepository chattingRoomRepository;
+    private final TradeRepository tradeRepository;
+    private final ChattingConverter chattingConverter;
 
-    //회원이 참여한 채팅방 조회
+    // 회원이 참여한 채팅방 목록 조회
     @Override
     public ChattingResponseDTO.ChattingRoomListDTO getChattingRoomList(Long memberId) {
         List<ChattingRoom> chattingRooms = chattingRoomRepository.findChattingRoomsByMemberId(memberId);
         return ChattingConverter.toChattingRoomListDTO(chattingRooms, memberId);
+    }
+
+    // 채팅방 생성
+    @Override
+    public ChattingResponseDTO.ChattingRoomMakeResponseDTO createChattingRoom(Long myId, ChattingRequestDTO.ChattingRoomMakeRequestDTO requestDTO) {
+        Trade trade = tradeRepository.findById(requestDTO.getTradeId())
+                .orElseThrow(() -> new RuntimeException("Trade not found"));
+
+        String otherNickname = trade.getMember().getNickName();
+        String tradeImgUrl = trade.getTradeImgs().isEmpty() ? null : trade.getTradeImgs().get(0).getTradeImgUrl();
+        String tradeTitle = trade.getTitle();
+        TradeType tradeType = trade.getTradeType();
+        String otherMemberImgUrl = trade.getMember().getMemberImg() == null ? null : trade.getMember().getMemberImg().getUrl();
+        String otherLocation = "";
+        if (trade.getMember().getTown() != null) {
+            otherLocation = trade.getMember().getTown().getEupmyeondong();
+        }
+
+        // 채팅방 이름
+        String roomName = trade.getMember().getNickName() + "님과의 채팅";
+
+        // ChattingRoom 엔티티 생성
+        ChattingRoom chattingRoom = ChattingRoom.builder()
+                .roomName(roomName)
+                .trade(trade)
+                .otherNickname(otherNickname)
+                .tradeImgUrl(tradeImgUrl)
+                .tradeType(tradeType)
+                .tradeTitle(tradeTitle)
+                .otherMemberImgUrl(otherMemberImgUrl)
+                .otherLocation(otherLocation)
+                .build();
+
+        ChattingRoom savedRoom = chattingRoomRepository.save(chattingRoom);
+
+        return chattingConverter.toResponseDTO(savedRoom);
     }
 }
