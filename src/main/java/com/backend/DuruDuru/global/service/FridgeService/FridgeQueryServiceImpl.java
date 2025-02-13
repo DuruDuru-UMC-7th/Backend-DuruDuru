@@ -44,79 +44,87 @@ public class FridgeQueryServiceImpl implements FridgeQueryService {
     }
 
     @Override
-    public List<Ingredient> getIngredientsNearExpiry(Long memberId) {
-        findMemberById(memberId);
-        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayAsc(memberId);
+    public List<Ingredient> getIngredientsNearExpiry(Member member) {
+        validateLoggedInMember(member);
+        findMemberById(member.getMemberId());
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_MemberOrderByDDayAsc(member);
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     @Override
-    public List<Ingredient> getIngredientsFarExpiry(Long memberId) {
-        findMemberById(memberId);
-        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayDesc(memberId);
+    public List<Ingredient> getIngredientsFarExpiry(Member member) {
+        validateLoggedInMember(member);
+        findMemberById(member.getMemberId());
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_MemberOrderByDDayDesc(member);
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     @Override
-    public List<Ingredient> getAllMajorCategoryIngredients(Long memberId, MajorCategory majorCategory) {
-        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndMajorCategoryOrderByCreatedAtDesc(memberId, majorCategory);
+    public List<Ingredient> getAllMajorCategoryIngredients(Member member, MajorCategory majorCategory) {
+        validateLoggedInMember(member);
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_MemberAndMajorCategoryOrderByCreatedAtDesc(member, majorCategory);
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     @Override
-    public List<Ingredient> getMajorCategoryIngredientsNearExpiry(Long memberId, MajorCategory majorCategory) {
-        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndMajorCategoryOrderByDDayAsc(memberId, majorCategory);
+    public List<Ingredient> getMajorCategoryIngredientsNearExpiry(Member member, MajorCategory majorCategory) {
+        validateLoggedInMember(member);
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_MemberAndMajorCategoryOrderByDDayAsc(member, majorCategory);
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     @Override
-    public List<Ingredient> getMajorCategoryIngredientsFarExpiry(Long memberId, MajorCategory majorCategory) {
-        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndMajorCategoryOrderByDDayDesc(memberId, majorCategory);
+    public List<Ingredient> getMajorCategoryIngredientsFarExpiry(Member member, MajorCategory majorCategory) {
+        validateLoggedInMember(member);
+        List<Ingredient> ingredients = ingredientRepository.findAllByFridge_MemberAndMajorCategoryOrderByDDayDesc(member, majorCategory);
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     @Override
-    public List<Ingredient> getIngredientsByNameRecent(Long memberId, Optional<String> optSearch) {
-        findMemberById(memberId);
+    public List<Ingredient> getIngredientsByNameRecent(Member member, Optional<String> optSearch) {
+        validateLoggedInMember(member);
+        findMemberById(member.getMemberId());
         List<Ingredient> ingredients;
         if (optSearch.isPresent() && !optSearch.get().trim().isEmpty()) {
             String search = optSearch.get();
-            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(memberId, search);
+            ingredients = ingredientRepository.findAllByFridge_MemberAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(member, search);
         } else {
-            ingredients = ingredientRepository.findAllByFridge_MemberOrderByCreatedAtDesc(findMemberById(memberId));
+            ingredients = ingredientRepository.findAllByFridge_MemberOrderByCreatedAtDesc(member);
         }
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     @Override
-    public List<Ingredient> getIngredientsByNameNearExpiry(Long memberId, Optional<String> optSearch) {
-        findMemberById(memberId);
+    public List<Ingredient> getIngredientsByNameNearExpiry(Member member, Optional<String> optSearch) {
+        validateLoggedInMember(member);
+        findMemberById(member.getMemberId());
         List<Ingredient> ingredients;
         if (optSearch.isPresent() && !optSearch.get().trim().isEmpty()) {
             String search = optSearch.get();
-            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByDDayAsc(memberId, search);
+            ingredients = ingredientRepository.findAllByFridge_MemberAndIngredientNameContainingIgnoreCaseOrderByDDayAsc(member, search);
         } else {
-            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayAsc(memberId);
+            ingredients = ingredientRepository.findAllByFridge_MemberOrderByDDayAsc(member);
         }
         validateIngredientProperties(ingredients);
         return ingredients;
     }
 
     @Override
-    public List<Ingredient> getIngredientsByNameFarExpiry(Long memberId, Optional<String> optSearch) {
-        findMemberById(memberId);
+    public List<Ingredient> getIngredientsByNameFarExpiry(Member member, Optional<String> optSearch) {
+        validateLoggedInMember(member);
+        findMemberById(member.getMemberId());
         List<Ingredient> ingredients;
         if (optSearch.isPresent() && !optSearch.get().trim().isEmpty()) {
             String search = optSearch.get();
-            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdAndIngredientNameContainingIgnoreCaseOrderByDDayDesc(memberId, search);
+            ingredients = ingredientRepository.findAllByFridge_MemberAndIngredientNameContainingIgnoreCaseOrderByDDayDesc(member, search);
         } else {
-            ingredients = ingredientRepository.findAllByFridge_Member_MemberIdOrderByDDayDesc(memberId);
+            ingredients = ingredientRepository.findAllByFridge_MemberOrderByDDayDesc(member);
         }
         validateIngredientProperties(ingredients);
         return ingredients;
