@@ -54,13 +54,6 @@ public class ChatController {
         return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, fullResponse);
     }
 
-    // 채팅방 삭제
-    @DeleteMapping("/rooms/{roomId}")
-    @Operation(summary = "채팅방 삭제 API", description = "특정 채팅방 삭제 API")
-    public ApiResponse<?> deleteChatRoom(@PathVariable Long roomId) {
-        return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, null);
-    }
-
     //웹소켓 연결 후 채팅 전송 방법
     @MessageMapping("/chat.{chatRoomId}")
     @SendTo("/subscribe/chat.{chatRoomId}")
@@ -71,4 +64,11 @@ public class ChatController {
         return chattingQueryServiceImpl.saveMessage(chatRoomId, request);
     }
 
+    // 채팅방 삭제
+    @DeleteMapping("/{chatRoomId}")
+    @Operation(summary = "채팅방 삭제 API", description = "특정 채팅방 삭제 API")
+    public ApiResponse<Void> deleteChattingRoom(@PathVariable Long chatRoomId) {
+        chattingQueryServiceImpl.deleteChattingRoom(chatRoomId);
+        return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, null);
+    }
 }
