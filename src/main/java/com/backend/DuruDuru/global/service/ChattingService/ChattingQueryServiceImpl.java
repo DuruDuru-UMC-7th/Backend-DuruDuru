@@ -21,6 +21,7 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
     private final ChattingRepository chattingRoomRepository;
     private final TradeRepository tradeRepository;
     private final ChattingConverter chattingConverter;
+    private final ChattingRepository chattingRepository;
 
     // 회원이 참여한 채팅방 목록 조회
     @Override
@@ -63,5 +64,14 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
         ChattingRoom savedRoom = chattingRoomRepository.save(chattingRoom);
 
         return chattingConverter.toResponseDTO(savedRoom);
+    }
+
+
+    @Override
+    public ChattingResponseDTO.ChattingRoomFullResponseDTO getFullChattingRoomDetails(Long chatRoomId, Long currentMemberId) {
+        ChattingRoom chattingRoom = chattingRoomRepository.findById(chatRoomId)
+                .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
+        List<ChattingRequestDTO.ChatMessageDTO> messages = chattingRepository.findByChatRoomIdOrderBySentTimeAsc(chatRoomId);
+        return ChattingConverter.toFullResponseDTO(chattingRoom, messages);
     }
 }

@@ -42,10 +42,13 @@ public class ChatController {
     }
 
     // 채팅 내역 조회
-    @GetMapping("/rooms/{roomId}/messages")
-    @Operation(summary = "채팅 내역 조회 API", description = "특정 채팅방 채팅 내역을 조회 API")
-    public ApiResponse<?> getChatMessages(@PathVariable Long roomId) {
-        return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, null);
+    @GetMapping("/rooms/{chatRoomId}/messages")
+    @Operation(summary = "채팅방 상세 조회 API", description = "특정 채팅방의 정보와 채팅 메시지 내역을 조회합니다.")
+    public ApiResponse<ChattingResponseDTO.ChattingRoomFullResponseDTO> getChattingRoomDetails(
+            @PathVariable Long chatRoomId,
+            @RequestParam Long memberId) {
+        ChattingResponseDTO.ChattingRoomFullResponseDTO fullResponse = chattingQueryServiceImpl.getFullChattingRoomDetails(chatRoomId, memberId);
+        return ApiResponse.onSuccess(SuccessStatus.CHAT_OK, fullResponse);
     }
 
     // 채팅방 삭제
@@ -63,5 +66,7 @@ public class ChatController {
 //                chatRoomId, request.getUsername(), request.getContent());
 //        return chatMessageService.saveMessage(chatRoomId, request);
 //    }
+
+
 
 }

@@ -52,4 +52,26 @@ public class ChattingResponseDTO {
         private LocalDateTime expirationDate;
         private List<ChattingRequestDTO.ChatMessageDTO> chatMessages;
     }
+
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ChattingRoomFullResponseDTO {
+        private Long chattingRoomId;
+        private String otherNickname;
+        private String tradeImgUrl;
+        private String tradeType;
+        private String tradeTitle;
+        private LocalDateTime createdAt;
+        private String otherMemberImgUrl;
+        private String otherLocation;
+        private String tradeStatus;
+        private Long ingredientCount;
+        private LocalDateTime expirationDate;
+        private List<ChattingRequestDTO.ChatMessageDTO> chatMessages;
+    }
+
 }
