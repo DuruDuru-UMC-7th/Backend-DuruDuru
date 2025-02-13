@@ -35,6 +35,20 @@ public enum SuccessStatus implements BaseCode {
     TRADE_LIKE_COUNT_OK(HttpStatus.OK, "TRADE_3008", "찜하기 개수를 성공적으로 조회하였습니다."),
     // 식재료 관련 응답
     INGREDIENT_OK(HttpStatus.OK, "INGREDIENT_4000", "성공입니다."),
+    INGREDIENT_CREATE_OK(HttpStatus.OK, "INGREDIENT_4001", "식재료를 성공적으로 추가하였습니다."),
+    INGREDIENT_UPDATE_OK(HttpStatus.OK, "INGREDIENT_4002", "식재료를 성공적으로 수정하였습니다."),
+    INGREDIENT_DELETE_OK(HttpStatus.OK, "INGREDIENT_4003", "식재료를 성공적으로 삭제하였습니다."),
+    INGREDIENT_GET_DETAIL_OK(HttpStatus.OK, "INGREDIENT_4004", "식재료를 성공적으로 상세 조회하였습니다."),
+    INGREDIENT_GET_LIST_OK(HttpStatus.OK, "INGREDIENT_4005", "식재료 리스트를 성공적으로 조회하였습니다."),
+    INGREDIENT_GET_LIST_BY_CATEGORY_OK(HttpStatus.OK, "INGREDIENT_4006", "카테고리별 식재료 리스트를 성공적으로 조회하였습니다."),
+    INGREDIENT_GET_LIST_BY_NAME_OK(HttpStatus.OK, "INGREDIENT_4007", "식재료 이름으로 검색한 리스트를 성공적으로 조회하였습니다."),
+    INGREDIENT_IMAGE_UPLOAD_OK(HttpStatus.OK, "INGREDIENT_4008", "식재료 이미지를 성공적으로 업로드하였습니다."),
+    INGREDIENT_SET_CATEGORY_OK(HttpStatus.OK, "INGREDIENT_4009", "식재료 카테고리를 성공적으로 설정하였습니다."),
+    INGREDIENT_SET_STORAGE_TYPE_OK(HttpStatus.OK, "INGREDIENT_4010", "식재료 보관 방법을 성공적으로 설정하였습니다."),
+    INGREDIENT_SET_PURCHASE_DATE_OK(HttpStatus.OK, "INGREDIENT_4011", "식재료 구매 날짜를 성공적으로 설정하였습니다."),
+    INGREDIENT_SET_EXPIRY_DATE_OK(HttpStatus.OK, "INGREDIENT_4012", "식재료 유통기한을 성공적으로 설정하였습니다."),
+    INGREDIENT_GET_MAJOR_TO_MINOR_CATEGORY_OK(HttpStatus.OK, "INGREDIENT_4013", "대분류에 따른 소분류 카테고리를 성공적으로 조회하였습니다."),
+    INGREDIENT_GET_ALL_MINOR_CATEGORIES_OK(HttpStatus.OK, "INGREDIENT_4014", "모든 소분류 카테고리를 성공적으로 조회하였습니다."),
     // 냉장고 관련 응답
     FRIDGE_OK(HttpStatus.OK, "FRIDGE_5000", "성공입니다."),
     // 레시피 관련 응답

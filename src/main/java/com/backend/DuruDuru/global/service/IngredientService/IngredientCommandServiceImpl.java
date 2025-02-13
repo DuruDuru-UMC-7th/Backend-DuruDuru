@@ -59,7 +59,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Transactional
     public Ingredient createRawIngredient(Member member, IngredientRequestDTO.CreateRawIngredientDTO request) {
         validateLoggedInMember(member);
-        //Member member = findMemberById(memberId);
         Fridge fridge = findFridgeById(member.getFridgeId());
 
         Ingredient newIngredient = IngredientConverter.toIngredient(request);
@@ -75,7 +74,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient updateIngredient(Member member, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
         validateLoggedInMember(member);
-        //Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.update(request);
@@ -86,7 +84,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public void deleteIngredient(Member member, Long ingredientId) {
         validateLoggedInMember(member);
-        //Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredientRepository.delete(ingredient);
@@ -95,7 +92,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient registerPurchaseDate(Member member, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         validateLoggedInMember(member);
-        //Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.setPurchaseDate(request.getPurchaseDate());
@@ -105,7 +101,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient registerExpiryDate(Member member, Long ingredientId, IngredientRequestDTO.ExpiryDateRequestDTO request) {
         validateLoggedInMember(member);
-        //Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.setExpiryDate(request.getExpiryDate());
@@ -115,7 +110,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     @Override
     public Ingredient setStorageType(Member member, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request) {
         validateLoggedInMember(member);
-        //Member member = findMemberById(memberId);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.setStorageType(request.getStorageType());

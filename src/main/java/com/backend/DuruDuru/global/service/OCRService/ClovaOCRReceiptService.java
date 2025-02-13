@@ -315,11 +315,8 @@ public class ClovaOCRReceiptService {
 
     public Ingredient updateOCRIngredient(Member member, Long ingredientId, Long receiptId, IngredientRequestDTO.UpdateOCRIngredientDTO request) {
         validateLoggedInMember(member);
-        Ingredient ingredient = ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
-        Receipt receipt = receiptRepository.findById(receiptId)
-                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
-
+        Ingredient ingredient = findIngredientById(ingredientId);
+        Receipt receipt = findReceiptById(receiptId);
         ingredient.updateOCR(request);
         return ingredient;
     }
@@ -327,9 +324,7 @@ public class ClovaOCRReceiptService {
 
     public Receipt updateOCRPurchaseDate(Member member, Long receiptId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         validateLoggedInMember(member);
-        Receipt receipt = receiptRepository.findById(receiptId)
-                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
-
+        Receipt receipt = findReceiptById(receiptId);
         receipt.setPurchaseDate(request.getPurchaseDate());
         for (Ingredient ingredient : receipt.getIngredients()) {
             ingredient.setPurchaseDate(request.getPurchaseDate());
@@ -353,9 +348,14 @@ public class ClovaOCRReceiptService {
                 .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
     }
 
-    private Fridge findFridgeById(Long fridgeId) {
-        return fridgeRepository.findById(fridgeId)
-                .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
+    private Ingredient findIngredientById(Long ingredientId) {
+        return ingredientRepository.findById(ingredientId)
+                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+    }
+
+    private Receipt findReceiptById(Long receiptId) {
+        return receiptRepository.findById(receiptId)
+                .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
     }
 
     // 로그인 여부 확인
