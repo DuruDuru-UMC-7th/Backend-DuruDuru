@@ -1,5 +1,7 @@
 package com.backend.DuruDuru.global.service.OCRService;
 
+import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
 import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
@@ -257,14 +259,14 @@ public class ClovaOCRReceiptService {
 
     // OCR Main 로직
     @Transactional
-    public List<Ingredient> extractAndCategorizeProductNames(MultipartFile file, Long memberId) {
-        Member member = findMemberById(memberId);
+    public List<Ingredient> extractAndCategorizeProductNames(MultipartFile file, Member member) {
+        validateLoggedInMember(member);
         Fridge fridge = member.getFridge();
         if (fridge == null) {
             throw new IllegalArgumentException("사용자의 냉장고가 없습니다.");
         }
 
-        Receipt receipt = createReceipt(memberId);
+        Receipt receipt = createReceipt(member.getMemberId());
 
         List<String> productNames = extractProductNames(file);
         List<Ingredient> savedIngredients = new ArrayList<>();
@@ -281,6 +283,7 @@ public class ClovaOCRReceiptService {
     }
 
     private Ingredient createAndSaveIngredient(String productName, Member member, Fridge fridge, Receipt receipt) {
+        validateLoggedInMember(member);
         MinorCategory minorCategory = categoryMapper.mapToMinorCategory(productName);
         MajorCategory majorCategory = (minorCategory != null) ? minorCategory.getMajorCategory() : MajorCategory.기타;
         if (minorCategory == null) {
@@ -310,8 +313,8 @@ public class ClovaOCRReceiptService {
     }
 
 
-    public Ingredient updateOCRIngredient(Long memberId, Long ingredientId, Long receiptId, IngredientRequestDTO.UpdateOCRIngredientDTO request) {
-        Member member = findMemberById(memberId);
+    public Ingredient updateOCRIngredient(Member member, Long ingredientId, Long receiptId, IngredientRequestDTO.UpdateOCRIngredientDTO request) {
+        validateLoggedInMember(member);
         Ingredient ingredient = ingredientRepository.findById(ingredientId)
                 .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
         Receipt receipt = receiptRepository.findById(receiptId)
@@ -322,8 +325,8 @@ public class ClovaOCRReceiptService {
     }
 
 
-    public Receipt updateOCRPurchaseDate(Long memberId, Long receiptId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
-        Member member = findMemberById(memberId);
+    public Receipt updateOCRPurchaseDate(Member member, Long receiptId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
+        validateLoggedInMember(member);
         Receipt receipt = receiptRepository.findById(receiptId)
                 .orElseThrow(() -> new IllegalArgumentException("Receipt not found. ID: " + receiptId));
 
@@ -332,6 +335,16 @@ public class ClovaOCRReceiptService {
             ingredient.setPurchaseDate(request.getPurchaseDate());
         }
         return receipt;
+    }
+
+    @Transactional
+    public Receipt createReceipt(Long memberId) {
+        Member member = findMemberById(memberId);
+        Receipt receipt = Receipt.builder()
+                .member(member)
+                .purchaseDate(LocalDate.now()) // 영수증 등록한 날짜(응답 요청 날짜)로 설정
+                .build();
+        return receiptRepository.save(receipt);
     }
 
 
@@ -345,14 +358,11 @@ public class ClovaOCRReceiptService {
                 .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
     }
 
-    @Transactional
-    public Receipt createReceipt(Long memberId) {
-        Member member = findMemberById(memberId);
-        Receipt receipt = Receipt.builder()
-                .member(member)
-                .purchaseDate(LocalDate.now()) // 영수증 등록한 날짜(응답 요청 날짜)로 설정
-                .build();
-        return receiptRepository.save(receipt);
+    // 로그인 여부 확인
+    private void validateLoggedInMember(Member member) {
+        if (member == null) {
+            throw new AuthException(ErrorStatus.LOGIN_REQUIRED);
+        }
     }
 
 }
