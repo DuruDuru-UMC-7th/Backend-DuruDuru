@@ -54,6 +54,7 @@ public enum SuccessStatus implements BaseCode {
     INGREDIENT_SET_EXPIRY_DATE_OK(HttpStatus.OK, "INGREDIENT_4012", "식재료 유통기한을 성공적으로 설정하였습니다."),
     INGREDIENT_GET_MAJOR_TO_MINOR_CATEGORY_OK(HttpStatus.OK, "INGREDIENT_4013", "대분류에 따른 소분류 카테고리를 성공적으로 조회하였습니다."),
     INGREDIENT_GET_ALL_MINOR_CATEGORIES_OK(HttpStatus.OK, "INGREDIENT_4014", "모든 소분류 카테고리를 성공적으로 조회하였습니다."),
+    //INGREDIENT_GET_MINOR_CATEGORY_BY_NAME_OK(HttpStatus.OK, "INGREDIENT_4015", "카테고리 이름으로 소분류 카테고리를 성공적으로 조회하였습니다."),
 
     // 냉장고 관련 응답
     FRIDGE_OK(HttpStatus.OK, "FRIDGE_5000", "성공입니다."),

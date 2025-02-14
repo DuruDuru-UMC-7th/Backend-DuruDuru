@@ -45,7 +45,7 @@ public class SecurityConfig {
                                 .requestMatchers("/ingredient/","/ingredient/{ingredient_id}/purchase-date", "/ingredient/{ingredient_id}/expiry-date").permitAll()
                                 .requestMatchers("/ingredient/{ingredient_id}","/ingredient/{ingredient_id}/category", "/ingredient/{ingredient_id}/storage-type").permitAll()
                                 .requestMatchers("/ingredient/{ingredient_id}/photo","/ingredient/search/name", "/ingredient/category/major-to-minor").permitAll()
-                                .requestMatchers("/ingredient/majorCategory/list", "/ingredient/minorCategory/list", "/ingredient/minorCategory/").permitAll()
+                                .requestMatchers("/ingredient/majorCategory/list", "/ingredient/minorCategory/list", "/ingredient/minorCategory/", "/ingredient/minorCategory/search").permitAll()
                                 // Fridge 관련 접근
                                 .requestMatchers("/fridge/recent", "/fridge/near-expiry", "/fridge/far-expiry").permitAll()
                                 .requestMatchers("/fridge/majorCategory/recent", "/fridge/majorCategory/near-expiry", "/fridge/majorCategory/far-expiry").permitAll()

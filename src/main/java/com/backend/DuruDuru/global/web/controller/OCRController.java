@@ -33,31 +33,34 @@ public class OCRController {
 
     private final ClovaOCRReceiptService clovaOCRReceiptService;
 
+    // 영수증 OCR 처리 및 식재료 저장
     @PostMapping(value = "/receipt", consumes = "multipart/form-data")
     @Operation(summary = "영수증 OCR 처리 및 식재료 저장 API", description = "영수증 이미지를 업로드하여 상품명을 추출하고, 저장된 모든 식재료를 반환합니다.")
-    public ApiResponse<IngredientResponseDTO.IngredientOCRDetailListDTO> ingredientOcrAdd(@Parameter(name = "user", hidden = true) @AuthUser Member member,
+    public ApiResponse<IngredientResponseDTO.IngredientDetailListDTO> ingredientOcrAdd(@Parameter(name = "user", hidden = true) @AuthUser Member member,
                                                                                           @RequestParam("file") MultipartFile file) throws IOException {
         List<Ingredient> savedIngredients = clovaOCRReceiptService.extractAndCategorizeProductNames(file, member);
 
-        return ApiResponse.onSuccess(SuccessStatus.OCR_CREATE_INGREDIENTS_OK, IngredientConverter.toIngredientOCRDetailListDTO(savedIngredients));
+        return ApiResponse.onSuccess(SuccessStatus.OCR_CREATE_INGREDIENTS_OK, IngredientConverter.toIngredientDetailListDTO(savedIngredients));
     }
 
+    // OCR 인식된 식재료 이름 및 수량 수정
     @PatchMapping(value = "/ingredient/{ingredient_id}")
     @Operation (summary = "OCR 인식된 식재료 이름 및 수량 수정 API", description = "OCR 인식된 식재료 이름 및 수량을 수정하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.UpdateOCRIngredientResultDTO> ingredientOcrUpdate(@PathVariable("ingredient_id") Long ingredientId, @RequestParam Long receiptId,
+    public ApiResponse<IngredientResponseDTO.IngredientDetailDTO> ingredientOcrUpdate(@PathVariable("ingredient_id") Long ingredientId, @RequestParam Long receiptId,
                                                                                                @Parameter(name = "user", hidden = true) @AuthUser Member member,
                                                                                                @RequestBody IngredientRequestDTO.UpdateOCRIngredientDTO request) {
         Ingredient updateOCRIngredient = clovaOCRReceiptService.updateOCRIngredient(member, ingredientId, receiptId, request);
-        return ApiResponse.onSuccess(SuccessStatus.OCR_UPDATE_INGREDIENT_OK, IngredientConverter.UpdateOCRIngredientResultDTO(updateOCRIngredient));
+        return ApiResponse.onSuccess(SuccessStatus.OCR_UPDATE_INGREDIENT_OK, IngredientConverter.toIngredientDetailDTO(updateOCRIngredient));
     }
 
+    // 영수증 인식 식재료 구매 날짜 수정
     @PatchMapping(value = "/{receipt_id}/purchase-date")
     @Operation(summary = "영수증 인식 식재료 구매 날짜 수정 API", description = "영수증 인식된 식재료의 구매 날짜를 수정하는 API 입니다.")
-    public ApiResponse<IngredientResponseDTO.UpdateOCRPurchaseDateResultDTO> updateOCRPurchaseDate(@PathVariable("receipt_id") Long receiptId,
+    public ApiResponse<IngredientResponseDTO.IngredientDetailListDTO> updateOCRPurchaseDate(@PathVariable("receipt_id") Long receiptId,
                                                                                                    @Parameter(name = "user", hidden = true) @AuthUser Member member,
                                                                                                    @RequestBody IngredientRequestDTO.PurchaseDateRequestDTO request) {
-        Receipt updatePurchaseDate = clovaOCRReceiptService.updateOCRPurchaseDate(member, receiptId, request);
-        return ApiResponse.onSuccess(SuccessStatus.OCR_UPDATE_PURCHASE_DATE_OK, IngredientConverter.toOCRPurchaseDateResultDTO(updatePurchaseDate));
+        List<Ingredient> updatePurchaseDate = clovaOCRReceiptService.updateOCRPurchaseDate(member, receiptId, request);
+        return ApiResponse.onSuccess(SuccessStatus.OCR_UPDATE_PURCHASE_DATE_OK, IngredientConverter.toIngredientDetailListDTO(updatePurchaseDate));
     }
 
 }

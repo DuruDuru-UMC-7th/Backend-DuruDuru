@@ -12,7 +12,9 @@ import java.util.List;
 
 public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
 
+    // 사용자가 등록한 식재료 중 소분류에 속하는 식재료 조회
     List<Ingredient> findByMemberAndMinorCategory(Member member, MinorCategory minorCategory);
+    // 사용자가 등록한 식재료 중 대분류에 속하는 식재료 조회
     List<Ingredient> findByMemberAndMajorCategory(Member member, MajorCategory majorCategory);
     // 사용자가 등록한 식재료 중 검색어가 포함된 식재료 조회 (대소문자 무시)
     List<Ingredient> findAllByMemberAndIngredientNameContainingIgnoreCaseOrderByCreatedAtDesc(Member member, String search);
@@ -20,7 +22,7 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     List<Ingredient> findAllByMemberOrderByCreatedAtDesc(Member member);
 
 
-    // -- 냉장고 관련 -- //
+    /// -- 냉장고 관련 -- ///
     // 사용자 식재료 최신순 조회
     List<Ingredient> findAllByFridge_MemberOrderByCreatedAtDesc(Member member);
     // 사용자 식재료 소비기한 임박순 조회

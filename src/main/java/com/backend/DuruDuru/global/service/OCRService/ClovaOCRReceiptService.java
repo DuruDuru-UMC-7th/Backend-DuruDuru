@@ -58,6 +58,7 @@ public class ClovaOCRReceiptService {
     private final IngredientRepository ingredientRepository;
     private final ReceiptRepository receiptRepository;
 
+    // OCR API 호출 및 응답 데이터 처리
     public List<String> extractProductNames(MultipartFile file) {
         try {
             // Step 1: 리사이즈
@@ -142,6 +143,7 @@ public class ClovaOCRReceiptService {
         }
     }
 
+    // 이미지 리사이즈
     public static class ImageResizer {
         public static byte[] resizeImage(MultipartFile file, int targetWidth, int targetHeight) throws IOException {
             ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -155,6 +157,7 @@ public class ClovaOCRReceiptService {
         }
     }
 
+    // OCR 응답 데이터 파싱
     private List<String> parseProductNames(String response) {
         List<String> productNames = new ArrayList<>();
         try {
@@ -178,7 +181,7 @@ public class ClovaOCRReceiptService {
         return productNames;
     }
 
-
+    // 쿠팡 구매내역 스크린샷 식재료 이름 파싱
     private List<String> parseCoupangPurchaseNames(String response) {
         List<String> productNames = new ArrayList<>();
         try {
@@ -258,7 +261,7 @@ public class ClovaOCRReceiptService {
     }
 
 
-    ////////////////////////////////////////////
+    //////////////////////-------------------------------------------------------//////////////////////
 
     // OCR Main 로직
     @Transactional
@@ -285,6 +288,7 @@ public class ClovaOCRReceiptService {
         return savedIngredients;
     }
 
+    // 식재료 생성 및 저장
     private Ingredient createAndSaveIngredient(String productName, Member member, Fridge fridge, Receipt receipt) {
         validateLoggedInMember(member);
         MinorCategory minorCategory = categoryMapper.mapToMinorCategory(productName);
@@ -295,7 +299,7 @@ public class ClovaOCRReceiptService {
 
         int shelfLifeDays = minorCategory.getShelfLifeDays();
         StorageType storageType = minorCategory.getStorageType();
-
+        // 구매일로부터 유통기한 설정
         LocalDate purchaseDate = (receipt.getPurchaseDate() != null) ? receipt.getPurchaseDate() : LocalDate.now();
         LocalDate expiryDate = purchaseDate.plusDays(shelfLifeDays);
 
@@ -315,7 +319,7 @@ public class ClovaOCRReceiptService {
         return ingredientRepository.save(ingredient);
     }
 
-
+    // OCR 인식된 식재료 정보 수정
     public Ingredient updateOCRIngredient(Member member, Long ingredientId, Long receiptId, IngredientRequestDTO.UpdateOCRIngredientDTO request) {
         validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
@@ -324,16 +328,27 @@ public class ClovaOCRReceiptService {
         return ingredient;
     }
 
-
-    public Receipt updateOCRPurchaseDate(Member member, Long receiptId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
+    // OCR 인식된 식재료 구매날짜 수정 (소비기한 자동 설정)
+    public List<Ingredient> updateOCRPurchaseDate(Member member, Long receiptId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         validateLoggedInMember(member);
         Receipt receipt = findReceiptById(receiptId);
-        receipt.setPurchaseDate(request.getPurchaseDate());
+
+        LocalDate purchaseDate = request.getPurchaseDate();
+        receipt.setPurchaseDate(purchaseDate);
+        List<Ingredient> updatedIngredients = new ArrayList<>();
+
         for (Ingredient ingredient : receipt.getIngredients()) {
-            ingredient.setPurchaseDate(request.getPurchaseDate());
+            ingredient.setPurchaseDate(purchaseDate);
+            if (ingredient.getMinorCategory() != null) {
+                int shelfLifeDays = ingredient.getMinorCategory().getShelfLifeDays();
+                LocalDate updatedExpiryDate = purchaseDate.plusDays(shelfLifeDays);
+                ingredient.setExpiryDate(updatedExpiryDate);
+            }
+            updatedIngredients.add(ingredient);
         }
-        return receipt;
+        return updatedIngredients;
     }
+
 
     @Transactional
     public Receipt createReceipt(Long memberId) {
