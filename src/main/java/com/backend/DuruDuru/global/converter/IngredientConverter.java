@@ -9,6 +9,7 @@ import com.backend.DuruDuru.global.web.dto.Ingredient.IngredientResponseDTO;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class IngredientConverter {
@@ -37,15 +38,15 @@ public class IngredientConverter {
         return IngredientResponseDTO.IngredientDetailDTO.builder()
                 .memberId(ingredient.getMember().getMemberId())
                 .fridgeId(ingredient.getFridge().getFridgeId())
-                .receiptId(ingredient.getReceipt().getReceiptId())
+                .receiptId(Optional.ofNullable(ingredient.getReceipt()).map(Receipt::getReceiptId).orElse(-1L))
                 .ingredientId(ingredient.getIngredientId())
                 .ingredientName(ingredient.getIngredientName())
                 .count(ingredient.getCount())
                 .purchaseDate(ingredient.getPurchaseDate())
                 .expiryDate(ingredient.getExpiryDate())
                 .storageType(String.valueOf(ingredient.getStorageType()))
-                .majorCategory(ingredient.getMajorCategory().name())
-                .minorCategory(ingredient.getMinorCategory().name())
+                .majorCategory(ingredient.getMajorCategory() != null ? ingredient.getMajorCategory().name() : "기타")
+                .minorCategory(ingredient.getMinorCategory() != null ? ingredient.getMinorCategory().name() : "기타")
                 .ingredientImageUrl(ingredient.getIngredientImg() != null ?
                                 ingredient.getIngredientImg().getIngredientImgUrl() : "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a")
                 .createdAt(ingredient.getCreatedAt())
