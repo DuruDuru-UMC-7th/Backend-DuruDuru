@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.service.TradeService;
 
 import com.backend.DuruDuru.global.S3.AmazonS3Manager;
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.TownHandler;
@@ -35,8 +36,8 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     // Trade 엔티티를 저장하는 메서드
     @Override
     @Transactional
-    public Trade createTrade(Long memberId, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request) {
-        Member member = findMemberById(memberId);
+    public Trade createTrade(Member member, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request) {
+        validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         // Member에 Town 정보가 없을 경우
@@ -44,7 +45,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
             throw new TownHandler(ErrorStatus.TOWN_NOT_REGISTERED);
         }
         // 진행중인 품앗이 거래가 이미 최대 개수인 4개인 경우
-        if(tradeRepository.findActiveTradesByMember(memberId).size() >= 4) {
+        if(tradeRepository.findActiveTradesByMember(member.getMemberId()).size() >= 4) {
             throw new TradeHandler(ErrorStatus.TRADE_MAX_LIMIT_REACHED);
         }
         // 접근 권한이 없는 식재료의 Id를 입력한 경우
@@ -84,9 +85,9 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     // 품앗이 게시글 삭제
     @Override
     @Transactional
-    public void deleteTrade(Long memberId, Long tradeId) {
+    public void deleteTrade(Member member, Long tradeId) {
         Trade trade = findTradeById(tradeId);
-        Member member = findMemberById(memberId);
+        validateLoggedInMember(member);
 
         if(!trade.getMember().getMemberId().equals(member.getMemberId())) {
             throw new TradeHandler(ErrorStatus.TRADE_ACCESS_DENIED);
@@ -98,9 +99,9 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     // 품앗이 게시글 수정
     @Override
     @Transactional
-    public Trade updateTrade(Long memberId, Long tradeId, TradeRequestDTO.UpdateTradeRequestDTO request) {
+    public Trade updateTrade(Member member, Long tradeId, TradeRequestDTO.UpdateTradeRequestDTO request) {
         Trade trade = findTradeById(tradeId);
-        Member member = findMemberById(memberId);
+        validateLoggedInMember(member);
 
         if(!trade.getMember().getMemberId().equals(member.getMemberId())) {
             throw new TradeHandler(ErrorStatus.TRADE_ACCESS_DENIED);
@@ -165,7 +166,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
             // 완료된 품앗이를 거래 전, 거래 중으로 바꾸는 경우
             if((requestStatus == Status.ACTIVE || requestStatus == Status.PROCEEDING)
-                    && tradeRepository.findActiveTradesByMember(memberId).size() >= 4) {
+                    && tradeRepository.findActiveTradesByMember(member.getMemberId()).size() >= 4) {
                 throw new TradeHandler(ErrorStatus.TRADE_MAX_LIMIT_REACHED);
             } else {
                 trade.setStatus(requestStatus);
@@ -178,8 +179,8 @@ public class TradeCommandServiceImpl implements TradeCommandService {
     // 찜하기 등록
     @Override
     @Transactional
-    public LikeTrade createLike(Long memberId, Long tradeId) {
-        Member member = findMemberById(memberId);
+    public LikeTrade createLike(Member member, Long tradeId) {
+        validateLoggedInMember(member);
         Trade trade = findTradeById(tradeId);
 
         if(likeTradeRepository.findByMemberAndTrade(member, trade) != null) {
@@ -199,8 +200,8 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
     @Override
     @Transactional
-    public void deleteLike(Long memberId, Long tradeId) {
-        Member member = findMemberById(memberId);
+    public void deleteLike(Member member, Long tradeId) {
+        validateLoggedInMember(member);
         Trade trade = findTradeById(tradeId);
 
         LikeTrade likeTrade = likeTradeRepository.findByMemberAndTrade(member, trade);
@@ -213,10 +214,11 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         likeTradeRepository.delete(likeTrade);
     }
 
-
-    private Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+    // 로그인 여부 확인
+    private void validateLoggedInMember(Member member) {
+        if (member == null) {
+            throw new AuthException(ErrorStatus.LOGIN_REQUIRED);
+        }
     }
 
     private Ingredient findIngredientById(Long ingredientId) {
