@@ -43,6 +43,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
+    @Override
     @Transactional
     public AuthResponseDTO.OAuthResponse kakaoLoginWithToken(String accessToken) {
         KakaoProfile kakaoProfile;
