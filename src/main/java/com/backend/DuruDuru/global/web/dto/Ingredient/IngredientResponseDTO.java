@@ -174,6 +174,7 @@ public class IngredientResponseDTO {
         private Long count;
         private String majorCategory;
         private String minorCategory;
+        private String ingredientImageUrl;
         private String storageType;
         private LocalDate expireDate;
     }
@@ -202,6 +203,7 @@ public class IngredientResponseDTO {
         private Long count;
         private String majorCategory;
         private String minorCategory;
+        private String ingredientImageUrl;
         private String storageType;
         private LocalDate expireDate;
     }
