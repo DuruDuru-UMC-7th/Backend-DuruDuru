@@ -43,6 +43,38 @@ public class MemberCommandServiceImpl implements MemberCommandService{
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
+    @Transactional
+    public AuthResponseDTO.OAuthResponse kakaoLoginWithToken(String accessToken) {
+        KakaoProfile kakaoProfile;
+        try {
+            kakaoProfile = kakaoAuthProvider.requestKakaoProfile(accessToken);
+        } catch (Exception e) {
+            throw new MemberException(ErrorStatus.INVALID_KAKAO_REQUEST_INFO);
+        }
+
+        Optional<Member> queryMember = memberRepository.findByEmail(kakaoProfile.getKakaoAccount().getEmail());
+
+        if (queryMember.isPresent()) {
+            Member member = queryMember.get();
+            if (member.getIsDelete() == 1) {
+                throw new MemberException(ErrorStatus.MEMBER_NOT_FOUND);
+            } else {
+                String newAccessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
+                String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
+                member.updateToken(newAccessToken, refreshToken);
+                memberRepository.save(member);
+                return AuthConverter.toOAuthResponse(newAccessToken, refreshToken, member);
+            }
+        } else {
+            Member member = memberRepository.save(AuthConverter.toMember(kakaoProfile, makeNickname()));
+            String newAccessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
+            String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
+            member.updateToken(newAccessToken, refreshToken);
+            memberRepository.save(member);
+            return AuthConverter.toOAuthResponse(newAccessToken, refreshToken, member);
+        }
+    }
+
     @Override
     @Transactional
     public AuthResponseDTO.OAuthResponse kakaoLogin(String code) {

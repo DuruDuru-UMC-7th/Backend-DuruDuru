@@ -12,4 +12,5 @@ public interface MemberCommandService {
     AuthResponseDTO.TokenRefreshResponse refreshToken(String refreshToken);
     AuthResponseDTO.OAuthResponse kakaoLogin(String code);
     AuthResponseDTO.OAuthResponse naverLogin(String code);
+    AuthResponseDTO.OAuthResponse kakaoLoginWithToken(String accessToken);
 }

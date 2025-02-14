@@ -47,4 +47,13 @@ public class AuthRequestDTO {
         @JsonProperty("refresh_token")
         String refreshToken;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class KakaoLoginRequest {
+        private String accessToken;
+    }
+
 }
