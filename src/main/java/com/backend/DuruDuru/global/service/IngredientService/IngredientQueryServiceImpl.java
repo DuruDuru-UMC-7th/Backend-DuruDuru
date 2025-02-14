@@ -35,6 +35,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
                 .orElseThrow(() -> new MemberHandler(ErrorStatus.MEMBER_ID_NULL));
     }
 
+    // 대분류에 속하는 소분류 카테고리 조회
     @Override
     public Map<String, Object> getMinorCategoriesByMajor(MajorCategory majorCategory) {
         // 대분류에 속하는 소분류 리스트 필터링
@@ -83,6 +84,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
         validateIngredientProperties(ingredients);
         return ingredients;
     }
+
 
     // 로그인 여부 확인
     private void validateLoggedInMember(Member member) {

@@ -53,6 +53,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
                 .orElseThrow(() -> new IngredientHandler(ErrorStatus.INGREDIENT_NOT_FOUND));
     }
 
+    // 식재료 직접 등록
     @Override
     @Transactional
     public Ingredient createRawIngredient(Member member, IngredientRequestDTO.CreateRawIngredientDTO request) {
@@ -68,7 +69,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         return savedIngredient;
     }
 
-
+    // 식재료 정보 수정
     @Override
     public Ingredient updateIngredient(Member member, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
         validateLoggedInMember(member);
@@ -79,6 +80,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
     }
 
+    // 식재료 삭제
     @Override
     public void deleteIngredient(Member member, Long ingredientId) {
         validateLoggedInMember(member);
@@ -87,6 +89,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         ingredientRepository.delete(ingredient);
     }
 
+    // 식재료 구매날짜 등록
     @Override
     public Ingredient registerPurchaseDate(Member member, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         validateLoggedInMember(member);
@@ -103,6 +106,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         return ingredient;
     }
 
+    // 식재료 소비기한 등록
     @Override
     public Ingredient registerExpiryDate(Member member, Long ingredientId, IngredientRequestDTO.ExpiryDateRequestDTO request) {
         validateLoggedInMember(member);
@@ -112,6 +116,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         return ingredient;
     }
 
+    // 식재료 보관방법 등록
     @Override
     public Ingredient setStorageType(Member member, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request) {
         validateLoggedInMember(member);
@@ -121,7 +126,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         return ingredient;
     }
 
-
+    // 식재료 이미지 등록
     @Transactional
     @Override
     public Ingredient registerIngredientImage(Member member, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
@@ -151,7 +156,7 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         return ingredient;
     }
 
-
+    // 식재료 카테고리 설정
     @Transactional
     @Override
     public Ingredient setCategory(Member member, Long ingredientId, IngredientRequestDTO.SetCategoryRequestDTO request) {
@@ -174,7 +179,6 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         if (!MinorCategory.isValidCategory(majorCategory, minorCategory)) {
             throw new IngredientHandler(ErrorStatus.INGREDIENT_MAJOR_MINOR_NOT_MATCH);
         }
-
         Ingredient ingredient = findIngredientById(ingredientId);
 
         LocalDate purchaseDate = (ingredient.getPurchaseDate() != null) ? ingredient.getPurchaseDate() : LocalDate.now();
@@ -189,6 +193,8 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
         return ingredientRepository.save(ingredient);
     }
+
+
 
     // 로그인 여부 확인
     private void validateLoggedInMember(Member member) {
