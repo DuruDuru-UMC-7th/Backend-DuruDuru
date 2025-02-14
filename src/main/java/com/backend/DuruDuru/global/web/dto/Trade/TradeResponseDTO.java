@@ -30,30 +30,10 @@ public class TradeResponseDTO {
         String eupmyeondong;
         Status status;
         TradeType tradeType;
+        Long likeCount;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
         List<TradeImg> tradeImgs;
-    }
-
-    @Getter
-    @Builder
-    @AllArgsConstructor
-    @NoArgsConstructor
-    public static class UpdateTradeResultDTO {
-        Long tradeId;
-        Long memberId;
-        String nickName;
-        Long ingredientId;
-        Long ingredientCount;
-        LocalDate expiryDate;
-        String title;
-        String body;
-        String eupmyeondong;
-        Status status;
-        TradeType tradeType;
-        LocalDateTime createdAt;
-        LocalDateTime updatedAt;
-        // String[] tradeImgUrls;
     }
 
     @Getter
@@ -70,6 +50,7 @@ public class TradeResponseDTO {
         String eupmyeondong;
         Status status;
         TradeType tradeType;
+        Long likeCount;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
         String thumbnailImgUrl;
@@ -83,5 +64,24 @@ public class TradeResponseDTO {
     public static class TradePreviewListDTO {
         int totalCount;
         List<TradePreviewDTO> tradeList;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LikeTradeResultDTO {
+        Long memberId;
+        Long tradeId;
+        Long likeCount;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class LikeCountResultDTO {
+        Long tradeId;
+        Long likeCount;
     }
 }

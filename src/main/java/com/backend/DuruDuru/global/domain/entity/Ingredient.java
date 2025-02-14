@@ -55,14 +55,8 @@ public class Ingredient extends BaseEntity {
     @Column(name = "minor_category", nullable = true, columnDefinition = "varchar(50)")
     private MinorCategory minorCategory;
 
-//    @Column(name = "ingredient_image_url", length = 200, nullable = true)
-//    private String ingredientImageUrl;
-
     @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Trade> trades = new ArrayList<>();
-
-    @OneToMany(mappedBy = "ingredient", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<RecipeIngredient> recipeIngredients = new ArrayList<>();
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fridge_id", nullable = false)

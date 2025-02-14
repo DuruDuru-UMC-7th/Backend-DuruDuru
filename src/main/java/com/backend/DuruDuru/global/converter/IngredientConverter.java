@@ -84,6 +84,17 @@ public class IngredientConverter {
                 .build();
     }
 
+    public static IngredientResponseDTO.ExpiryDateResultDTO toExpiryDateResultDTO(Ingredient ingredient) {
+        return IngredientResponseDTO.ExpiryDateResultDTO.builder()
+                .memberId(ingredient.getMember().getMemberId())
+                .ingredientId(ingredient.getIngredientId())
+                .ingredientName(ingredient.getIngredientName())
+                .fridgeId(ingredient.getFridge().getFridgeId())
+                .purchaseDate(ingredient.getPurchaseDate())
+                .expiryDate(ingredient.getExpiryDate())
+                .build();
+    }
+
     public static IngredientResponseDTO.StorageTypeResultDTO toStorageTypeResultDTO(Ingredient ingredient) {
         return IngredientResponseDTO.StorageTypeResultDTO.builder()
                 .memberId(ingredient.getMember().getMemberId())
@@ -150,6 +161,8 @@ public class IngredientConverter {
                 .count(ingredient.getCount())
                 .majorCategory(ingredient.getMajorCategory().name())
                 .minorCategory(ingredient.getMinorCategory().name())
+                .ingredientImageUrl(ingredient.getIngredientImg() != null ?
+                        ingredient.getIngredientImg().getIngredientImgUrl() : "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a")
                 .storageType(ingredient.getStorageType().name())
                 .expireDate(ingredient.getExpiryDate())
                 .build();
@@ -178,6 +191,8 @@ public class IngredientConverter {
                 .count(ingredient.getCount())
                 .majorCategory(ingredient.getMajorCategory().name())
                 .minorCategory(ingredient.getMinorCategory().name())
+                .ingredientImageUrl(ingredient.getIngredientImg() != null ?
+                        ingredient.getIngredientImg().getIngredientImgUrl() : "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a")
                 .storageType(ingredient.getStorageType().name())
                 .expireDate(ingredient.getExpiryDate())
                 .build();

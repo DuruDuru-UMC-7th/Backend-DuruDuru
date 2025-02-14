@@ -2,7 +2,12 @@ package com.backend.DuruDuru.global.service.IngredientService;
 
 import com.backend.DuruDuru.global.S3.AmazonS3Manager;
 import com.backend.DuruDuru.global.apiPayload.ApiResponse;
+import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.code.status.SuccessStatus;
+import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.FridgeHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberHandler;
 import com.backend.DuruDuru.global.converter.IngredientConverter;
 import com.backend.DuruDuru.global.domain.entity.*;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
@@ -38,25 +43,20 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     private final UuidRepository uuidRepository;
 
 
-    private Member findMemberById(Long memberId) {
-        return memberRepository.findById(memberId)
-                .orElseThrow(() -> new IllegalArgumentException("Member not found. ID: " + memberId));
-    }
-
     private Fridge findFridgeById(Long fridgeId) {
         return fridgeRepository.findById(fridgeId)
-                .orElseThrow(() -> new IllegalArgumentException("Fridge not found. ID: " + fridgeId));
+                .orElseThrow(() -> new FridgeHandler(ErrorStatus.FRIDGE_NOT_FOUND));
     }
 
     private Ingredient findIngredientById(Long ingredientId) {
         return ingredientRepository.findById(ingredientId)
-                .orElseThrow(() -> new IllegalArgumentException("Ingredient not found. ID: " + ingredientId));
+                .orElseThrow(() -> new IngredientHandler(ErrorStatus.INGREDIENT_NOT_FOUND));
     }
 
     @Override
     @Transactional
-    public Ingredient createRawIngredient(Long memberId, IngredientRequestDTO.CreateRawIngredientDTO request) {
-        Member member = findMemberById(memberId);
+    public Ingredient createRawIngredient(Member member, IngredientRequestDTO.CreateRawIngredientDTO request) {
+        validateLoggedInMember(member);
         Fridge fridge = findFridgeById(member.getFridgeId());
 
         Ingredient newIngredient = IngredientConverter.toIngredient(request);
@@ -70,8 +70,8 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
 
     @Override
-    public Ingredient updateIngredient(Long memberId, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
-        Member member = findMemberById(memberId);
+    public Ingredient updateIngredient(Member member, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
+        validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.update(request);
@@ -80,26 +80,41 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     }
 
     @Override
-    public void deleteIngredient(Long memberId, Long ingredientId) {
-        Member member = findMemberById(memberId);
+    public void deleteIngredient(Member member, Long ingredientId) {
+        validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredientRepository.delete(ingredient);
     }
 
-
     @Override
-    public Ingredient registerPurchaseDate(Long memberId, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
-        Member member = findMemberById(memberId);
+    public Ingredient registerPurchaseDate(Member member, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
+        validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
+        LocalDate purchaseDate = request.getPurchaseDate();
+        ingredient.setPurchaseDate(purchaseDate);
 
-        ingredient.setPurchaseDate(request.getPurchaseDate());
+        // 소분류 카테고리에 따라 소비기한 자동 설정
+        if (ingredient.getMinorCategory() != null) {
+            int shelfLifeDays = ingredient.getMinorCategory().getShelfLifeDays();
+            LocalDate updatedExpiryDate = purchaseDate.plusDays(shelfLifeDays);
+            ingredient.setExpiryDate(updatedExpiryDate);
+        }
         return ingredient;
     }
 
     @Override
-    public Ingredient setStorageType(Long memberId, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request) {
-        Member member = findMemberById(memberId);
+    public Ingredient registerExpiryDate(Member member, Long ingredientId, IngredientRequestDTO.ExpiryDateRequestDTO request) {
+        validateLoggedInMember(member);
+        Ingredient ingredient = findIngredientById(ingredientId);
+
+        ingredient.setExpiryDate(request.getExpiryDate());
+        return ingredient;
+    }
+
+    @Override
+    public Ingredient setStorageType(Member member, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request) {
+        validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         ingredient.setStorageType(request.getStorageType());
@@ -109,7 +124,8 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
     @Transactional
     @Override
-    public Ingredient registerIngredientImage(Long memberId, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
+    public Ingredient registerIngredientImage(Member member, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
+        validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
 
         if (ingredient.getIngredientImg() != null) {
@@ -138,24 +154,25 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
 
     @Transactional
     @Override
-    public Ingredient setCategory(Long memberId, Long ingredientId, IngredientRequestDTO.SetCategoryRequestDTO request) {
+    public Ingredient setCategory(Member member, Long ingredientId, IngredientRequestDTO.SetCategoryRequestDTO request) {
+        validateLoggedInMember(member);
         // 대분류 검증
         MajorCategory majorCategory;
         try {
             majorCategory = MajorCategory.valueOf(request.getMajorCategory());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("존재하지 않는 대분류 카테고리입니다.");
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_NO_MAJOR_CATEGORY);
         }
         // 소분류 검증
         MinorCategory minorCategory;
         try {
             minorCategory = MinorCategory.valueOf(request.getMinorCategory());
         } catch (IllegalArgumentException e) {
-            throw new IllegalArgumentException("존재하지 않는 소분류 카테고리입니다.");
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_NO_MINOR_CATEGORY);
         }
         // 대분류와 소분류 매칭 검증
         if (!MinorCategory.isValidCategory(majorCategory, minorCategory)) {
-            throw new IllegalArgumentException("대분류와 소분류가 일치하지 않습니다.");
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_MAJOR_MINOR_NOT_MATCH);
         }
 
         Ingredient ingredient = findIngredientById(ingredientId);
@@ -171,6 +188,13 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
         ingredient.setStorageType(storageType); // 보관 방식 자동 설정 (사용자 변경가능)
 
         return ingredientRepository.save(ingredient);
+    }
+
+    // 로그인 여부 확인
+    private void validateLoggedInMember(Member member) {
+        if (member == null) {
+            throw new AuthException(ErrorStatus.LOGIN_REQUIRED);
+        }
     }
 
 

@@ -35,19 +35,21 @@ public class SecurityConfig {
                 .authorizeHttpRequests(
                         authorize -> authorize
                                 // Member 관련 접근
-                                .requestMatchers("/member/register", "/member/login/kakao", "/member/login/email","/member/refresh").permitAll()
+                                .requestMatchers("/member/register", "/member/login/kakao", "/member/login/naver", "/member/login/email","/member/refresh").permitAll()
                                 // Trade 관련 접근
                                 .requestMatchers("/trade/", "trade/{trade_id}", "/trade/my/active", "/trade/my/history", "/trade/my/like").permitAll()
                                 .requestMatchers("/trade/near/{trade_type}", "/trade/near/recent", "trade/near/near-expiry", "trade/near/far-expiry").permitAll()
-                                .requestMatchers("trade/like/{member_id}/{trade_id}", "/trade/like/delete/{trade_id}", "/trade/like/count/{trade_id}").permitAll()
-                                .requestMatchers("trade/other-trade","/trade/shareUrl", "/trade/recommend/today", "/trade/keyword/alert").permitAll()
+                                .requestMatchers("trade/like/{trade_id}", "/trade/like/{trade_id}/delete", "/trade/like/{trade_id}/count").permitAll()
+                                .requestMatchers("trade/other-trade", "/trade/keyword/alert").permitAll()
                                 // Ingredient 관련 접근
-                                .requestMatchers("/ingredient/{ingredient_id}/photo","/ingredient/{ingredient_id}/purchase-date", "/ingredient/").permitAll()
+                                .requestMatchers("/ingredient/","/ingredient/{ingredient_id}/purchase-date", "/ingredient/{ingredient_id}/expiry-date").permitAll()
                                 .requestMatchers("/ingredient/{ingredient_id}","/ingredient/{ingredient_id}/category", "/ingredient/{ingredient_id}/storage-type").permitAll()
-                                .requestMatchers("/ingredient/search/name", "/ingredient/category/major-to-minor").permitAll()
+                                .requestMatchers("/ingredient/{ingredient_id}/photo","/ingredient/search/name", "/ingredient/category/major-to-minor").permitAll()
                                 .requestMatchers("/ingredient/majorCategory/list", "/ingredient/minorCategory/list", "/ingredient/minorCategory/").permitAll()
                                 // Fridge 관련 접근
-                                .requestMatchers("/fridge/{member_id}/all/recent", "/fridge/{member_id}/near-expiry", "/fridge/{member_id}/far-expiry").permitAll()
+                                .requestMatchers("/fridge/recent", "/fridge/near-expiry", "/fridge/far-expiry").permitAll()
+                                .requestMatchers("/fridge/majorCategory/recent", "/fridge/majorCategory/near-expiry", "/fridge/majorCategory/far-expiry").permitAll()
+                                .requestMatchers("/fridge/name/recent", "/fridge/name/near-expiry", "/fridge/name/far-expiry").permitAll()
                                 // OCR 관련 접근
                                 .requestMatchers("/OCR/receipt", "/OCR/ingredient/{ingredient_id}", "/OCR/{receipt_id}/purchase-date").permitAll()
                                 // Town 관련 접근

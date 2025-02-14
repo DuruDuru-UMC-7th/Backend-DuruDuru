@@ -29,7 +29,49 @@ public class ChattingResponseDTO {
     @AllArgsConstructor
     @Builder
     public static class ChattingRoomListDTO {
-        private int count;                                  // 채팅방 개수
-        private List<ChattingRoomDetailDTO> chatRooms;          // 채팅방 상세 정보 리스트
+        private int count;
+        private List<ChattingRoomDetailDTO> chatRooms;
     }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ChattingRoomMakeResponseDTO {
+        private Long chattingRoomId;
+        private String otherNickname;
+        private String tradeImgUrl;
+        private String tradeType;
+        private LocalDateTime createdAt;
+        private String otherMemberImgUrl;
+        private String otherLocation;
+        private String tradeStatus;
+        private String tradeTitle;
+        private Long ingredientCount;
+        private LocalDateTime expirationDate;
+        private List<ChattingRequestDTO.ChatMessageDTO> chatMessages;
+    }
+
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ChattingRoomFullResponseDTO {
+        private Long chattingRoomId;
+        private String otherNickname;
+        private String tradeImgUrl;
+        private String tradeType;
+        private String tradeTitle;
+        private LocalDateTime createdAt;
+        private String otherMemberImgUrl;
+        private String otherLocation;
+        private String tradeStatus;
+        private Long ingredientCount;
+        private LocalDateTime expirationDate;
+        private List<ChattingRequestDTO.ChatMessageDTO> chatMessages;
+    }
+
 }

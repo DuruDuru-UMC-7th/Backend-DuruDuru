@@ -32,7 +32,7 @@ public class Member extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private Gender gender;
 
-    private Long age;
+    private String mobile;
 
     @ColumnDefault("0") // 삭제시 1
     private int isDelete;
@@ -64,7 +64,7 @@ public class Member extends BaseEntity {
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
     private List<Notification> notifications = new ArrayList<>();
 
-    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "member", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<MemberRecipe> memberRecipes = new ArrayList<>();
 
     @OneToMany(mappedBy = "member", cascade = CascadeType.ALL)
@@ -107,6 +107,13 @@ public class Member extends BaseEntity {
         this.town = town;
         if (town.getMember() != this) {
             town.setMember(this);
+        }
+    }
+
+    public void addLikeTrades(LikeTrade likeTrade) {
+        this.likeTrades.add(likeTrade);
+        if (likeTrade.getMember() != this) {
+            likeTrade.setMember(this);
         }
     }
 

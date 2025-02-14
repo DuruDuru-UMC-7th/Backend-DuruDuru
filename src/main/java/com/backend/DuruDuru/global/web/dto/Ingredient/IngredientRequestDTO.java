@@ -46,6 +46,15 @@ public class IngredientRequestDTO {
     @Builder
     @AllArgsConstructor
     @NoArgsConstructor
+    public static class ExpiryDateRequestDTO {
+        private LocalDate expiryDate;
+    }
+
+    @Getter
+    @Setter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
     public static class StorageTypeRequestDTO {
         private StorageType storageType;
     }

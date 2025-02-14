@@ -16,4 +16,18 @@ public enum StorageType {
     StorageType(String storageType) {
         this.storageType = storageType;
     }
+
+    // Enum 값 변환 메서드
+    public static StorageType fromString(String value) {
+        for (StorageType type : StorageType.values()) {
+            if (type.getStorageType().equals(value)) {
+                return type;
+            }
+        }
+        throw new IllegalArgumentException("올바르지 않은 보관방식입니다: " + value);
+    }
+
+//    StorageType(String storageType) {
+//        this.storageType = storageType;
+//    }
 }

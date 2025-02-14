@@ -10,6 +10,7 @@ import lombok.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class IngredientResponseDTO {
 
@@ -71,6 +72,21 @@ public class IngredientResponseDTO {
         String ingredientName;
         LocalDate purchaseDate;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class ExpiryDateResultDTO {
+        Long memberId;
+        Long fridgeId;
+        Long ingredientId;
+        String ingredientName;
+        LocalDate purchaseDate;
+        LocalDate expiryDate;
+    }
+
+
 
     @Getter
     @Builder
@@ -158,6 +174,7 @@ public class IngredientResponseDTO {
         private Long count;
         private String majorCategory;
         private String minorCategory;
+        private String ingredientImageUrl;
         private String storageType;
         private LocalDate expireDate;
     }
@@ -186,6 +203,7 @@ public class IngredientResponseDTO {
         private Long count;
         private String majorCategory;
         private String minorCategory;
+        private String ingredientImageUrl;
         private String storageType;
         private LocalDate expireDate;
     }
@@ -200,4 +218,22 @@ public class IngredientResponseDTO {
         Long receiptId;
         LocalDate purchaseDate;
     }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class MinorCategoryDTO {
+        private String minorCategory;
+        private String categoryImageUrl;
+
+        private static final String DEFAULT_IMAGE_URL = "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a";
+
+        public static List<MinorCategoryDTO> fromMinorCategories(List<MinorCategory> categories) {
+            return categories.stream()
+                    .map(category -> new MinorCategoryDTO(category.name(), DEFAULT_IMAGE_URL))
+                    .collect(Collectors.toList());
+        }
+    }
+
 }

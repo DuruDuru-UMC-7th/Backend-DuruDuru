@@ -2,12 +2,19 @@ package com.backend.DuruDuru.global.repository;
 
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.MemberRecipe;
-import com.backend.DuruDuru.global.domain.entity.Recipe;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-
-import java.util.List;
+import org.springframework.data.jpa.repository.Query;
 
 public interface MemberRecipeRepository extends JpaRepository<MemberRecipe, Long> {
-    MemberRecipe findByMemberAndRecipe(Member member, Recipe recipe);
-    List<MemberRecipe> findAllByMember(Member member);
+    Page<MemberRecipe> findByMember(Member member, Pageable pageable);
+    boolean existsByMemberAndRecipeName(Member member, String recipeName);
+    void deleteByMemberAndRecipeName(Member member, String recipeName);
+    long countByRecipeName(String recipeName);
+
+    @Query("SELECT r.recipeName, COUNT(r) AS favoriteCount FROM MemberRecipe r " +
+            "GROUP BY r.recipeName " +
+            "ORDER BY favoriteCount DESC")
+    Page<Object[]> findPopularRecipes(Pageable pageable);
 }
