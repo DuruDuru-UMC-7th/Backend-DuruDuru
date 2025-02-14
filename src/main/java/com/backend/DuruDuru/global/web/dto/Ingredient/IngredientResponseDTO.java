@@ -225,15 +225,21 @@ public class IngredientResponseDTO {
     @NoArgsConstructor
     public static class MinorCategoryDTO {
         private String minorCategory;
+        private String majorCategory;
         private String categoryImageUrl;
 
         private static final String DEFAULT_IMAGE_URL = "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a";
 
         public static List<MinorCategoryDTO> fromMinorCategories(List<MinorCategory> categories) {
             return categories.stream()
-                    .map(category -> new MinorCategoryDTO(category.name(), DEFAULT_IMAGE_URL))
+                    .map(category -> new MinorCategoryDTO(
+                            category.name(),
+                            category.getMajorCategory().name(),
+                            DEFAULT_IMAGE_URL
+                    ))
                     .collect(Collectors.toList());
         }
     }
+
 
 }
