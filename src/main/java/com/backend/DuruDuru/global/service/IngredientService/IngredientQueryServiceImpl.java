@@ -56,6 +56,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
     public List<Ingredient> getIngredientsByMinorCategory(Member member, MinorCategory minorCategory) {
         validateLoggedInMember(member);
         List<Ingredient> ingredients = ingredientRepository.findByMemberAndMinorCategory(member, minorCategory);
+
         validateIngredientProperties(ingredients);
         return ingredients;
     }
@@ -65,6 +66,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
     public List<Ingredient> getIngredientsByMajorCategory(Member member, MajorCategory majorCategory) {
         validateLoggedInMember(member);
         List<Ingredient> ingredients = ingredientRepository.findByMemberAndMajorCategory(member, majorCategory);
+
         validateIngredientProperties(ingredients);
         return ingredients;
     }
@@ -81,6 +83,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
         } else {
             ingredients = ingredientRepository.findAllByMemberOrderByCreatedAtDesc(member);
         }
+
         validateIngredientProperties(ingredients);
         return ingredients;
     }
