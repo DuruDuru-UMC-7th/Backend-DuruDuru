@@ -12,6 +12,14 @@ public class ErrorReasonDTO {
     private final boolean isSuccess;
     private final String code;
     private final String message;
+    private final String detail;
+
+    public static class ErrorReasonDTOBuilder {
+        public ErrorReasonDTOBuilder detail(String detail) {
+            this.detail = detail;
+            return this;
+        }
+    }
 
     public boolean getIsSuccess(){return isSuccess;}
 

@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
-import com.backend.DuruDuru.global.apiPayload.exception.handler.FridgeHandler;
-import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberHandler;
 import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
