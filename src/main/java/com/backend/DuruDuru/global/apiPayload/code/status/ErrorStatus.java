@@ -59,6 +59,10 @@ public enum ErrorStatus implements BaseErrorCode {
     INGREDIENT_NO_MAJOR_CATEGORY(HttpStatus.NOT_FOUND,"INGREDIENT_4003","존재하지 않는 대분류 카테고리입니다."),
     INGREDIENT_NO_MINOR_CATEGORY(HttpStatus.NOT_FOUND,"INGREDIENT_4004","존재하지 않는 소분류 카테고리입니다."),
     INGREDIENT_MAJOR_MINOR_NOT_MATCH(HttpStatus.BAD_REQUEST,"INGREDIENT_4005","대분류와 소분류가 일치하지 않습니다."),
+    INGREDIENT_NO_STORAGE_TYPE(HttpStatus.BAD_REQUEST, "INGREDIENT_4006", "보관방식이 설정되지 않았습니다."),
+    INGREDIENT_NO_PURCHASE_DATE(HttpStatus.BAD_REQUEST, "INGREDIENT_4007", "구매날짜가 설정되지 않았습니다."),
+    INGREDIENT_NO_EXPIRY_DATE(HttpStatus.BAD_REQUEST, "INGREDIENT_4008", "소비기한이 설정되지 않았습니다."),
+    INGREDIENT_MISSING_PROPERTIES(HttpStatus.BAD_REQUEST, "INGREDIENT_4009", "필수 속성이 설정되지 않았습니다."),
 
     // 냉장고 관련 에러 5000
     FRIDGE_NOT_FOUND(HttpStatus.NOT_FOUND, "FRIDGE_5001", "해당 냉장고를 찾을 수 없습니다."),

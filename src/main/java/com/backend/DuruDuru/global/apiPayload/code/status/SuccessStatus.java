@@ -51,7 +51,7 @@ public enum SuccessStatus implements BaseCode {
     INGREDIENT_SET_CATEGORY_OK(HttpStatus.OK, "INGREDIENT_4009", "식재료 카테고리를 성공적으로 설정하였습니다."),
     INGREDIENT_SET_STORAGE_TYPE_OK(HttpStatus.OK, "INGREDIENT_4010", "식재료 보관 방법을 성공적으로 설정하였습니다."),
     INGREDIENT_SET_PURCHASE_DATE_OK(HttpStatus.OK, "INGREDIENT_4011", "식재료 구매 날짜를 성공적으로 설정하였습니다."),
-    INGREDIENT_SET_EXPIRY_DATE_OK(HttpStatus.OK, "INGREDIENT_4012", "식재료 유통기한을 성공적으로 설정하였습니다."),
+    INGREDIENT_SET_EXPIRY_DATE_OK(HttpStatus.OK, "INGREDIENT_4012", "식재료 소비기한을 성공적으로 설정하였습니다."),
     INGREDIENT_GET_MAJOR_TO_MINOR_CATEGORY_OK(HttpStatus.OK, "INGREDIENT_4013", "대분류에 따른 소분류 카테고리를 성공적으로 조회하였습니다."),
     INGREDIENT_GET_ALL_MINOR_CATEGORIES_OK(HttpStatus.OK, "INGREDIENT_4014", "모든 소분류 카테고리를 성공적으로 조회하였습니다."),
     //INGREDIENT_GET_MINOR_CATEGORY_BY_NAME_OK(HttpStatus.OK, "INGREDIENT_4015", "카테고리 이름으로 소분류 카테고리를 성공적으로 조회하였습니다."),

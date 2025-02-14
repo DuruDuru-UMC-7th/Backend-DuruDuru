@@ -74,6 +74,9 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     public Ingredient updateIngredient(Member member, Long ingredientId, IngredientRequestDTO.UpdateIngredientDTO request) {
         validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
+        if (!ingredient.getMember().equals(member)) {
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
+        }
 
         ingredient.update(request);
         return ingredient;
@@ -85,6 +88,9 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     public void deleteIngredient(Member member, Long ingredientId) {
         validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
+        if (!ingredient.getMember().equals(member)) {
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
+        }
 
         ingredientRepository.delete(ingredient);
     }
@@ -94,6 +100,10 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     public Ingredient registerPurchaseDate(Member member, Long ingredientId, IngredientRequestDTO.PurchaseDateRequestDTO request) {
         validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
+        if (!ingredient.getMember().equals(member)) {
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
+        }
+
         LocalDate purchaseDate = request.getPurchaseDate();
         ingredient.setPurchaseDate(purchaseDate);
 
@@ -111,6 +121,9 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     public Ingredient registerExpiryDate(Member member, Long ingredientId, IngredientRequestDTO.ExpiryDateRequestDTO request) {
         validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
+        if (!ingredient.getMember().equals(member)) {
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
+        }
 
         ingredient.setExpiryDate(request.getExpiryDate());
         return ingredient;
@@ -121,6 +134,9 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     public Ingredient setStorageType(Member member, Long ingredientId, IngredientRequestDTO.StorageTypeRequestDTO request) {
         validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
+        if (!ingredient.getMember().equals(member)) {
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
+        }
 
         ingredient.setStorageType(request.getStorageType());
         return ingredient;
@@ -132,6 +148,9 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
     public Ingredient registerIngredientImage(Member member, Long ingredientId, IngredientRequestDTO.IngredientImageRequestDTO request) {
         validateLoggedInMember(member);
         Ingredient ingredient = findIngredientById(ingredientId);
+        if (!ingredient.getMember().equals(member)) {
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
+        }
 
         if (ingredient.getIngredientImg() != null) {
             s3Manager.deleteFile(ingredient.getIngredientImg().getIngredientImgUrl());
@@ -180,6 +199,9 @@ public class IngredientCommandServiceImpl implements IngredientCommandService {
             throw new IngredientHandler(ErrorStatus.INGREDIENT_MAJOR_MINOR_NOT_MATCH);
         }
         Ingredient ingredient = findIngredientById(ingredientId);
+        if (!ingredient.getMember().equals(member)) {
+            throw new IngredientHandler(ErrorStatus.INGREDIENT_ACCESS_DENIED);
+        }
 
         LocalDate purchaseDate = (ingredient.getPurchaseDate() != null) ? ingredient.getPurchaseDate() : LocalDate.now();
         int shelfLifeDays = minorCategory.getShelfLifeDays();

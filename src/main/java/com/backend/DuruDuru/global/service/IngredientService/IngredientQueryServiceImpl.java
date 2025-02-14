@@ -5,8 +5,6 @@ import java.util.stream.Collectors;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
-import com.backend.DuruDuru.global.apiPayload.exception.handler.FridgeHandler;
-import com.backend.DuruDuru.global.apiPayload.exception.handler.IngredientHandler;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberHandler;
 import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
@@ -56,6 +54,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
     public List<Ingredient> getIngredientsByMinorCategory(Member member, MinorCategory minorCategory) {
         validateLoggedInMember(member);
         List<Ingredient> ingredients = ingredientRepository.findByMemberAndMinorCategory(member, minorCategory);
+
         validateIngredientProperties(ingredients);
         return ingredients;
     }
@@ -65,6 +64,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
     public List<Ingredient> getIngredientsByMajorCategory(Member member, MajorCategory majorCategory) {
         validateLoggedInMember(member);
         List<Ingredient> ingredients = ingredientRepository.findByMemberAndMajorCategory(member, majorCategory);
+
         validateIngredientProperties(ingredients);
         return ingredients;
     }
@@ -81,6 +81,7 @@ public class IngredientQueryServiceImpl implements IngredientQueryService {
         } else {
             ingredients = ingredientRepository.findAllByMemberOrderByCreatedAtDesc(member);
         }
+
         validateIngredientProperties(ingredients);
         return ingredients;
     }
