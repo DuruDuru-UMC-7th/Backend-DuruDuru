@@ -26,10 +26,17 @@ public class MemberController {
     private final MemberCommandService memberService;
 
     // 카카오 로그인 API
-    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원가입을 진행하는 API 입니다.")
-    @GetMapping("/login/kakao")
-    public ApiResponse<AuthResponseDTO.OAuthResponse> kakaoLogin(@RequestParam("code") String code) {
-        return ApiResponse.onSuccess(SuccessStatus.USER_KAKAO_LOGIN_OK, memberService.kakaoLogin(code));
+//    @Operation(summary = "카카오 로그인 API", description = "카카오 로그인 및 회원가입을 진행하는 API 입니다.")
+//    @GetMapping("/login/kakao")
+//    public ApiResponse<AuthResponseDTO.OAuthResponse> kakaoLogin(@RequestParam("code") String code) {
+//        return ApiResponse.onSuccess(SuccessStatus.USER_KAKAO_LOGIN_OK, memberService.kakaoLogin(code));
+//    }
+
+    // iOS용 카카오 로그인 API
+    @Operation(summary = "iOS용 카카오 로그인 API", description = "iOS 카카오 SDK에서 직접 받은 액세스 토큰을 이용해 로그인하는 API입니다.")
+    @PostMapping("/login/kakao")
+    public ApiResponse<AuthResponseDTO.OAuthResponse> kakaoLoginWithToken(@RequestBody AuthRequestDTO.KakaoLoginRequest request) {
+        return ApiResponse.onSuccess(SuccessStatus.USER_KAKAO_LOGIN_OK, memberService.kakaoLoginWithToken(request.getAccessToken()));
     }
 
     // 네이버 로그인 API
