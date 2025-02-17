@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.service.TradeService;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.AuthException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.TownHandler;
 import com.backend.DuruDuru.global.apiPayload.exception.handler.TradeHandler;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.Trade;
@@ -32,6 +33,12 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     @Transactional
     public List<Trade> getNearTradesByType(Member member, TradeType tradeType) {
         validateLoggedInMember(member);
+
+        // Member에 Town 정보가 없을 경우
+        if(member.getTown() == null) {
+            throw new TownHandler(ErrorStatus.TOWN_NOT_REGISTERED);
+        }
+
         return tradeRepository.findNearbyTrades(member.getTown().getLatitude(), member.getTown().getLongitude(), tradeType.name());
     }
 
@@ -56,6 +63,12 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     @Transactional
     public List<Trade> getRecentTrades(Member member) {
         validateLoggedInMember(member);
+
+        // Member에 Town 정보가 없을 경우
+        if(member.getTown() == null) {
+            throw new TownHandler(ErrorStatus.TOWN_NOT_REGISTERED);
+        }
+
         return tradeRepository.findRecentTrades(member.getTown().getLatitude(), member.getTown().getLongitude());
     }
 
@@ -64,6 +77,12 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     @Transactional
     public List<Trade> getNearExpiryTrade(Member member) {
         validateLoggedInMember(member);
+
+        // Member에 Town 정보가 없을 경우
+        if(member.getTown() == null) {
+            throw new TownHandler(ErrorStatus.TOWN_NOT_REGISTERED);
+        }
+
         return tradeRepository.findNearExpiryTrades(member.getTown().getLatitude(), member.getTown().getLongitude());
     }
 
@@ -72,6 +91,12 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     @Transactional
     public List<Trade> getFarExpiryTrade(Member member) {
         validateLoggedInMember(member);
+
+        // Member에 Town 정보가 없을 경우
+        if(member.getTown() == null) {
+            throw new TownHandler(ErrorStatus.TOWN_NOT_REGISTERED);
+        }
+
         return tradeRepository.findFarExpiryTrades(member.getTown().getLatitude(), member.getTown().getLongitude());
     }
 
@@ -83,6 +108,7 @@ public class TradeQueryServiceImpl implements TradeQueryService {
         return tradeRepository.findOtherTrades(member.getTown().getLatitude(), member.getTown().getLongitude(), member.getMemberId(), tradeId, 4);
     }
 
+    // 내가 찜한 품앗이 리스트 조회
     @Override
     @Transactional
     public List<Trade> getAllLikeTradesByMember(Member member) {
