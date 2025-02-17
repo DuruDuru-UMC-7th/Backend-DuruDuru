@@ -27,13 +27,12 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
     private final TradeRepository tradeRepository;
     private final TradeImageRepository tradeImageRepository;
-    private final MemberRepository memberRepository;
     private final IngredientRepository ingredientRepository;
     private final LikeTradeRepository likeTradeRepository;
     private final UuidRepository uuidRepository;
     private final AmazonS3Manager s3Manager;
 
-    // Trade 엔티티를 저장하는 메서드
+    // 품앗이 게시글 등록
     @Override
     @Transactional
     public Trade createTrade(Member member, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request) {
@@ -198,6 +197,7 @@ public class TradeCommandServiceImpl implements TradeCommandService {
         return likeTradeRepository.save(likeTrade);
     }
 
+    // 찜하기 취소
     @Override
     @Transactional
     public void deleteLike(Member member, Long tradeId) {
@@ -212,6 +212,14 @@ public class TradeCommandServiceImpl implements TradeCommandService {
 
         trade.decreaseLikeCount();
         likeTradeRepository.delete(likeTrade);
+    }
+
+    // 찜하기 여부 조회
+    @Override
+    @Transactional
+    public boolean isLiked(Member member, Long tradeId) {
+        validateLoggedInMember(member);
+        return likeTradeRepository.existsByMemberAndTrade(member, findTradeById(tradeId));
     }
 
     // 로그인 여부 확인

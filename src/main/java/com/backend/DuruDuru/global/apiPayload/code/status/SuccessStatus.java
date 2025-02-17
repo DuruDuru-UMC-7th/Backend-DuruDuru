@@ -37,6 +37,7 @@ public enum SuccessStatus implements BaseCode {
     TRADE_LIKE_OK(HttpStatus.OK, "TRADE_3006", "찜하기를 설정하였습니다."),
     TRADE_LIKE_DELETE_OK(HttpStatus.OK, "TRADE_3007", "찜하기를 취소하였습니다"),
     TRADE_LIKE_COUNT_OK(HttpStatus.OK, "TRADE_3008", "찜하기 개수를 성공적으로 조회하였습니다."),
+    TRADE_LIKE_CHECK_OK(HttpStatus.OK, "TRADE_3009", "찜하기 여부를 성공적으로 조회하였습니다."),
 
     // 식재료 관련 응답
     INGREDIENT_OK(HttpStatus.OK, "INGREDIENT_4000", "성공입니다."),
