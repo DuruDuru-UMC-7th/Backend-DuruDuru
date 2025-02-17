@@ -43,6 +43,15 @@ public class MemberCommandServiceImpl implements MemberCommandService{
                 .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
     }
 
+    private void createFridgeForMember(Member member) {
+        Fridge fridge = Fridge.builder()
+                .ingredientCount(0)
+                .build();
+        fridge.setMember(member);
+        member.setFridge(fridge);
+        fridgeRepository.save(fridge);
+    }
+
     @Override
     @Transactional
     public AuthResponseDTO.OAuthResponse kakaoLoginWithToken(String accessToken) {
@@ -68,6 +77,9 @@ public class MemberCommandServiceImpl implements MemberCommandService{
             }
         } else {
             Member member = memberRepository.save(AuthConverter.toMember(kakaoProfile, makeNickname()));
+
+            createFridgeForMember(member);  // 냉장고 생성
+
             String newAccessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
             String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
             member.updateToken(newAccessToken, refreshToken);
@@ -155,6 +167,9 @@ public class MemberCommandServiceImpl implements MemberCommandService{
             }
         } else {
             Member member = memberRepository.save(AuthConverter.toMember(naverProfile));
+
+            createFridgeForMember(member);  // 냉장고 생성
+
             String accessToken = jwtTokenProvider.createAccessToken(member.getMemberId());
             String refreshToken = jwtTokenProvider.createRefreshToken(member.getMemberId());
             member.updateToken(accessToken, refreshToken);
@@ -179,14 +194,7 @@ public class MemberCommandServiceImpl implements MemberCommandService{
                 .build();
         memberRepository.save(member);
 
-        // 회원 가입시 자동 개인 냉장고 생성
-        Fridge fridge = Fridge.builder()
-                .ingredientCount(0)
-                .build();
-        fridge.setMember(member);
-        member.setFridge(fridge);
-        fridgeRepository.save(fridge);
-
+        createFridgeForMember(member);  // 냉장고 생성
 
     }
 
