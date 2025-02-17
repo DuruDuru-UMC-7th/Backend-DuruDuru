@@ -9,7 +9,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.util.List;
 
 public interface TradeCommandService {
-    // Trade 엔티티를 저장하는 메서드
+    // 품앗이 게시글 등록
     Trade createTrade(Member member, Long ingredientId, TradeRequestDTO.CreateTradeRequestDTO request);
     // 품앗이 게시글 삭제
     void deleteTrade(Member member, Long tradeId);
@@ -19,4 +19,6 @@ public interface TradeCommandService {
     LikeTrade createLike(Member member, Long tradeId);
     // 찜하기 취소
     void deleteLike(Member member, Long tradeId);
+    // 찜하기 여부 확인
+    boolean isLiked(Member member, Long tradeId);
 }

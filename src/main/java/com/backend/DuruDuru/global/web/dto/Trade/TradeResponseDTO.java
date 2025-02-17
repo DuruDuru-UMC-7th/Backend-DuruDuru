@@ -30,6 +30,7 @@ public class TradeResponseDTO {
         String eupmyeondong;
         Status status;
         TradeType tradeType;
+        boolean liked;
         Long likeCount;
         LocalDateTime createdAt;
         LocalDateTime updatedAt;
@@ -74,6 +75,16 @@ public class TradeResponseDTO {
         Long memberId;
         Long tradeId;
         Long likeCount;
+    }
+
+    @Getter
+    @Builder
+    @AllArgsConstructor
+    @NoArgsConstructor
+    public static class IsLikeResultDTO {
+        Long memberId;
+        Long tradeId;
+        boolean liked;
     }
 
     @Getter

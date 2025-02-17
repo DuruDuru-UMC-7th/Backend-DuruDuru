@@ -80,7 +80,6 @@ public class TradeQueryServiceImpl implements TradeQueryService {
     @Transactional
     public List<Trade> getOtherTrade(Member member, Long tradeId) {
         validateLoggedInMember(member);
-        Trade trade = findTradeById(tradeId);
         return tradeRepository.findOtherTrades(member.getTown().getLatitude(), member.getTown().getLongitude(), member.getMemberId(), tradeId, 4);
     }
 

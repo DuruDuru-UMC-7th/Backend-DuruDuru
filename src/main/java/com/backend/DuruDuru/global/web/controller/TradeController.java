@@ -46,7 +46,7 @@ public class TradeController {
             @ModelAttribute TradeRequestDTO.CreateTradeRequestDTO request
     ){
         Trade trade = tradeCommandService.createTrade(member, ingredientId, request);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_CREATE_OK, TradeConverter.toTradeDetailDTO(trade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_CREATE_OK, TradeConverter.toTradeDetailDTO(trade, false));
     }
 
     // 품앗이 상세 조회
@@ -57,7 +57,7 @@ public class TradeController {
             @PathVariable("trade_id") Long tradeId
     ){
         Trade trade = tradeQueryService.getTrade(member, tradeId);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_DETAIL_OK, TradeConverter.toTradeDetailDTO(trade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_GET_DETAIL_OK, TradeConverter.toTradeDetailDTO(trade, tradeCommandService.isLiked(member, tradeId)));
     }
 
     // 품앗이 게시글 삭제
@@ -86,7 +86,7 @@ public class TradeController {
     ){
         TradeRequestDTO.UpdateTradeRequestDTO request = new TradeRequestDTO.UpdateTradeRequestDTO(ingredientCount, body, tradeType, status, deleteImgIds, addImgs);
         Trade trade = tradeCommandService.updateTrade(member, tradeId, request);
-        return ApiResponse.onSuccess(SuccessStatus.TRADE_UPDATE_OK, TradeConverter.toTradeDetailDTO(trade));
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_UPDATE_OK, TradeConverter.toTradeDetailDTO(trade, tradeCommandService.isLiked(member, tradeId)));
     }
 
     // 나의 활성화 품앗이 리스트 조회
@@ -181,6 +181,17 @@ public class TradeController {
     ) {
         LikeTrade likeTrade = tradeCommandService.createLike(member, tradeId);
         return ApiResponse.onSuccess(SuccessStatus.TRADE_LIKE_OK, TradeConverter.toLikeTradeResultDTO(likeTrade));
+    }
+
+    // 품앗이 찜하기 여부 조회
+    @GetMapping("/like/{trade_id}")
+    @Operation(summary = "품앗이 찜하기 여부 조회 API", description = "품앗이 찜하기 여부를 조회하는 API 입니다.")
+    public ApiResponse<TradeResponseDTO.IsLikeResultDTO> existLike(
+            @Parameter(name = "user", hidden = true) @AuthUser Member member,
+            @PathVariable("trade_id") Long tradeId
+    ) {
+        boolean isLiked = tradeCommandService.isLiked(member, tradeId);
+        return ApiResponse.onSuccess(SuccessStatus.TRADE_LIKE_CHECK_OK, TradeConverter.toIsLikedResultDTO(member, tradeId, isLiked));
     }
 
     // 품앗이 찜하기 취소

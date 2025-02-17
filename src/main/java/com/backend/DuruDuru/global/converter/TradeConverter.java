@@ -7,7 +7,7 @@ import com.backend.DuruDuru.global.domain.entity.Trade;
 import com.backend.DuruDuru.global.domain.enums.Status;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Trade.TradeResponseDTO;
-import org.springframework.data.domain.Page;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +15,7 @@ import java.util.stream.Collectors;
 
 public class TradeConverter {
 
-    public static TradeResponseDTO.TradeDetailResultDTO toTradeDetailDTO(Trade trade) {
+    public static TradeResponseDTO.TradeDetailResultDTO toTradeDetailDTO(Trade trade, boolean isLiked) {
         return TradeResponseDTO.TradeDetailResultDTO.builder()
                 .tradeId(trade.getTradeId())
                 .memberId(trade.getMember().getMemberId())
@@ -28,6 +28,7 @@ public class TradeConverter {
                 .eupmyeondong(trade.getEupmyeondong())
                 .status(trade.getStatus())
                 .tradeType(trade.getTradeType())
+                .liked(isLiked)
                 .likeCount(trade.getLikeCount())
                 .tradeImgs(trade.getTradeImgs())
                 .createdAt(trade.getCreatedAt())
@@ -101,6 +102,14 @@ public class TradeConverter {
         return TradeResponseDTO.LikeCountResultDTO.builder()
                 .tradeId(trade.getTradeId())
                 .likeCount(trade.getLikeCount())
+                .build();
+    }
+
+    public static TradeResponseDTO.IsLikeResultDTO toIsLikedResultDTO(Member member, Long tradeId, boolean isLiked) {
+        return TradeResponseDTO.IsLikeResultDTO.builder()
+                .memberId(member.getMemberId())
+                .tradeId(tradeId)
+                .liked(isLiked)
                 .build();
     }
 }
