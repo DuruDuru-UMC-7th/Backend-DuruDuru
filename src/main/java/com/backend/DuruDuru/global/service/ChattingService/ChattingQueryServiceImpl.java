@@ -22,7 +22,6 @@ import java.util.List;
 @Transactional
 public class ChattingQueryServiceImpl implements ChattingQueryService {
 
-    private final ChattingRepository chattingRoomRepository;
     private final TradeRepository tradeRepository;
     private final ChattingConverter chattingConverter;
     private final ChattingRepository chattingRepository;
@@ -32,7 +31,7 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
     // 회원이 참여한 채팅방 목록 조회
     @Override
     public ChattingResponseDTO.ChattingRoomListDTO getChattingRoomList(Long memberId) {
-        List<ChattingRoom> chattingRooms = chattingRoomRepository.findChattingRoomsByMemberId(memberId);
+        List<ChattingRoom> chattingRooms = chattingRepository.findChattingRoomsByMemberId(memberId);
         return ChattingConverter.toChattingRoomListDTO(chattingRooms, memberId);
     }
 
@@ -68,17 +67,18 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
                 .chattings(new ArrayList<>())
                 .build();
 
+
 //  생성한 유저를 채팅방과 연결
+        Member member = memberRepository.findById(myId)
+                .orElseThrow(() -> new RuntimeException("Member not found"));
         Chatting chatting = Chatting.builder()
                 .chattingRoom(chattingRoom)
                 .member(memberRepository.findById(myId).orElseThrow(() -> new RuntimeException("Member not found")))
                 .build();
 
         chattingRoom.getChattings().add(chatting);
-        chattingRoomRepository.save(chattingRoom);
-
-        ChattingRoom savedRoom = chattingRoomRepository.save(chattingRoom);
-
+        ChattingRoom savedRoom = chattingRepository.save(chattingRoom);
+        member.getChattings().add(chatting);
         return chattingConverter.toResponseDTO(savedRoom);
     }
 
@@ -86,7 +86,7 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
     //채팅방 정보 전체 조회
     @Override
     public ChattingResponseDTO.ChattingRoomFullResponseDTO getFullChattingRoomDetails(Long chatRoomId, Long currentMemberId) {
-        ChattingRoom chattingRoom = chattingRoomRepository.findById(chatRoomId)
+        ChattingRoom chattingRoom = chattingRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
         List<ChattingRequestDTO.ChatMessageDTO> messages = chattingRepository.findByChatRoomIdOrderBySentTimeAsc(chatRoomId);
         return ChattingConverter.toFullResponseDTO(chattingRoom, messages);
@@ -94,7 +94,7 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
 
     @Override
     public ChattingRequestDTO.ChatMessageDTO saveMessage(Long chatRoomId, ChattingRequestDTO.ChatMessageDTO request) {
-        ChattingRoom chattingRoom = chattingRoomRepository.findById(chatRoomId)
+        ChattingRoom chattingRoom = chattingRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
 
         Member member = memberRepository.findByNickName(request.getUsername())
@@ -114,9 +114,9 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
 
     @Override
     public void deleteChattingRoom(Long chattingRoomId) {
-        ChattingRoom chattingRoom = chattingRoomRepository.findById(chattingRoomId)
+        ChattingRoom chattingRoom = chattingRepository.findById(chattingRoomId)
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
-        chattingRoomRepository.delete(chattingRoom);
+        chattingRepository.delete(chattingRoom);
     }
 
 }
