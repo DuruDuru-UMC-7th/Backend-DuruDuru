@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -64,7 +65,17 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
                 .tradeTitle(tradeTitle)
                 .otherMemberImgUrl(otherMemberImgUrl)
                 .otherLocation(otherLocation)
+                .chattings(new ArrayList<>())
                 .build();
+
+//  생성한 유저를 채팅방과 연결
+        Chatting chatting = Chatting.builder()
+                .chattingRoom(chattingRoom)
+                .member(memberRepository.findById(myId).orElseThrow(() -> new RuntimeException("Member not found")))
+                .build();
+
+        chattingRoom.getChattings().add(chatting);
+        chattingRoomRepository.save(chattingRoom);
 
         ChattingRoom savedRoom = chattingRoomRepository.save(chattingRoom);
 
