@@ -96,6 +96,7 @@ public class RecipeController {
             @RequestParam(defaultValue = "10") int size
     ){
         RecipeResponseDTO.RecipePageResponse recipes = recipeService.searchRecipes(ingredients, page, size);
+        System.out.println("ingre: " + ingredients);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_RECOMMEND_OK, recipes);
     }
 

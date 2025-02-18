@@ -91,7 +91,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         int totalPages = (int) Math.ceil((double) totalElements / size);
 
         String url = buildApiUrl(ingredients, startIdx, endIdx);
-
+        System.out.println("url: " + url);
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
 
         List<RecipeResponseDTO.RecipeResponse> recipes = apiResponse.getRecipes().stream()
@@ -229,10 +229,15 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     // 페이징용 URL 생성
     private String buildApiUrl(String ingredients, int startIdx, int endIdx) {
-        return UriComponentsBuilder.fromHttpUrl("http://openapi.foodsafetykorea.go.kr/api")
+
+        String quotedName = "\"" + ingredients + "\"";
+        String baseUrl = "http://openapi.foodsafetykorea.go.kr/api/" + keyId + "/COOKRCP01/json/" + startIdx + "/" + endIdx;
+        return baseUrl + "/RCP_PARTS_DTLS=" + quotedName;
+
+        /*return UriComponentsBuilder.fromHttpUrl("http://openapi.foodsafetykorea.go.kr/api")
                 .pathSegment(keyId, "COOKRCP01", "json", String.valueOf(startIdx), String.valueOf(endIdx))
                 .queryParam("RCP_PARTS_DTLS", ingredients)
-                .toUriString();
+                .toUriString();*/
     }
 
     private String cleanIngredients(String ingredients) {
