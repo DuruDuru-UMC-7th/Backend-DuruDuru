@@ -7,6 +7,6 @@ public interface ChattingQueryService {
     ChattingResponseDTO.ChattingRoomListDTO getChattingRoomList(Long memberId);
     ChattingResponseDTO.ChattingRoomMakeResponseDTO createChattingRoom(Long myId, ChattingRequestDTO.ChattingRoomMakeRequestDTO requestDTO);
     ChattingResponseDTO.ChattingRoomFullResponseDTO getFullChattingRoomDetails(Long chatRoomId, Long currentMemberId);
-    ChattingRequestDTO.ChatMessageDTO saveMessage(Long chatRoomId, ChattingRequestDTO.ChatMessageDTO request);
+    ChattingResponseDTO.ChatMessageResponseDTO saveMessage(Long chatRoomId, ChattingRequestDTO.ChatMessageResquestDTO request);
     void deleteChattingRoom(Long chattingRoomId);
 }

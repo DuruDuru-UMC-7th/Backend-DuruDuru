@@ -51,7 +51,7 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
             otherLocation = trade.getMember().getTown().getEupmyeondong();
         }
 
-        // 채팅방 이름
+        // 채팅방 이름 설정
         String roomName = trade.getMember().getNickName() + "님과의 채팅";
 
         // ChattingRoom 엔티티 생성
@@ -67,44 +67,53 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
                 .chattings(new ArrayList<>())
                 .build();
 
-
-//  생성한 유저를 채팅방과 연결
+        // 채팅방 생성한 회원을 채팅방과 연결
         Member member = memberRepository.findById(myId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
         Chatting chatting = Chatting.builder()
                 .chattingRoom(chattingRoom)
-                .member(memberRepository.findById(myId).orElseThrow(() -> new RuntimeException("Member not found")))
+                .member(member)
                 .build();
 
         chattingRoom.getChattings().add(chatting);
         ChattingRoom savedRoom = chattingRepository.save(chattingRoom);
         member.getChattings().add(chatting);
+
         return chattingConverter.toResponseDTO(savedRoom);
     }
 
-
-    //채팅방 정보 전체 조회
+    // 채팅방 전체 상세 조회
     @Override
     public ChattingResponseDTO.ChattingRoomFullResponseDTO getFullChattingRoomDetails(Long chatRoomId, Long currentMemberId) {
         ChattingRoom chattingRoom = chattingRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
-        List<ChattingRequestDTO.ChatMessageDTO> messages = chattingRepository.findByChatRoomIdOrderBySentTimeAsc(chatRoomId);
+        // Repository에서 DTO로 반환하도록 되어있다면 타입을 ChattingResponseDTO.ChatMessageResponseDTO로 사용
+        List<ChattingResponseDTO.ChatMessageResponseDTO> messages =
+                chattingRepository.findByChatRoomIdOrderBySentTimeAsc(chatRoomId);
         return ChattingConverter.toFullResponseDTO(chattingRoom, messages);
     }
 
+    // 메시지 저장 (클라이언트는 요청 DTO로 username과 content만 전송)
     @Override
-    public ChattingRequestDTO.ChatMessageDTO saveMessage(Long chatRoomId, ChattingRequestDTO.ChatMessageDTO request) {
+    public ChattingResponseDTO.ChatMessageResponseDTO saveMessage(Long chatRoomId, ChattingRequestDTO.ChatMessageResquestDTO request) {
         ChattingRoom chattingRoom = chattingRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
 
         Member member = memberRepository.findByNickName(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
+        // 해당 채팅방에서 이 회원의 Chatting 엔티티를 조회 (양방향 연관관계 설정이 되어 있다면)
+        Chatting chatting = chattingRoom.getChattings().stream()
+                .filter(c -> c.getMember().getMemberId().equals(member.getMemberId()))
+                .findFirst()
+                .orElseThrow(() -> new RuntimeException("Chatting entity not found for member"));
+
         Message message = Message.builder()
                 .content(request.getContent())
-                .sentTime(LocalDateTime.now())
+                .sentTime(LocalDateTime.now()) // 서버에서 전송 시각 설정
                 .isRead(false)
                 .member(member)
+                .chatting(chatting)
                 .build();
 
         Message savedMessage = chatMessageRepository.save(message);
@@ -118,5 +127,4 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
         chattingRepository.delete(chattingRoom);
     }
-
 }
