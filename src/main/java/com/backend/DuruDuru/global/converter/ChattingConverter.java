@@ -103,7 +103,7 @@ public class ChattingConverter {
 
 
     //채팅 메시지 전체 조회
-    public static ChattingResponseDTO.ChattingRoomFullResponseDTO toFullResponseDTO(ChattingRoom chattingRoom, List<ChattingRequestDTO.ChatMessageDTO> messages) {
+    public static ChattingResponseDTO.ChattingRoomFullResponseDTO toFullResponseDTO(ChattingRoom chattingRoom, List<ChattingResponseDTO.ChatMessageResponseDTO> messages) {
         Trade trade = chattingRoom.getTrade();
         Member other = trade.getMember(); // Trade에 저장된 상대방
 
@@ -120,8 +120,8 @@ public class ChattingConverter {
         LocalDateTime expirationDate = null;
 
         // 채팅 메시지 목록 변환
-        List<ChattingRequestDTO.ChatMessageDTO> chatMessages = messages.stream()
-                .map(message -> ChattingRequestDTO.ChatMessageDTO.builder()
+        List<ChattingResponseDTO.ChatMessageResponseDTO> chatMessages = messages.stream()
+                .map(message -> ChattingResponseDTO.ChatMessageResponseDTO.builder()
                         .username(message.getUsername()) // 수정된 부분
                         .content(message.getContent())
                         .sentTime(message.getSentTime())
@@ -144,8 +144,8 @@ public class ChattingConverter {
                 .build();
     }
 
-    public ChattingRequestDTO.ChatMessageDTO toResponse(Message message) {
-        return ChattingRequestDTO.ChatMessageDTO.builder()
+    public ChattingResponseDTO.ChatMessageResponseDTO toResponse(Message message) {
+        return ChattingResponseDTO.ChatMessageResponseDTO.builder()
                 .username(message.getMember().getNickName())
                 .content(message.getContent())
                 .sentTime(message.getSentTime())

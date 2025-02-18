@@ -2,6 +2,7 @@ package com.backend.DuruDuru.global.repository;
 
 import com.backend.DuruDuru.global.domain.entity.ChattingRoom;
 import com.backend.DuruDuru.global.web.dto.Chatting.ChattingRequestDTO;
+import com.backend.DuruDuru.global.web.dto.Chatting.ChattingResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -13,6 +14,6 @@ public interface ChattingRepository extends JpaRepository<ChattingRoom, Long> {
     List<ChattingRoom> findChattingRoomsByMemberId(@Param("memberId") Long memberId);
 
     @Query("select m from Message m where m.chatting.chattingRoom.chattingRoomId = :chatRoomId order by m.sentTime asc")
-    List<ChattingRequestDTO.ChatMessageDTO> findByChatRoomIdOrderBySentTimeAsc(@Param("chatRoomId") Long chatRoomId);
+    List<ChattingResponseDTO.ChatMessageResponseDTO> findByChatRoomIdOrderBySentTimeAsc(@Param("chatRoomId") Long chatRoomId);
 
 }

@@ -50,7 +50,7 @@ public class ChattingResponseDTO {
         private String tradeTitle;
         private Long ingredientCount;
         private LocalDateTime expirationDate;
-        private List<ChattingRequestDTO.ChatMessageDTO> chatMessages;
+        private List<ChattingResponseDTO.ChatMessageResponseDTO> chatMessages;
     }
 
 
@@ -71,7 +71,18 @@ public class ChattingResponseDTO {
         private String tradeStatus;
         private Long ingredientCount;
         private LocalDateTime expirationDate;
-        private List<ChattingRequestDTO.ChatMessageDTO> chatMessages;
+        private List<ChatMessageResponseDTO> chatMessages;
+    }
+
+    @Getter
+    @Setter
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ChatMessageResponseDTO {
+        private String username;
+        private String content;
+        private LocalDateTime sentTime;
     }
 
 }
