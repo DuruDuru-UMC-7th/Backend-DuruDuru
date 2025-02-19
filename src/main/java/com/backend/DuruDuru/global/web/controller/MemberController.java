@@ -39,6 +39,14 @@ public class MemberController {
         return ApiResponse.onSuccess(SuccessStatus.USER_KAKAO_LOGIN_OK, memberService.kakaoLoginWithToken(request.getAccessToken()));
     }
 
+    // 카카오 로그아웃 API
+    @Operation(summary = "카카오 로그아웃 API", description = "카카오 계정 로그아웃을 하는 API입니다.")
+    @PostMapping("/logout/kakao")
+    public ApiResponse<?> kakaoLogout(@RequestHeader("Authorization") String accessToken) {
+        memberService.kakaoLogout(accessToken.replace("Bearer ", ""));
+        return ApiResponse.onSuccess(SuccessStatus.USER_KAKAO_LOGOUT_OK, null);
+    }
+
     // 네이버 로그인 API
     @GetMapping("/login/naver")
     @Operation(summary = "네이버 로그인 API", description = "네이버 로그인 및 회원가입을 진행하는 API 입니다.")
