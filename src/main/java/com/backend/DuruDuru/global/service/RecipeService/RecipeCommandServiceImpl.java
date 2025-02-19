@@ -20,10 +20,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,11 +29,12 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     private final MemberRecipeRepository memberRecipeRepository;
     private final RestTemplate restTemplate;
-    private final IngredientRepository ingredientRepository;
     private final FridgeRepository fridgeRepository;
 
     @Value("${api.foodsafety.keyId}")
     private String keyId;
+    private final String API_URL = "http://openapi.foodsafetykorea.go.kr/api/{apiKey}/COOKRCP01/json";
+
 
     // 특정 레시피 조회
     @Override
@@ -85,11 +83,47 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
       }
     }
 
+    @Override
+    public RecipeResponseDTO.RecipePageResponse searchRecipes(String query, int page, int size) {
+        int startIdx = (page - 1) * size + 1;
+        int endIdx = page * size;
 
+        String url = API_URL.replace("{apiKey}", keyId) + "/" + startIdx + "/" + endIdx + "/RCP_NM=" + query;
+        RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
+
+        System.out.println("url: " + url);
+        if (apiResponse == null || apiResponse.getRecipes() == null) {
+            return RecipeResponseDTO.RecipePageResponse.builder()
+                    .page(page)
+                    .size(size)
+                    .totalPages(0)
+                    .totalElements(0)
+                    .recipes(Collections.emptyList())
+                    .build();
+        }
+
+        List<RecipeResponseDTO.RecipeResponse> recipes = apiResponse.getRecipes().stream()
+                .map(recipe -> RecipeResponseDTO.RecipeResponse.builder()
+                        .recipeName(recipe.getRcpNm())
+                        .imageUrl(recipe.getAttFileNoMain())
+                        .build())
+                .collect(Collectors.toList());
+
+        int totalElements = recipes.size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+
+        return RecipeResponseDTO.RecipePageResponse.builder()
+                .page(page)
+                .size(size)
+                .totalPages(totalPages)
+                .totalElements(totalElements)
+                .recipes(recipes)
+                .build();
+    }
     // 식재료 기반 레시피 추천
     @Override
     @Transactional
-    public RecipeResponseDTO.RecipePageResponse searchRecipes(String ingredients, int page, int size) {
+    public RecipeResponseDTO.RecipePageResponse searchRecipesByIngredient(String ingredients, int page, int size) {
         int startIdx = (page - 1) * size + 1;
         int endIdx = page * size;
 
@@ -116,6 +150,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .recipes(recipes)
                 .build();
     }
+
 
     // 즐겨찾기한 레시피 목록
     @Override
@@ -238,6 +273,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .recipes(pagedRecipes)
                 .build();
     }
+
 
     private List<String> extractIngredients(String rawIngredients) {
         return Arrays.stream(rawIngredients.split("[,\n]"))  // 쉼표(,) 또는 개행(\n)으로 분리
