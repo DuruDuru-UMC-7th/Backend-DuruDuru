@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.Parameters;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -33,6 +34,20 @@ public class RecipeController {
     ){
         RecipeResponseDTO.RecipeDetailResponse response = recipeService.getRecipeDetailByName(recipeName);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FETCH_OK, response);
+    }
+
+    @GetMapping("/search")
+    @Operation(summary = "레시피 검색 API", description = "레시피 이름을 기반으로 검색하는 API입니다.")
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호, 기본값은 1입니다"),
+            @Parameter(name = "size", description = "페이지 당 항목 수, 기본값은 10입니다.")
+    })
+    public ApiResponse<RecipeResponseDTO.RecipePageResponse> searchRecipes(
+            @RequestParam String query,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        RecipeResponseDTO.RecipePageResponse response = recipeService.searchRecipes(query, page, size);
+        return ApiResponse.onSuccess(SuccessStatus.RECIPE_SEARCH_OK, response);
     }
 
     // 레시피 즐겨찾기 설정
@@ -95,7 +110,7 @@ public class RecipeController {
             @RequestParam(defaultValue = "1") int page,
             @RequestParam(defaultValue = "10") int size
     ){
-        RecipeResponseDTO.RecipePageResponse recipes = recipeService.searchRecipes(ingredients, page, size);
+        RecipeResponseDTO.RecipePageResponse recipes = recipeService.searchRecipesByIngredient(ingredients, page, size);
         System.out.println("ingre: " + ingredients);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_RECOMMEND_OK, recipes);
     }

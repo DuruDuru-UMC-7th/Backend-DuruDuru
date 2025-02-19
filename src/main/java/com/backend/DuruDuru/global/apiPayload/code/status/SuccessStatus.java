@@ -72,6 +72,7 @@ public enum SuccessStatus implements BaseCode {
 
     // 레시피 관련 응답
     RECIPE_FETCH_OK(HttpStatus.OK, "RECIPE_6000", "해당 레시피 조회 성공"),
+    RECIPE_SEARCH_OK(HttpStatus.OK, "RECIPE_6006", "레시피 검색 성공"),
     RECIPE_FAVORITE_SET_OK(HttpStatus.OK, "RECIPE_6001", "레시피 즐겨찾기 설정 성공"),
     RECIPE_FAVORITE_FETCH_OK(HttpStatus.OK, "RECIPE_6002", "즐겨찾기한 레시피 목록 조회 성공"),
     RECIPE_FAVORITE_SORT_OK(HttpStatus.OK, "RECIPE_6003", "즐겨찾기 수로 정렬된 레시피 목록 조회 성공"),
