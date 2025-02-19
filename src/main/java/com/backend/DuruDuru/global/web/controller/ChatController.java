@@ -30,7 +30,7 @@ public class ChatController {
     private final ChattingQueryServiceImpl chattingQueryServiceImpl;
 
     // 채팅방 만들기
-    @PostMapping
+    @PostMapping("/")
     @Operation(summary = "채팅방 만들기 API", description = "채팅방을 만드는 API")
     public ApiResponse<ChattingResponseDTO.ChattingRoomMakeResponseDTO> createChattingRoom(
             @Parameter(hidden = true) @AuthUser Member member, // Swagger 문서에서 숨김
