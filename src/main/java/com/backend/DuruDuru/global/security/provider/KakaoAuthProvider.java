@@ -92,4 +92,26 @@ public class KakaoAuthProvider {
         System.out.println(kakaoProfile.getKakaoAccount().getEmail());
         return kakaoProfile;
     }
+
+    public void kakaoLogout(String accessToken) {
+        RestTemplate restTemplate = new RestTemplate();
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Content-type", "application/x-www-form-urlencoded;charset=utf-8");
+        headers.add("Authorization" ,"Bearer " + accessToken);
+
+        HttpEntity<MultiValueMap<String, String>> logoutRequest = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(
+                "https://kapi.kakao.com/v1/user/logout",
+                HttpMethod.POST,
+                logoutRequest,
+                String.class
+        );
+
+        if (response.getStatusCode().is2xxSuccessful()) {
+            System.out.println("카카오 로그아웃 성공");
+        } else {
+            System.out.println("카카오 로그아웃 실패");
+        }
+    }
 }

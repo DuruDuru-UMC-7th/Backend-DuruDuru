@@ -135,6 +135,17 @@ public class MemberCommandServiceImpl implements MemberCommandService{
     }
 
     @Override
+    public void kakaoLogout(String accessToken) {
+        kakaoAuthProvider.kakaoLogout(accessToken);
+
+        Long memberId = jwtTokenProvider.getId(accessToken);
+        Member member = memberRepository.findById(memberId)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        member.updateToken(null, null);
+        memberRepository.save(member);
+    }
+    @Override
     public AuthResponseDTO.OAuthResponse naverLogin(String code) {
 
         OAuthToken oAuthToken;
