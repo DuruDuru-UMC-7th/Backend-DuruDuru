@@ -40,7 +40,7 @@ public class MemberController {
     }
 
     // 카카오 로그아웃 API
-    @Operation(summary = "카카오 로그아웃 API", description = "카카오 계정 로그아웃을 수행하는 API입니다.")
+    @Operation(summary = "카카오 로그아웃 API", description = "카카오 계정 로그아웃을 하는 API입니다.")
     @PostMapping("/logout/kakao")
     public ApiResponse<?> kakaoLogout(@RequestHeader("Authorization") String accessToken) {
         memberService.kakaoLogout(accessToken.replace("Bearer ", ""));
