@@ -57,7 +57,7 @@ public class SecurityConfig {
                                 // Recipe 관련 접근
                                 .requestMatchers("/recipes/{recipeId}/favorite", "/recipes/{recipeName}", "recipes/recommend", "recipes/popular", "recipes/favorite").permitAll()
                                 // Chat 관련 접근
-                                .requestMatchers("/chat","/chat/rooms", "/chat/rooms/{chatRoomId}/messages", "/chat/{chatRoomId}").permitAll()
+                                .requestMatchers("/chat/","/chat/rooms", "/chat/rooms/{chatRoomId}/messages", "/chat/{chatRoomId}").permitAll()
                                 // Alert 관련 접근
                                 .requestMatchers("/Alert/fcm/token").permitAll()
                                 // 기타 관련 접근
