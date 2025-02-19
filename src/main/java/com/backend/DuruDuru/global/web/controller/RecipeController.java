@@ -36,7 +36,7 @@ public class RecipeController {
     }
 
     // 레시피 즐겨찾기 설정
-    @PostMapping("/{recipeId}/favorite")
+    @PostMapping("/{recipeName}/favorite")
     @Parameters({
             @Parameter(name = "recipeName", description = "즐겨찾기를 설정하려는 레시피 이름")
     })
