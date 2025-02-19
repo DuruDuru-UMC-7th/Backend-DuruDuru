@@ -73,6 +73,14 @@ public class ChattingConverter {
                 .build();
     }
 
+    public static ChattingResponseDTO.ChatMessageResponseDTO toChatMessageResponseDTO(Message message) {
+        return ChattingResponseDTO.ChatMessageResponseDTO.builder()
+                .username(message.getMember().getNickName())  // ✅ 보낸 사람 닉네임
+                .content(message.getContent())                // ✅ 메시지 내용
+                .sentTime(message.getSentTime())              // ✅ 메시지 전송 시간
+                .build();
+    }
+
     public static ChattingResponseDTO.ChattingRoomMakeResponseDTO toResponseDTO(ChattingRoom chattingRoom) {
         Trade trade = chattingRoom.getTrade();
         Member other = trade.getMember();

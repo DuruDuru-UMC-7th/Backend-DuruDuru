@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -87,13 +88,17 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
     public ChattingResponseDTO.ChattingRoomFullResponseDTO getFullChattingRoomDetails(Long chatRoomId, Long currentMemberId) {
         ChattingRoom chattingRoom = chattingRepository.findById(chatRoomId)
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
-        // Repository에서 DTO로 반환하도록 되어있다면 타입을 ChattingResponseDTO.ChatMessageResponseDTO로 사용
-        List<ChattingResponseDTO.ChatMessageResponseDTO> messages =
-                chattingRepository.findByChatRoomIdOrderBySentTimeAsc(chatRoomId);
-        return ChattingConverter.toFullResponseDTO(chattingRoom, messages);
+
+        List<Message> messages = chatMessageRepository.findByChattingChattingRoomChattingRoomIdOrderBySentTimeAsc(chatRoomId);
+
+        List<ChattingResponseDTO.ChatMessageResponseDTO> messageDTOs = messages.stream()
+                .map(ChattingConverter::toChatMessageResponseDTO)
+                .collect(Collectors.toList());
+
+        return ChattingConverter.toFullResponseDTO(chattingRoom, messageDTOs);
     }
 
-    // 메시지 저장 (클라이언트는 요청 DTO로 username과 content만 전송)
+    // 메시지 저장
     @Override
     public ChattingResponseDTO.ChatMessageResponseDTO saveMessage(Long chatRoomId, ChattingRequestDTO.ChatMessageResquestDTO request) {
         ChattingRoom chattingRoom = chattingRepository.findById(chatRoomId)
@@ -102,7 +107,7 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
         Member member = memberRepository.findByNickName(request.getUsername())
                 .orElseThrow(() -> new RuntimeException("Member not found"));
 
-        // 해당 채팅방에서 이 회원의 Chatting 엔티티를 조회 (양방향 연관관계 설정이 되어 있다면)
+        // 해당 채팅방에서 회원의 Chatting 엔티티를 조회
         Chatting chatting = chattingRoom.getChattings().stream()
                 .filter(c -> c.getMember().getMemberId().equals(member.getMemberId()))
                 .findFirst()
