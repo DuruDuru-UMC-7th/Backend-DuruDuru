@@ -324,23 +324,24 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     }
 
     private String cleanIngredients(String ingredients) {
-        // 처음 콤마 앞부분과 콤마 제거
-        String cleanedIngredients = ingredients.replaceFirst("^[^,]+,\\s*", "").trim();
-
-        // 개행으로 감싸진 불필요한 섹션 제거 후 줄바꿈을 콤마로 변환
-        cleanedIngredients = cleanedIngredients.replaceAll("\n[^,\n]+\n", "\n")
-                .replace("\n", ", ")
-                .trim();
-
-        return cleanedIngredients;
+        return Arrays.stream(ingredients.split("[,\n]"))
+                .map(String::trim)
+                .map(ingredient -> ingredient.replaceAll("[●◆■▪◦•]", "").trim()) // 특수문자 제거
+                .map(ingredient -> ingredient.replaceAll("\\(.*?\\)", "").trim()) // 괄호 제거
+                .map(ingredient -> ingredient.replaceAll("\\d+(\\.\\d+)?[gGmlLkg개oz컵큰술작은술]+", "").trim()) // 숫자 + 단위 제거
+                .map(ingredient -> ingredient.replaceAll("^[^:]+:\\s*", "").trim()) // "이름 : " 패턴 제거
+                .filter(ingredient -> !ingredient.isEmpty())
+                .collect(Collectors.joining(", "));
     }
-
 
 
     private List<String> cleanManualSteps(List<String> manualSteps) {
         return manualSteps.stream()
+                .map(step -> step.replaceAll("\n", " "))  // 개행문자를 공백으로 변환
+                .map(step -> step.replaceAll("\\s+", " ").trim())  // 중복 공백 제거
                 .map(step -> step.replaceAll("[a-zA-Z]$", "").trim())  // 마지막 알파벳 제거
-                .map(step -> step.replaceAll("^[0-9]+\\.\\s*", "").trim())
+                .map(step -> step.replaceAll("^[0-9]+\\.\\s*", "").trim()) // 앞쪽 숫자 제거
                 .collect(Collectors.toList());
     }
+
 }
