@@ -65,6 +65,14 @@ public class ChattingConverter {
     public static ChattingResponseDTO.ChattingRoomListDTO toChattingRoomListDTO(List<ChattingRoom> chattingRooms, Long currentMemberId) {
         List<ChattingResponseDTO.ChattingRoomDetailDTO> detailDTOList = chattingRooms.stream()
                 .map(chattingRoom -> toChattingRoomDetailDTO(chattingRoom, currentMemberId))
+                .sorted((d1, d2) -> {
+                    LocalDateTime t1 = d1.getLastMessageDate();
+                    LocalDateTime t2 = d2.getLastMessageDate();
+                    if(t1 == null && t2 == null) return 0;
+                    if(t1 == null) return 1;
+                    if(t2 == null) return -1;
+                    return t2.compareTo(t1);
+                })
                 .collect(Collectors.toList());
 
         return ChattingResponseDTO.ChattingRoomListDTO.builder()
@@ -75,9 +83,9 @@ public class ChattingConverter {
 
     public static ChattingResponseDTO.ChatMessageResponseDTO toChatMessageResponseDTO(Message message) {
         return ChattingResponseDTO.ChatMessageResponseDTO.builder()
-                .username(message.getMember().getNickName())  // ✅ 보낸 사람 닉네임
-                .content(message.getContent())                // ✅ 메시지 내용
-                .sentTime(message.getSentTime())              // ✅ 메시지 전송 시간
+                .username(message.getMember().getNickName())
+                .content(message.getContent())
+                .sentTime(message.getSentTime())
                 .build();
     }
 

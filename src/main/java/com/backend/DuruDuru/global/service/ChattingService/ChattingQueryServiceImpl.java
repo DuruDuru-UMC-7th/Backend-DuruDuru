@@ -42,6 +42,20 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
         Trade trade = tradeRepository.findById(requestDTO.getTradeId())
                 .orElseThrow(() -> new RuntimeException("Trade not found"));
 
+        // 채팅방 중복검사
+        if (trade.getChattingRooms() != null) {
+            for (ChattingRoom existingRoom : trade.getChattingRooms()) {
+                boolean hasRequestMember = existingRoom.getChattings().stream()
+                        .anyMatch(c -> c.getMember().getMemberId().equals(myId));
+                boolean hasTradeMember = existingRoom.getChattings().stream()
+                        .anyMatch(c -> c.getMember().getMemberId().equals(trade.getMember().getMemberId()));
+                if (hasRequestMember && hasTradeMember) {
+                    return chattingConverter.toResponseDTO(existingRoom);
+                }
+            }
+        }
+
+
         String otherNickname = trade.getMember().getNickName();
         String tradeImgUrl = trade.getTradeImgs().isEmpty() ? null : trade.getTradeImgs().get(0).getTradeImgUrl();
         String tradeTitle = trade.getTitle();
@@ -68,18 +82,24 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
                 .chattings(new ArrayList<>())
                 .build();
 
-        // 채팅방 생성한 회원을 채팅방과 연결
-        Member member = memberRepository.findById(myId)
+        Member requestMember = memberRepository.findById(myId)
                 .orElseThrow(() -> new RuntimeException("Member not found"));
-        Chatting chatting = Chatting.builder()
+        Chatting chattingRequest = Chatting.builder()
                 .chattingRoom(chattingRoom)
-                .member(member)
+                .member(requestMember)
                 .build();
+        chattingRoom.getChattings().add(chattingRequest);
 
-        chattingRoom.getChattings().add(chatting);
+        if (!trade.getMember().getMemberId().equals(myId)) {
+            Chatting chattingTradeMember = Chatting.builder()
+                    .chattingRoom(chattingRoom)
+                    .member(trade.getMember())
+                    .build();
+            chattingRoom.getChattings().add(chattingTradeMember);
+        }
+
         ChattingRoom savedRoom = chattingRepository.save(chattingRoom);
-        member.getChattings().add(chatting);
-
+        requestMember.getChattings().add(chattingRequest);
         return chattingConverter.toResponseDTO(savedRoom);
     }
 
