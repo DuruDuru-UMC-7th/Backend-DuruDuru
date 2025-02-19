@@ -75,6 +75,7 @@ public enum SuccessStatus implements BaseCode {
     RECIPE_FAVORITE_FETCH_OK(HttpStatus.OK, "RECIPE_6002", "즐겨찾기한 레시피 목록 조회 성공"),
     RECIPE_FAVORITE_SORT_OK(HttpStatus.OK, "RECIPE_6003", "즐겨찾기 수로 정렬된 레시피 목록 조회 성공"),
     RECIPE_RECOMMEND_OK(HttpStatus.OK, "RECIPE_6004", "식재료 기반 레시피 목록 조회 성공"),
+    RECIPE_REMAINING_OK(HttpStatus.OK, "RECIPE_6005", "남은 재료로 뚝딱 한끼 조회 성공"),
 
     // 채팅 관련 응답
     CHAT_OK(HttpStatus.OK, "CHAT_7000", "성공입니다."),

@@ -1,5 +1,6 @@
 package com.backend.DuruDuru.global.repository;
 
+import com.backend.DuruDuru.global.domain.entity.Fridge;
 import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.enums.MajorCategory;
@@ -50,5 +51,6 @@ public interface IngredientRepository extends JpaRepository<Ingredient, Long> {
     @Query("SELECT i FROM Ingredient i WHERE i.fridge.member = :member AND i.ingredientName LIKE %:search% ORDER BY i.dDay DESC")
     List<Ingredient> findAllByFridge_MemberAndIngredientNameContainingIgnoreCaseOrderByDDayDesc(Member member, String search);
 
-
+    // 사용자의 냉장고에 있는 식재료 목록
+    List<Ingredient> findByFridge(Fridge fridge);
 }

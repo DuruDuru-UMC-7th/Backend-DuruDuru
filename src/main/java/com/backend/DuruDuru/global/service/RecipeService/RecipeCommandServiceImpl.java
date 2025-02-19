@@ -2,8 +2,13 @@ package com.backend.DuruDuru.global.service.RecipeService;
 
 import com.backend.DuruDuru.global.apiPayload.code.status.ErrorStatus;
 import com.backend.DuruDuru.global.apiPayload.exception.RecipeException;
+import com.backend.DuruDuru.global.apiPayload.exception.handler.MemberException;
+import com.backend.DuruDuru.global.domain.entity.Fridge;
+import com.backend.DuruDuru.global.domain.entity.Ingredient;
 import com.backend.DuruDuru.global.domain.entity.Member;
 import com.backend.DuruDuru.global.domain.entity.MemberRecipe;
+import com.backend.DuruDuru.global.repository.FridgeRepository;
+import com.backend.DuruDuru.global.repository.IngredientRepository;
 import com.backend.DuruDuru.global.repository.MemberRecipeRepository;
 import com.backend.DuruDuru.global.web.dto.Recipe.RecipeResponseDTO;
 import jakarta.transaction.Transactional;
@@ -14,9 +19,9 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -27,6 +32,8 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     private final MemberRecipeRepository memberRecipeRepository;
     private final RestTemplate restTemplate;
+    private final IngredientRepository ingredientRepository;
+    private final FridgeRepository fridgeRepository;
 
     @Value("${api.foodsafety.keyId}")
     private String keyId;
@@ -160,6 +167,89 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .build();
     }
 
+    // 남은 재료로 뚝딱
+    @Override
+    public RecipeResponseDTO.RecipePageResponse getRecipesWithIngredientInfo(Member member, int page, int size) {
+        // 사용자 냉장고의 식재료 조회
+        Fridge fridge = fridgeRepository.findByMember(member)
+                .orElseThrow(() -> new MemberException(ErrorStatus.MEMBER_NOT_FOUND));
+
+        List<Ingredient> ingredients = fridge.getIngredients();
+
+        // 사용자의 남은 식재료 이름 리스트 추출
+        List<String> myIngredientNames = ingredients.stream()
+                .map(Ingredient::getIngredientName)
+                .collect(Collectors.toList());
+
+        List<RecipeResponseDTO.RecipeResponse> recipes = new ArrayList<>();
+
+        // 재료가 없으면 빈 응답 반환
+        if (myIngredientNames.isEmpty()) {
+            return RecipeResponseDTO.RecipePageResponse.builder()
+                    .page(page)
+                    .size(size)
+                    .totalPages(0)
+                    .totalElements(0)
+                    .recipes(recipes)
+                    .build();
+        }
+
+        // 식재료를 ,로 결합하여 Open API 요청 URL 생성
+        String joinedIngredients = String.join(",", myIngredientNames);
+        String url = buildApiUrl(joinedIngredients, 1, 50);
+        RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
+
+        // 응답된 레시피 데이터 필터링
+        if (apiResponse != null && apiResponse.getRecipes() != null) {
+            for (RecipeResponseDTO.RecipeApiResponse.Recipe recipe: apiResponse.getRecipes()) {
+                List<String> recipeIngredients = extractIngredients(recipe.getRcpPartsDtls());
+                List<String> availableIngredients = new ArrayList<>();
+                List<String> missingIngredients = new ArrayList<>();
+
+                for (String recipeIngredient: recipeIngredients) {
+                    if (myIngredientNames.contains(recipeIngredient)) {
+                        availableIngredients.add(recipeIngredient);
+                    } else {
+                        missingIngredients.add(recipeIngredient);
+                    }
+                }
+
+                recipes.add(RecipeResponseDTO.RecipeResponse.builder()
+                        .recipeName(recipe.getRcpNm())
+                        .imageUrl(recipe.getAttFileNoMain())
+                        .availableIngredients(availableIngredients)
+                        .missingIngredients(missingIngredients)
+                        .build());
+            }
+        }
+
+        int totalElements = recipes.size();
+        int totalPages = (int) Math.ceil((double) totalElements / size);
+        List<RecipeResponseDTO.RecipeResponse> pagedRecipes = recipes.stream()
+                .skip((long) (page - 1) * size)
+                .limit(size)
+                .collect(Collectors.toList());
+
+        return RecipeResponseDTO.RecipePageResponse.builder()
+                .page(page)
+                .size(size)
+                .totalPages(totalPages)
+                .totalElements(totalElements)
+                .recipes(pagedRecipes)
+                .build();
+    }
+
+    private List<String> extractIngredients(String rawIngredients) {
+        return Arrays.stream(rawIngredients.split("[,\n]"))  // 쉼표(,) 또는 개행(\n)으로 분리
+                .map(String::trim)
+                .map(ingredient -> ingredient.replaceAll("\\(.*?\\)", "").trim()) // 괄호 제거
+                .map(ingredient -> ingredient.replaceAll("\\d+(\\.\\d+)?[gGmlLkg개oz컵]*", "").trim()) // 소수점 포함 숫자 제거
+                .filter(ingredient -> !ingredient.isEmpty()) // 빈 문자열 제거
+                .collect(Collectors.toList());
+    }
+
+
+
     private RecipeResponseDTO.RecipeResponse fetchRecipeDetailWithFavoriteCount(String recipeName, long favoriteCount) {
         String url = buildApiUrl(recipeName);
 
@@ -222,42 +312,36 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
 
     // 기본 URL 생성
     private String buildApiUrl(String recipeName) {
-        String quotedName = "\"" + recipeName + "\"";
         String baseUrl = "http://openapi.foodsafetykorea.go.kr/api/" + keyId + "/COOKRCP01/json/1/1";
-        return baseUrl + "/RCP_NM=" + quotedName;
+        return baseUrl + "/RCP_NM=" + recipeName;
     }
 
     // 페이징용 URL 생성
     private String buildApiUrl(String ingredients, int startIdx, int endIdx) {
 
-        String quotedName = "\"" + ingredients + "\"";
         String baseUrl = "http://openapi.foodsafetykorea.go.kr/api/" + keyId + "/COOKRCP01/json/" + startIdx + "/" + endIdx;
-        return baseUrl + "/RCP_PARTS_DTLS=" + quotedName;
-
-        /*return UriComponentsBuilder.fromHttpUrl("http://openapi.foodsafetykorea.go.kr/api")
-                .pathSegment(keyId, "COOKRCP01", "json", String.valueOf(startIdx), String.valueOf(endIdx))
-                .queryParam("RCP_PARTS_DTLS", ingredients)
-                .toUriString();*/
+        return baseUrl + "/RCP_PARTS_DTLS=" + ingredients;
     }
 
     private String cleanIngredients(String ingredients) {
-        // 처음 콤마 앞부분과 콤마 제거
-        String cleanedIngredients = ingredients.replaceFirst("^[^,]+,\\s*", "").trim();
-
-        // 개행으로 감싸진 불필요한 섹션 제거 후 줄바꿈을 콤마로 변환
-        cleanedIngredients = cleanedIngredients.replaceAll("\n[^,\n]+\n", "\n")
-                .replace("\n", ", ")
-                .trim();
-
-        return cleanedIngredients;
+        return Arrays.stream(ingredients.split("[,\n]"))
+                .map(String::trim)
+                .map(ingredient -> ingredient.replaceAll("[●◆■▪◦•]", "").trim()) // 특수문자 제거
+                .map(ingredient -> ingredient.replaceAll("\\(.*?\\)", "").trim()) // 괄호 제거
+                .map(ingredient -> ingredient.replaceAll("\\d+(\\.\\d+)?[gGmlLkg개oz컵큰술작은술]+", "").trim()) // 숫자 + 단위 제거
+                .map(ingredient -> ingredient.replaceAll("^[^:]+:\\s*", "").trim()) // "이름 : " 패턴 제거
+                .filter(ingredient -> !ingredient.isEmpty())
+                .collect(Collectors.joining(", "));
     }
-
 
 
     private List<String> cleanManualSteps(List<String> manualSteps) {
         return manualSteps.stream()
+                .map(step -> step.replaceAll("\n", " "))  // 개행문자를 공백으로 변환
+                .map(step -> step.replaceAll("\\s+", " ").trim())  // 중복 공백 제거
                 .map(step -> step.replaceAll("[a-zA-Z]$", "").trim())  // 마지막 알파벳 제거
-                .map(step -> step.replaceAll("^[0-9]+\\.\\s*", "").trim())
+                .map(step -> step.replaceAll("^[0-9]+\\.\\s*", "").trim()) // 앞쪽 숫자 제거
                 .collect(Collectors.toList());
     }
+
 }

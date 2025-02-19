@@ -28,7 +28,10 @@ public class RecipeResponseDTO {
         private String recipeName;
         private String imageUrl;
         private long favoriteCount;
+        private List<String> availableIngredients;
+        private List<String> missingIngredients;
     }
+
     @Getter
     @Builder
     @AllArgsConstructor(access = AccessLevel.PROTECTED)

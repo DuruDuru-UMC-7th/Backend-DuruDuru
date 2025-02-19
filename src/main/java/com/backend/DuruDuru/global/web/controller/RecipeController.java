@@ -36,7 +36,7 @@ public class RecipeController {
     }
 
     // 레시피 즐겨찾기 설정
-    @PostMapping("/{recipeId}/favorite")
+    @PostMapping("/{recipeName}/favorite")
     @Parameters({
             @Parameter(name = "recipeName", description = "즐겨찾기를 설정하려는 레시피 이름")
     })
@@ -100,4 +100,17 @@ public class RecipeController {
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_RECOMMEND_OK, recipes);
     }
 
+    @GetMapping("/remaining")
+    @Parameters({
+            @Parameter(name = "page", description = "페이지 번호, 기본값은 1입니다"),
+            @Parameter(name = "size", description = "페이지 당 항목 수, 기본값은 10입니다.")
+    })
+    @Operation(summary = "남은 재료로 뚝딱 한 끼 API", description = "보유하고 있는 식재료로 만들 수 있는 레시피를 추천하는 API입니다. 레시피 이름/사진과 레시피 재료 중 보유하고 있는 식재료와 보유하고 있지 않는 식재료를 반환합니다.")
+    public ApiResponse<RecipeResponseDTO.RecipePageResponse> getRecipesWithRemainingIngredients(
+            @Parameter(name = "user", hidden = true) @AuthUser Member member,
+            @RequestParam(defaultValue = "1") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        RecipeResponseDTO.RecipePageResponse response = recipeService.getRecipesWithIngredientInfo(member, page, size);
+        return ApiResponse.onSuccess(SuccessStatus.RECIPE_REMAINING_OK, response);
+    }
 }
