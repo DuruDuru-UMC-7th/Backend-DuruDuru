@@ -64,10 +64,18 @@ public class ChatController {
     @MessageMapping("/chat.{chatRoomId}")
     @SendTo("/subscribe/chat.{chatRoomId}")
     @Operation(summary = "WebSocket 채팅 메시지 전송", description = "채팅방에 메시지를 전송하고 채팅방을 구독한 구독자에게 브로드캐스트 함")
-    public ChattingResponseDTO.ChatMessageResponseDTO sendMessage(ChattingRequestDTO.ChatMessageResquestDTO request, @DestinationVariable Long chatRoomId) {
+    public ChattingResponseDTO.ChatMessageResponseDTO sendMessage(
+            ChattingRequestDTO.ChatMessageResquestDTO request,
+            @DestinationVariable Long chatRoomId,
+            @AuthUser Member member) {
         log.info("WebSocket 메시지 수신: chatRoomId={}, username={}, content={}",
-                chatRoomId, request.getUsername(), request.getContent());
-        return chattingQueryServiceImpl.saveMessage(chatRoomId, request);
+                chatRoomId, member.getNickName(), request.getContent());
+        ChattingRequestDTO.ChatMessageResquestDTO newRequest =
+                ChattingRequestDTO.ChatMessageResquestDTO.builder()
+                        .username(member.getNickName())
+                        .content(request.getContent())
+                        .build();
+        return chattingQueryServiceImpl.saveMessage(chatRoomId, newRequest);
     }
 
     // 채팅방 삭제
