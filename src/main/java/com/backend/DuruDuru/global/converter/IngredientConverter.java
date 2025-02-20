@@ -48,7 +48,7 @@ public class IngredientConverter {
                 .majorCategory(ingredient.getMajorCategory() != null ? ingredient.getMajorCategory().name() : "기타")
                 .minorCategory(ingredient.getMinorCategory() != null ? ingredient.getMinorCategory().name() : "기타")
                 .ingredientImageUrl(ingredient.getIngredientImg() != null ?
-                                ingredient.getIngredientImg().getIngredientImgUrl() : "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a")
+                                ingredient.getIngredientImg().getIngredientImgUrl() : "https://duruduru.s3.ap-northeast-2.amazonaws.com/files/ea463c2d-fefb-4df5-a10f-d687d14105f8")
                 .createdAt(ingredient.getCreatedAt())
                 .updatedAt(ingredient.getUpdatedAt())
                 .build();

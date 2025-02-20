@@ -123,7 +123,7 @@ public class Ingredient extends BaseEntity {
     public void setIngredientImg(IngredientImg ingredientImg) {
         if (ingredientImg == null) {
             this.ingredientImg = IngredientImg.builder()
-                    .ingredientImgUrl("https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a")
+                    .ingredientImgUrl("https://duruduru.s3.ap-northeast-2.amazonaws.com/files/ea463c2d-fefb-4df5-a10f-d687d14105f8")
                     .ingredient(this)
                     .build();
         } else {
