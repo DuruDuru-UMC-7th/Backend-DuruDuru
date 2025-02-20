@@ -64,10 +64,20 @@ public class ChatController {
     @MessageMapping("/chat.{chatRoomId}")
     @SendTo("/subscribe/chat.{chatRoomId}")
     @Operation(summary = "WebSocket 채팅 메시지 전송", description = "채팅방에 메시지를 전송하고 채팅방을 구독한 구독자에게 브로드캐스트 함")
-    public ChattingResponseDTO.ChatMessageResponseDTO sendMessage(ChattingRequestDTO.ChatMessageResquestDTO request, @DestinationVariable Long chatRoomId) {
+    public ChattingResponseDTO.ChatMessageResponseDTO sendMessage(
+            ChattingRequestDTO.ChatMessageResquestDTO request,
+            @DestinationVariable Long chatRoomId,
+            @AuthUser Member member) {  // 인증 정보를 추가
+        // 클라이언트가 보낸 username 대신 인증된 사용자의 닉네임 사용
         log.info("WebSocket 메시지 수신: chatRoomId={}, username={}, content={}",
-                chatRoomId, request.getUsername(), request.getContent());
-        return chattingQueryServiceImpl.saveMessage(chatRoomId, request);
+                chatRoomId, member.getNickName(), request.getContent());
+        // 새로운 DTO를 만들어서 사용하거나, request의 username을 덮어쓰도록 합니다.
+        ChattingRequestDTO.ChatMessageResquestDTO newRequest =
+                ChattingRequestDTO.ChatMessageResquestDTO.builder()
+                        .username(member.getNickName())
+                        .content(request.getContent())
+                        .build();
+        return chattingQueryServiceImpl.saveMessage(chatRoomId, newRequest);
     }
 
     // 채팅방 삭제

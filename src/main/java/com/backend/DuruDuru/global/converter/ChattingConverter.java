@@ -97,9 +97,14 @@ public class ChattingConverter {
     public static ChattingResponseDTO.ChattingRoomMakeResponseDTO toResponseDTO(ChattingRoom chattingRoom, String myNickname) {
         Trade trade = chattingRoom.getTrade();
         Member other = trade.getMember();
+
+        // tradeImgs가 있다면 첫 번째 이미지 URL 사용
         String tradeImgUrl = trade.getTradeImgs().isEmpty() ? null : trade.getTradeImgs().get(0).getTradeImgUrl();
+
         String tradeTitle = trade.getTitle();
+
         String otherMemberImgUrl = other.getMemberImg() == null ? null : other.getMemberImg().getUrl();
+
         String otherLocation = "";
         if (other.getTown() != null) {
             otherLocation = other.getTown().getEupmyeondong();
@@ -107,7 +112,7 @@ public class ChattingConverter {
 
         return ChattingResponseDTO.ChattingRoomMakeResponseDTO.builder()
                 .chattingRoomId(chattingRoom.getChattingRoomId())
-                .myNickname(myNickname)
+                .myNickname(myNickname)        // 본인 닉네임 추가
                 .otherNickname(other.getNickName())
                 .tradeImgUrl(tradeImgUrl)
                 .tradeType(trade.getTradeType().toString())
