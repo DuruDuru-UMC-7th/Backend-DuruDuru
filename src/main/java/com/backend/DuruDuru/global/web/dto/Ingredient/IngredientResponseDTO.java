@@ -93,7 +93,8 @@ public class IngredientResponseDTO {
                     .map(category -> new MinorCategoryDTO(
                             category.name(),
                             category.getMajorCategory().name(),
-                            DEFAULT_IMAGE_URL
+                            category.getMinorImageUrl()
+                            //DEFAULT_IMAGE_URL
                     ))
                     .collect(Collectors.toList());
         }
