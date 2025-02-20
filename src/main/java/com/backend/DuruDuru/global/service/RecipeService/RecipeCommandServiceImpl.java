@@ -135,6 +135,17 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         System.out.println("url: " + url);
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
 
+
+        if (apiResponse == null || apiResponse.getRecipes() == null) {
+            return RecipeResponseDTO.RecipePageResponse.builder()
+                    .page(page)
+                    .size(size)
+                    .totalPages(0)
+                    .totalElements(0)
+                    .recipes(Collections.emptyList())
+                    .build();
+        }
+        
         List<RecipeResponseDTO.RecipeResponse> recipes = apiResponse.getRecipes().stream()
                 .map(recipe -> RecipeResponseDTO.RecipeResponse.builder()
                         .recipeName(recipe.getRcpNm())
