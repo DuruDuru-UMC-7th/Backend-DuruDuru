@@ -30,9 +30,10 @@ public class RecipeController {
     })
     @Operation(summary = "특정 레시피 조회 API", description = "특정 레시피를 조회하는 API입니다")
     public ApiResponse<RecipeResponseDTO.RecipeDetailResponse> getRecipeByName(
+            @Parameter(name = "user", hidden = true) @AuthUser Member member,
             @PathVariable String recipeName
     ){
-        RecipeResponseDTO.RecipeDetailResponse response = recipeService.getRecipeDetailByName(recipeName);
+        RecipeResponseDTO.RecipeDetailResponse response = recipeService.getRecipeDetailByName(member, recipeName);
         return ApiResponse.onSuccess(SuccessStatus.RECIPE_FETCH_OK, response);
     }
 

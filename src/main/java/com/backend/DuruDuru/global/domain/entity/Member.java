@@ -30,6 +30,7 @@ public class Member extends BaseEntity {
     private String nickName;
 
     @Enumerated(EnumType.STRING)
+    @ColumnDefault("'U'")
     private Gender gender;
 
     private String mobile;
