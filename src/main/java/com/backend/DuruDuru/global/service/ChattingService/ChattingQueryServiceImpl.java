@@ -117,12 +117,18 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
 
         List<Message> messages = chatMessageRepository.findByChattingChattingRoomChattingRoomIdOrderBySentTimeAsc(chatRoomId);
+
+        messages.stream()
+                .filter(message -> !message.isRead() && !message.getMember().getMemberId().equals(currentMemberId))
+                .forEach(message -> message.setRead(true));
+
         List<ChattingResponseDTO.ChatMessageResponseDTO> messageDTOs = messages.stream()
                 .map(ChattingConverter::toChatMessageResponseDTO)
                 .collect(Collectors.toList());
 
         return ChattingConverter.toFullResponseDTO(chattingRoom, messageDTOs, currentMemberId);
     }
+
 
     // 메시지 저장
     @Override
