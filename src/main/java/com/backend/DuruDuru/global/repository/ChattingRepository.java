@@ -1,7 +1,6 @@
 package com.backend.DuruDuru.global.repository;
 
 import com.backend.DuruDuru.global.domain.entity.ChattingRoom;
-import com.backend.DuruDuru.global.web.dto.Chatting.ChattingRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Chatting.ChattingResponseDTO;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
