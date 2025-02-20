@@ -30,7 +30,7 @@ public class Member extends BaseEntity {
     private String nickName;
 
     @Enumerated(EnumType.STRING)
-    //@ColumnDefault("'U'")
+    //@ColumnDefault("'U'")  // DB 생성시 오류 발생으로 주석 처리
     private Gender gender;
 
     private String mobile;
