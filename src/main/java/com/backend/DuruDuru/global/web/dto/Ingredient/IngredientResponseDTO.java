@@ -85,7 +85,8 @@ public class IngredientResponseDTO {
         private String majorCategory;
         private String categoryImageUrl;
 
-        private static final String DEFAULT_IMAGE_URL = "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a";
+        private static final String DEFAULT_IMAGE_URL = "https://duruduru.s3.ap-northeast-2.amazonaws.com/files/ea463c2d-fefb-4df5-a10f-d687d14105f8";
+        // "https://duruduru.s3.ap-northeast-2.amazonaws.com/76636494-cfa7-4b1b-8649-2eda45f1be8a"
 
         public static List<MinorCategoryDTO> fromMinorCategories(List<MinorCategory> categories) {
             return categories.stream()
