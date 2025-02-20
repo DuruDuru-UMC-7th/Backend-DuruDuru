@@ -134,8 +134,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         String url = buildApiUrl(ingredients, startIdx, endIdx);
         System.out.println("url: " + url);
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
-
-
+        
         if (apiResponse == null || apiResponse.getRecipes() == null) {
             return RecipeResponseDTO.RecipePageResponse.builder()
                     .page(page)
@@ -145,7 +144,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                     .recipes(Collections.emptyList())
                     .build();
         }
-        
+
         List<RecipeResponseDTO.RecipeResponse> recipes = apiResponse.getRecipes().stream()
                 .map(recipe -> RecipeResponseDTO.RecipeResponse.builder()
                         .recipeName(recipe.getRcpNm())
