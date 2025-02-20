@@ -39,12 +39,21 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     // 특정 레시피 조회
     @Override
     @Transactional
-    public RecipeResponseDTO.RecipeDetailResponse getRecipeDetailByName(String recipeName) {
+    public RecipeResponseDTO.RecipeDetailResponse getRecipeDetailByName(Member member, String recipeName) {
         String url = buildApiUrl(recipeName);
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
 
         if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
-            throw new RecipeException(ErrorStatus.RECIPE_NOT_FOUND);
+            return RecipeResponseDTO.RecipeDetailResponse.builder()
+                    .recipeName("")
+                    .cookingMethod("")
+                    .recipeType("")
+                    .ingredients("")
+                    .imageUrl("")
+                    .manualSteps(Collections.emptyList())
+                    .favoriteCount(0)
+                    .isFavorite(false) // ✅ 기본값 false
+                    .build();
         }
 
         RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
@@ -55,6 +64,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         List<String> cleanedManualSteps = cleanManualSteps(recipe.getManualSteps());
 
         long favoriteCount = memberRecipeRepository.countByRecipeName(recipeName);
+        boolean isFavorite = memberRecipeRepository.existsByMemberAndRecipeName(member, recipeName);
 
         return RecipeResponseDTO.RecipeDetailResponse.builder()
                 .recipeName(recipe.getRcpNm())
@@ -64,6 +74,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .imageUrl(recipe.getAttFileNoMk())
                 .manualSteps(cleanedManualSteps)
                 .favoriteCount(favoriteCount)
+                .isFavorite(isFavorite)
                 .build();
     }
 
@@ -72,15 +83,15 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
     @Override
     @Transactional
     public void setRecipeFavorite(Member member, String recipeName) {
-      if (memberRecipeRepository.existsByMemberAndRecipeName(member, recipeName)) {
-          memberRecipeRepository.deleteByMemberAndRecipeName(member, recipeName);
-      } else {
-          MemberRecipe memberRecipe = MemberRecipe.builder()
-                  .member(member)
-                  .recipeName(recipeName)
-                  .build();
-          memberRecipeRepository.save(memberRecipe);
-      }
+        if (memberRecipeRepository.existsByMemberAndRecipeName(member, recipeName)) {
+            memberRecipeRepository.deleteByMemberAndRecipeName(member, recipeName);
+        } else {
+            MemberRecipe memberRecipe = MemberRecipe.builder()
+                    .member(member)
+                    .recipeName(recipeName)
+                    .build();
+            memberRecipeRepository.save(memberRecipe);
+        }
     }
 
     @Override
@@ -134,7 +145,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         String url = buildApiUrl(ingredients, startIdx, endIdx);
         System.out.println("url: " + url);
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
-        
+
         if (apiResponse == null || apiResponse.getRecipes() == null) {
             return RecipeResponseDTO.RecipePageResponse.builder()
                     .page(page)
@@ -172,7 +183,6 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         List<RecipeResponseDTO.RecipeResponse> recipes = memberRecipesPage.stream()
                 .map(MemberRecipe::getRecipeName)
                 .map(this::fetchRecipeDetailFromApi)
-                .filter(Objects::nonNull)  // null 응답 제거
                 .collect(Collectors.toList());
 
         return RecipeResponseDTO.RecipePageResponse.builder()
@@ -200,7 +210,6 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                     long favoriteCount = (long) record[1];
                     return fetchRecipeDetailWithFavoriteCount(recipeName, favoriteCount);
                 })
-                .filter(Objects::nonNull)
                 .collect(Collectors.toList());
 
         return RecipeResponseDTO.RecipePageResponse.builder()
@@ -243,6 +252,16 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         String joinedIngredients = String.join(",", myIngredientNames);
         String url = buildApiUrl(joinedIngredients, 1, 50);
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
+
+        if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
+            return RecipeResponseDTO.RecipePageResponse.builder()
+                    .page(page)
+                    .size(size)
+                    .totalPages(0)
+                    .totalElements(0)
+                    .recipes(Collections.emptyList()) // 빈 리스트 반환
+                    .build();
+        }
 
         // 응답된 레시피 데이터 필터링
         if (apiResponse != null && apiResponse.getRecipes() != null) {
@@ -300,9 +319,12 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
         String url = buildApiUrl(recipeName);
 
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
-
         if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
-            return null;
+            return RecipeResponseDTO.RecipeResponse.builder()
+                    .recipeName("")
+                    .imageUrl("")
+                    .favoriteCount(0)
+                    .build();
         }
 
         RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
@@ -314,12 +336,16 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .build();
     }
 
+
     private RecipeResponseDTO.RecipeResponse fetchRecipeDetailFromApi(String recipeName) {
         String url = buildApiUrl(recipeName);
 
         RecipeResponseDTO.RecipeApiResponse apiResponse = restTemplate.getForObject(url, RecipeResponseDTO.RecipeApiResponse.class);
         if (apiResponse == null || apiResponse.getRecipes() == null || apiResponse.getRecipes().isEmpty()) {
-            return null;
+            return RecipeResponseDTO.RecipeResponse.builder()
+                    .recipeName("")
+                    .imageUrl("")
+                    .build();
         }
 
         RecipeResponseDTO.RecipeApiResponse.Recipe recipe = apiResponse.getRecipes().get(0);
@@ -329,6 +355,7 @@ public class RecipeCommandServiceImpl implements RecipeCommandService {
                 .imageUrl(recipe.getAttFileNoMk())
                 .build();
     }
+
 
     private long getTotalElements(String ingredients) {
         int batchSize = 200;
