@@ -13,13 +13,15 @@ public class ChattingResponseDTO {
     @AllArgsConstructor
     public static class ChattingRoomDetailDTO {
         private Long chatRoomId;
-        private String username;
+        private String chattingRequestNickname;
+        private String tradeUserNickname;
         private String tradeType;
         private String location;
         private String lastMessage;
         private LocalDateTime lastMessageDate;
         private int unreadCount;
         private LocalDateTime sentTime;
+        private String memberImgUrl;
     }
 
     //ChttingRoom상세 정보 담아서 개수와 함께 반환 하는 DTO
@@ -40,6 +42,7 @@ public class ChattingResponseDTO {
     @Builder
     public static class ChattingRoomMakeResponseDTO {
         private Long chattingRoomId;
+        private String myNickname;
         private String otherNickname;
         private String tradeImgUrl;
         private String tradeType;
@@ -61,6 +64,7 @@ public class ChattingResponseDTO {
     @Builder
     public static class ChattingRoomFullResponseDTO {
         private Long chattingRoomId;
+        private String myNickname;
         private String otherNickname;
         private String tradeImgUrl;
         private String tradeType;

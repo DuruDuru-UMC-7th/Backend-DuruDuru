@@ -33,10 +33,16 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
     @Override
     public ChattingResponseDTO.ChattingRoomListDTO getChattingRoomList(Long memberId) {
         List<ChattingRoom> chattingRooms = chattingRepository.findChattingRoomsByMemberId(memberId);
-        return ChattingConverter.toChattingRoomListDTO(chattingRooms, memberId);
+        List<ChattingResponseDTO.ChattingRoomDetailDTO> detailDTOList = chattingRooms.stream()
+                .map(chattingRoom -> ChattingConverter.toChattingRoomDetailDTO(chattingRoom, memberId))
+                .collect(Collectors.toList());
+
+        return ChattingResponseDTO.ChattingRoomListDTO.builder()
+                .chatRooms(detailDTOList)
+                .count(detailDTOList.size())
+                .build();
     }
 
-    // 채팅방 생성
     @Override
     public ChattingResponseDTO.ChattingRoomMakeResponseDTO createChattingRoom(Long myId, ChattingRequestDTO.ChattingRoomMakeRequestDTO requestDTO) {
         Trade trade = tradeRepository.findById(requestDTO.getTradeId())
@@ -50,11 +56,10 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
                 boolean hasTradeMember = existingRoom.getChattings().stream()
                         .anyMatch(c -> c.getMember().getMemberId().equals(trade.getMember().getMemberId()));
                 if (hasRequestMember && hasTradeMember) {
-                    return chattingConverter.toResponseDTO(existingRoom);
+                    return chattingConverter.toResponseDTO(existingRoom, myId != null ? memberRepository.findById(myId).get().getNickName() : "");
                 }
             }
         }
-
 
         String otherNickname = trade.getMember().getNickName();
         String tradeImgUrl = trade.getTradeImgs().isEmpty() ? null : trade.getTradeImgs().get(0).getTradeImgUrl();
@@ -100,7 +105,9 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
 
         ChattingRoom savedRoom = chattingRepository.save(chattingRoom);
         requestMember.getChattings().add(chattingRequest);
-        return chattingConverter.toResponseDTO(savedRoom);
+
+        // 여기서 본인 닉네임도 함께 반환하도록 수정
+        return chattingConverter.toResponseDTO(savedRoom, requestMember.getNickName());
     }
 
     // 채팅방 전체 상세 조회
@@ -110,12 +117,11 @@ public class ChattingQueryServiceImpl implements ChattingQueryService {
                 .orElseThrow(() -> new RuntimeException("ChattingRoom not found"));
 
         List<Message> messages = chatMessageRepository.findByChattingChattingRoomChattingRoomIdOrderBySentTimeAsc(chatRoomId);
-
         List<ChattingResponseDTO.ChatMessageResponseDTO> messageDTOs = messages.stream()
                 .map(ChattingConverter::toChatMessageResponseDTO)
                 .collect(Collectors.toList());
 
-        return ChattingConverter.toFullResponseDTO(chattingRoom, messageDTOs);
+        return ChattingConverter.toFullResponseDTO(chattingRoom, messageDTOs, currentMemberId);
     }
 
     // 메시지 저장

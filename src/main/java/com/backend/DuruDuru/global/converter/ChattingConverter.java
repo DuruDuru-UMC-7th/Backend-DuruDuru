@@ -4,7 +4,6 @@ import com.backend.DuruDuru.global.domain.entity.*;
 import com.backend.DuruDuru.global.web.dto.Chatting.ChattingRequestDTO;
 import com.backend.DuruDuru.global.web.dto.Chatting.ChattingResponseDTO;
 import org.springframework.stereotype.Component;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -13,54 +12,53 @@ import java.util.stream.Collectors;
 public class ChattingConverter {
 
     public static ChattingResponseDTO.ChattingRoomDetailDTO toChattingRoomDetailDTO(ChattingRoom chattingRoom, Long currentMemberId) {
-        // 거래유형 가져오기
         String tradeType = chattingRoom.getTrade().getTradeType().toString();
+        String location = chattingRoom.getTrade().getMember().getTown() != null ?
+                chattingRoom.getTrade().getMember().getTown().getEupmyeondong() : "";
 
-        // 위치 가져오기
-        String location = "";
-        if (chattingRoom.getTrade().getMember().getTown() != null) {
-            location = chattingRoom.getTrade().getMember().getTown().getEupmyeondong();
-        }
+        // 최신 메시지 가져오기
+        Message lastMessage = chattingRoom.getChattings().stream()
+                .flatMap(chatting -> chatting.getMessages().stream())
+                .max((m1, m2) -> m1.getSentTime().compareTo(m2.getSentTime()))
+                .orElse(null);
 
-        // 최신 메시지 찾기
-        Message lastMessage = null;
-        for (Chatting chatting : chattingRoom.getChattings()) {
-            for (Message message : chatting.getMessages()) {
-                if (lastMessage == null || message.getSentTime().isAfter(lastMessage.getSentTime())) {
-                    lastMessage = message;
-                }
-            }
-        }
         String lastMessageContent = lastMessage != null ? lastMessage.getContent() : "";
         LocalDateTime lastMessageDate = lastMessage != null ? lastMessage.getSentTime() : null;
         LocalDateTime sentTime = lastMessageDate;
 
-        // 읽은 메시지 계산
-        int unreadCount = 0;
-        for (Chatting chatting : chattingRoom.getChattings()) {
-            for (Message message : chatting.getMessages()) {
-                if (!message.isRead() && !message.getMember().getMemberId().equals(currentMemberId)) {
-                    unreadCount++;
-                }
-            }
-        }
+        // 읽지 않은 메시지 수 계산
+        int unreadCount = (int) chattingRoom.getChattings().stream()
+                .flatMap(chatting -> chatting.getMessages().stream())
+                .filter(message -> !message.isRead() && !message.getMember().getMemberId().equals(currentMemberId))
+                .count();
 
-        // 마지막 메시지가 존재하면 발신자 닉네임 가져오기
-        String username = (lastMessage != null)
-                ? lastMessage.getMember().getNickName()
-                : chattingRoom.getTrade().getMember().getNickName();
+        // 요청자가 누구인지 판별하여 닉네임 구분
+        Member tradeUser = chattingRoom.getTrade().getMember();
+        Member chattingRequestUser = chattingRoom.getChattings().stream()
+                .map(Chatting::getMember)
+                .filter(member -> !member.getMemberId().equals(tradeUser.getMemberId()))
+                .findFirst()
+                .orElse(null);
+
+        String chattingRequestNickname = chattingRequestUser != null ? chattingRequestUser.getNickName() : "";
+        String tradeUserNickname = tradeUser.getNickName();
+
+        String memberImgUrl = tradeUser.getMemberImg() != null ? tradeUser.getMemberImg().getUrl() : null;
 
         return ChattingResponseDTO.ChattingRoomDetailDTO.builder()
                 .chatRoomId(chattingRoom.getChattingRoomId())
-                .username(username)
+                .chattingRequestNickname(chattingRequestNickname)
+                .tradeUserNickname(tradeUserNickname)
                 .tradeType(tradeType)
                 .location(location)
                 .lastMessage(lastMessageContent)
                 .lastMessageDate(lastMessageDate)
                 .unreadCount(unreadCount)
                 .sentTime(sentTime)
+                .memberImgUrl(memberImgUrl)
                 .build();
     }
+
 
     public static ChattingResponseDTO.ChattingRoomListDTO toChattingRoomListDTO(List<ChattingRoom> chattingRooms, Long currentMemberId) {
         List<ChattingResponseDTO.ChattingRoomDetailDTO> detailDTOList = chattingRooms.stream()
@@ -89,17 +87,12 @@ public class ChattingConverter {
                 .build();
     }
 
-    public static ChattingResponseDTO.ChattingRoomMakeResponseDTO toResponseDTO(ChattingRoom chattingRoom) {
+    public static ChattingResponseDTO.ChattingRoomMakeResponseDTO toResponseDTO(ChattingRoom chattingRoom, String myNickname) {
         Trade trade = chattingRoom.getTrade();
         Member other = trade.getMember();
-
-        // tradeImgs가 있다면 첫 번째 이미지 URL 사용
         String tradeImgUrl = trade.getTradeImgs().isEmpty() ? null : trade.getTradeImgs().get(0).getTradeImgUrl();
-
         String tradeTitle = trade.getTitle();
-
         String otherMemberImgUrl = other.getMemberImg() == null ? null : other.getMemberImg().getUrl();
-
         String otherLocation = "";
         if (other.getTown() != null) {
             otherLocation = other.getTown().getEupmyeondong();
@@ -107,6 +100,7 @@ public class ChattingConverter {
 
         return ChattingResponseDTO.ChattingRoomMakeResponseDTO.builder()
                 .chattingRoomId(chattingRoom.getChattingRoomId())
+                .myNickname(myNickname)
                 .otherNickname(other.getNickName())
                 .tradeImgUrl(tradeImgUrl)
                 .tradeType(trade.getTradeType().toString())
@@ -117,46 +111,35 @@ public class ChattingConverter {
                 .build();
     }
 
-
-    //채팅 메시지 전체 조회
-    public static ChattingResponseDTO.ChattingRoomFullResponseDTO toFullResponseDTO(ChattingRoom chattingRoom, List<ChattingResponseDTO.ChatMessageResponseDTO> messages) {
+    public static ChattingResponseDTO.ChattingRoomFullResponseDTO toFullResponseDTO(ChattingRoom chattingRoom, List<ChattingResponseDTO.ChatMessageResponseDTO> messages, Long myId) {
         Trade trade = chattingRoom.getTrade();
-        Member other = trade.getMember(); // Trade에 저장된 상대방
+        Member tradeUser = trade.getMember();
+        Member myUser = chattingRoom.getChattings().stream()
+                .map(Chatting::getMember)
+                .filter(member -> member.getMemberId().equals(myId))
+                .findFirst()
+                .orElse(null);
 
-        String tradeImgUrl = (trade.getTradeImgs() != null && !trade.getTradeImgs().isEmpty())
-                ? trade.getTradeImgs().get(0).getTradeImgUrl() : null;
+        String tradeImgUrl = !trade.getTradeImgs().isEmpty() ? trade.getTradeImgs().get(0).getTradeImgUrl() : null;
         String tradeTitle = trade.getTitle();
-        String otherMemberImgUrl = (other.getMemberImg() != null) ? other.getMemberImg().getUrl() : null;
-        String otherLocation = "";
-        if (other.getTown() != null) {
-            otherLocation = other.getTown().getEupmyeondong();
-        }
         String tradeStatus = trade.getStatus().toString();
         Long ingredientCount = trade.getIngredientCount();
         LocalDateTime expirationDate = null;
 
-        // 채팅 메시지 목록 변환
-        List<ChattingResponseDTO.ChatMessageResponseDTO> chatMessages = messages.stream()
-                .map(message -> ChattingResponseDTO.ChatMessageResponseDTO.builder()
-                        .username(message.getUsername()) // 수정된 부분
-                        .content(message.getContent())
-                        .sentTime(message.getSentTime())
-                        .build())
-                .collect(Collectors.toList());
-
         return ChattingResponseDTO.ChattingRoomFullResponseDTO.builder()
                 .chattingRoomId(chattingRoom.getChattingRoomId())
-                .otherNickname(other.getNickName())
+                .myNickname(myUser != null ? myUser.getNickName() : "")
+                .otherNickname(tradeUser.getNickName())
                 .tradeImgUrl(tradeImgUrl)
                 .tradeType(trade.getTradeType().toString())
                 .tradeTitle(tradeTitle)
                 .createdAt(chattingRoom.getCreatedAt())
-                .otherMemberImgUrl(otherMemberImgUrl)
-                .otherLocation(otherLocation)
+                .otherMemberImgUrl(tradeUser.getMemberImg() != null ? tradeUser.getMemberImg().getUrl() : null)
+                .otherLocation(tradeUser.getTown() != null ? tradeUser.getTown().getEupmyeondong() : "")
                 .tradeStatus(tradeStatus)
                 .ingredientCount(ingredientCount)
                 .expirationDate(expirationDate)
-                .chatMessages(chatMessages)
+                .chatMessages(messages)
                 .build();
     }
 
@@ -168,4 +151,3 @@ public class ChattingConverter {
                 .build();
     }
 }
-
