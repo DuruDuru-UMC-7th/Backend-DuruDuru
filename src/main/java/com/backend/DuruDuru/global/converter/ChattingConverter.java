@@ -32,23 +32,30 @@ public class ChattingConverter {
                 .filter(message -> !message.isRead() && !message.getMember().getMemberId().equals(currentMemberId))
                 .count();
 
-        // 요청자가 누구인지 판별하여 닉네임 구분
-        Member tradeUser = chattingRoom.getTrade().getMember();
-        Member chattingRequestUser = chattingRoom.getChattings().stream()
+        // 현재 사용자의 정보 찾기
+        Member myUser = chattingRoom.getChattings().stream()
                 .map(Chatting::getMember)
-                .filter(member -> !member.getMemberId().equals(tradeUser.getMemberId()))
+                .filter(member -> member.getMemberId().equals(currentMemberId))
                 .findFirst()
                 .orElse(null);
 
-        String chattingRequestNickname = chattingRequestUser != null ? chattingRequestUser.getNickName() : "";
-        String tradeUserNickname = tradeUser.getNickName();
+        // 상대방의 정보 찾기
+        Member otherUser = chattingRoom.getChattings().stream()
+                .map(Chatting::getMember)
+                .filter(member -> !member.getMemberId().equals(currentMemberId))
+                .findFirst()
+                .orElse(null);
 
-        String memberImgUrl = tradeUser.getMemberImg() != null ? tradeUser.getMemberImg().getUrl() : null;
+        String myNickname = myUser != null ? myUser.getNickName() : "알 수 없음";
+        String otherNickname = otherUser != null ? otherUser.getNickName() : "알 수 없음";
+
+        String memberImgUrl = otherUser != null && otherUser.getMemberImg() != null ?
+                otherUser.getMemberImg().getUrl() : null;
 
         return ChattingResponseDTO.ChattingRoomDetailDTO.builder()
                 .chatRoomId(chattingRoom.getChattingRoomId())
-                .chattingRequestNickname(chattingRequestNickname)
-                .tradeUserNickname(tradeUserNickname)
+                .myNickname(myNickname)  // ✅ 내 닉네임 설정
+                .otherNickname(otherNickname)  // ✅ 상대방 닉네임 설정
                 .tradeType(tradeType)
                 .location(location)
                 .lastMessage(lastMessageContent)
@@ -114,11 +121,23 @@ public class ChattingConverter {
     public static ChattingResponseDTO.ChattingRoomFullResponseDTO toFullResponseDTO(ChattingRoom chattingRoom, List<ChattingResponseDTO.ChatMessageResponseDTO> messages, Long myId) {
         Trade trade = chattingRoom.getTrade();
         Member tradeUser = trade.getMember();
+
+        // 현재 사용자의 정보 찾기
         Member myUser = chattingRoom.getChattings().stream()
                 .map(Chatting::getMember)
                 .filter(member -> member.getMemberId().equals(myId))
                 .findFirst()
                 .orElse(null);
+
+        // 상대방의 정보 찾기
+        Member otherUser = chattingRoom.getChattings().stream()
+                .map(Chatting::getMember)
+                .filter(member -> !member.getMemberId().equals(myId))
+                .findFirst()
+                .orElse(null);
+
+        String myNickname = myUser != null ? myUser.getNickName() : "알 수 없음";
+        String otherNickname = otherUser != null ? otherUser.getNickName() : tradeUser.getNickName();
 
         String tradeImgUrl = !trade.getTradeImgs().isEmpty() ? trade.getTradeImgs().get(0).getTradeImgUrl() : null;
         String tradeTitle = trade.getTitle();
@@ -128,14 +147,16 @@ public class ChattingConverter {
 
         return ChattingResponseDTO.ChattingRoomFullResponseDTO.builder()
                 .chattingRoomId(chattingRoom.getChattingRoomId())
-                .myNickname(myUser != null ? myUser.getNickName() : "")
-                .otherNickname(tradeUser.getNickName())
+                .myNickname(myNickname)
+                .otherNickname(otherNickname)
                 .tradeImgUrl(tradeImgUrl)
                 .tradeType(trade.getTradeType().toString())
                 .tradeTitle(tradeTitle)
                 .createdAt(chattingRoom.getCreatedAt())
-                .otherMemberImgUrl(tradeUser.getMemberImg() != null ? tradeUser.getMemberImg().getUrl() : null)
-                .otherLocation(tradeUser.getTown() != null ? tradeUser.getTown().getEupmyeondong() : "")
+                .otherMemberImgUrl(otherUser != null && otherUser.getMemberImg() != null ?
+                        otherUser.getMemberImg().getUrl() : null)
+                .otherLocation(otherUser != null && otherUser.getTown() != null ?
+                        otherUser.getTown().getEupmyeondong() : "")
                 .tradeStatus(tradeStatus)
                 .ingredientCount(ingredientCount)
                 .expirationDate(expirationDate)

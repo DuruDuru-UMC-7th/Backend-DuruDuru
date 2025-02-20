@@ -13,8 +13,8 @@ public class ChattingResponseDTO {
     @AllArgsConstructor
     public static class ChattingRoomDetailDTO {
         private Long chatRoomId;
-        private String chattingRequestNickname;
-        private String tradeUserNickname;
+        private String myNickname;
+        private String otherNickname;
         private String tradeType;
         private String location;
         private String lastMessage;
